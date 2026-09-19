@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espalier — Deal Suggester</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F6F1; --surface:#FFFFFF; --ink:#15181D; --ink-soft:#454B52; --dim:#7B828A;
+    --border:#E4E1D6; --border-strong:#D6D2C4; --coral:#FF5A3C; --coral-dim:#FFE4DB;
+    --teal:#1F8A70; --teal-dim:#E1F1EA; --amber:#C97F1E; --amber-dim:#FBEDD8; --plum:#6E52B5; --plum-dim:#EDE7F7;
+    --font-display:'Sora', system-ui, sans-serif; --font-body:'Manrope', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); padding:36px 20px 80px;}
+  .site-header{display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:800; font-size:16px; margin-bottom:4px;}
+  .site-header svg{width:19px; height:19px; color:var(--teal);}
+  h1{font-family:var(--font-display); font-weight:800; font-size:21px; margin:0 0 4px;}
+  .sub{color:var(--dim); font-size:13.5px; margin:0 0 24px;}
+  .wrap{max-width:1040px; margin:0 auto;}
+  a{color:inherit;}
+
+  .types-section{margin-bottom:34px;}
+  .types-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; cursor:pointer;}
+  .types-head h2{font-family:var(--font-display); font-weight:700; font-size:15.5px; margin:0;}
+  .types-head .chev{font-size:13px; color:var(--dim); transition:transform .2s;}
+  .types-head.open .chev{transform:rotate(180deg);}
+  .types-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:12px; max-height:2000px; overflow:hidden; transition:max-height .3s;}
+  .types-grid.collapsed{max-height:0;}
+  .type-card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px;}
+  .type-card .tag{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--coral); margin-bottom:8px;}
+  .type-card h3{font-family:var(--font-display); font-weight:700; font-size:14.5px; margin:0 0 8px;}
+  .type-card p{font-size:12.5px; line-height:1.6; color:var(--ink-soft); margin:0;}
+
+  .presets{display:flex; gap:10px; margin-bottom:22px; flex-wrap:wrap;}
+  .preset-btn{font-size:12.5px; font-weight:700; background:var(--surface); border:1px solid var(--border-strong); color:var(--ink-soft); padding:9px 16px; border-radius:100px; cursor:pointer;}
+  .preset-btn:hover{border-color:var(--coral); color:var(--coral);}
+
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+  @media (max-width:900px){ .grid{grid-template-columns:1fr;} }
+
+  .panel{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:26px;}
+  .panel h2{font-family:var(--font-display); font-weight:700; font-size:15px; margin:0 0 18px;}
+
+  .field{margin-bottom:20px;}
+  .field label{display:flex; justify-content:space-between; font-size:12.5px; font-weight:700; color:var(--ink-soft); margin-bottom:8px;}
+  .field label .val{color:var(--coral); font-family:var(--font-display);}
+  .field.priority{background:var(--coral-dim); border-radius:12px; padding:16px; margin:-4px -4px 22px;}
+  .field.priority label{color:#9A3E23; font-size:13px;}
+  input[type=range]{width:100%; accent-color:var(--coral);}
+  input[type=number]{width:100%; border:1.5px solid var(--border-strong); border-radius:8px; padding:9px 11px; font-size:14px; font-family:inherit;}
+  select{width:100%; border:1.5px solid var(--border-strong); border-radius:8px; padding:10px 11px; font-size:13.5px; font-family:inherit; background:#fff;}
+  .field-row{display:flex; gap:10px;}
+  .field-row .field{flex:1;}
+  .toggle-row{display:flex; gap:8px;}
+  .toggle-opt{flex:1; text-align:center; font-size:12.5px; font-weight:700; padding:9px; border-radius:8px; border:1.5px solid var(--border-strong); color:var(--dim); cursor:pointer;}
+  .toggle-opt.active{background:var(--coral); border-color:var(--coral); color:#fff;}
+
+  .result-block{border:1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:16px;}
+  .result-block.neutral{background:var(--teal-dim); border-color:transparent;}
+  .result-block.stated{background:var(--plum-dim); border-color:transparent;}
+  .result-label{font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; margin-bottom:10px;}
+  .result-block.neutral .result-label{color:var(--teal);}
+  .result-block.stated .result-label{color:var(--plum);}
+  .deal-type{font-family:var(--font-display); font-weight:800; font-size:18px; margin:0 0 10px;}
+  .deal-numbers{display:flex; gap:24px; margin-bottom:10px;}
+  .num-box .n{font-family:var(--font-display); font-weight:800; font-size:22px;}
+  .num-box .l{font-size:11px; color:var(--dim); margin-top:1px;}
+  .result-note{font-size:12.5px; line-height:1.6; color:var(--ink-soft);}
+
+  .show-math{font-size:12px; font-weight:700; color:var(--dim); cursor:pointer; margin-top:8px; display:inline-block;}
+  .math-detail{display:none; font-size:12px; color:var(--ink-soft); line-height:1.9; margin-top:10px; padding-top:10px; border-top:1px dashed var(--border);}
+  .math-detail.open{display:block;}
+  .math-detail .row{display:flex; justify-content:space-between; padding:3px 0;}
+  .math-detail .row b{color:var(--ink);}
+
+  .alt-note{margin-top:6px; padding:12px 14px; background:var(--amber-dim); border-radius:10px; font-size:12px; color:#7A5310; line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="site-header"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 9 5 9 5 4C10 4 12 9 12 9M12 9C12 9 19 9 19 4C14 4 12 9 12 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Espalier</div>
+  <h1>Deal Suggester</h1>
+  <p class="sub">The platform's own read on what's fair, shown alongside what the starter says they'd prefer — never just one or the other.</p>
+
+  <div class="types-section">
+    <div class="types-head open" id="typesHead"><h2>The 5 deal types, in plain terms</h2><span class="chev">▾</span></div>
+    <div class="types-grid" id="typesGrid">
+      <div class="type-card"><div class="tag">Full Buyout</div><h3>You sell it, they own it, done.</h3><p>Someone pays you once for the idea and everything you've made toward it. After that it's fully theirs — you don't get anything else later, even if it takes off, but you also never have to think about it again.</p></div>
+      <div class="type-card"><div class="tag">Royalty / Revenue Share</div><h3>A small slice, every time it earns.</h3><p>No payment now. Instead, every time it makes money, you automatically get a percentage of that — like a check that shows up whenever it earns, for as long as the deal runs.</p></div>
+      <div class="type-card"><div class="tag">Hybrid</div><h3>Some cash now, plus a smaller slice later.</h3><p>You get paid something today to make it worth handing off, and you also keep a smaller ongoing percentage in case it really takes off.</p></div>
+      <div class="type-card"><div class="tag">Milestone Earn-Out</div><h3>Paid in stages, as it actually succeeds.</h3><p>Instead of one number, you're paid in check-ins tied to real progress — some now, more once it hits real users or real revenue. Less all at once, but tied to what actually happens.</p></div>
+    </div>
+  </div>
+
+  <div class="presets">
+    <button class="preset-btn" id="presetIdea">Load: "$1,000 flat sale" example</button>
+    <button class="preset-btn" id="presetRoyalty">Load: "2% recurring" example</button>
+    <button class="preset-btn" id="presetReset">Reset to blank idea</button>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h2>About this idea and this deal</h2>
+
+      <div class="field priority">
+        <label>What does the starter actually want?</label>
+        <select id="preference">
+          <option value="0">Cash now — no ongoing stake</option>
+          <option value="25">Mostly cash now, small ongoing share too</option>
+          <option value="50" selected>A fair mix of both</option>
+          <option value="75">Mostly an ongoing share, a little cash too</option>
+          <option value="100">No cash now — ongoing share only</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>How much have they already invested? <span class="val" id="valSunk">$0</span></label>
+        <input type="range" id="sunkCost" min="0" max="10000" step="50" value="0">
+      </div>
+
+      <div class="field">
+        <label>How complete is it already? <span class="val" id="valCompletion">0%</span></label>
+        <input type="range" id="completionPct" min="0" max="100" step="1" value="0">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Profit potential — low end ($/mo)</label>
+          <input type="number" id="profitMin" value="500">
+        </div>
+        <div class="field">
+          <label>Profit potential — high end ($/mo)</label>
+          <input type="number" id="profitMax" value="2000">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Forecast score (how validated it seems) <span class="val" id="valForecast">50</span></label>
+        <input type="range" id="forecastScore" min="5" max="95" step="1" value="50">
+      </div>
+
+      <div class="field">
+        <label>Revenue type</label>
+        <div class="toggle-row">
+          <div class="toggle-opt active" data-val="one-time" data-group="revenueType">One-time sale</div>
+          <div class="toggle-opt" data-val="recurring" data-group="revenueType">Recurring</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Starter's desired involvement</label>
+        <select id="involvement">
+          <option value="hands-off">Hands-off — fully done after this</option>
+          <option value="occasional" selected>Occasional — available if asked</option>
+          <option value="stay-involved">Stay involved — active ongoing role</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Suggested deal</h2>
+
+      <div class="result-block neutral">
+        <div class="result-label">Platform's fair suggestion</div>
+        <div class="deal-type" id="neutralDealType">—</div>
+        <div class="deal-numbers">
+          <div class="num-box"><div class="n" id="neutralUpfront">$0</div><div class="l">upfront</div></div>
+          <div class="num-box"><div class="n" id="neutralRoyalty">0%</div><div class="l">ongoing</div></div>
+        </div>
+        <div class="result-note" id="neutralNote"></div>
+        <div class="alt-note" id="neutralAltNote" style="display:none;"></div>
+        <span class="show-math" data-target="neutralMath">Show the math ▾</span>
+        <div class="math-detail" id="neutralMath"></div>
+      </div>
+
+      <div class="result-block stated">
+        <div class="result-label">Based on what the starter said they want</div>
+        <div class="deal-type" id="statedDealType">—</div>
+        <div class="deal-numbers">
+          <div class="num-box"><div class="n" id="statedUpfront">$0</div><div class="l">upfront</div></div>
+          <div class="num-box"><div class="n" id="statedRoyalty">0%</div><div class="l">ongoing</div></div>
+        </div>
+        <div class="result-note" id="statedNote"></div>
+        <span class="show-math" data-target="statedMath">Show the math ▾</span>
+        <div class="math-detail" id="statedMath"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const els = {
+  sunkCost: document.getElementById('sunkCost'),
+  completionPct: document.getElementById('completionPct'),
+  profitMin: document.getElementById('profitMin'),
+  profitMax: document.getElementById('profitMax'),
+  forecastScore: document.getElementById('forecastScore'),
+  involvement: document.getElementById('involvement'),
+  preference: document.getElementById('preference'),
+};
+let revenueType = 'one-time';
+
+document.querySelectorAll('.toggle-opt[data-group="revenueType"]').forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    document.querySelectorAll('.toggle-opt[data-group="revenueType"]').forEach(o=>o.classList.remove('active'));
+    opt.classList.add('active');
+    revenueType = opt.dataset.val;
+    compute();
+  });
+});
+
+document.getElementById('typesHead').addEventListener('click', ()=>{
+  document.getElementById('typesHead').classList.toggle('open');
+  document.getElementById('typesGrid').classList.toggle('collapsed');
+});
+
+document.querySelectorAll('.show-math').forEach(el=>{
+  el.addEventListener('click', ()=>{
+    const target = document.getElementById(el.dataset.target);
+    const open = target.classList.toggle('open');
+    el.textContent = (open ? 'Hide the math ▴' : 'Show the math ▾');
+  });
+});
+
+function money(n){ return '$' + Math.round(n).toLocaleString(); }
+
+function scoreDeal(input, prefOverride){
+  const { sunkCost, completionPct, profitMin, profitMax, forecastScore, revenueType, involvement } = input;
+  const completionFrac = completionPct/100;
+  const confidenceFrac = forecastScore/100;
+
+  let fullRoyalty = 18;
+  const completionMult = 1 - completionFrac*0.85;
+  fullRoyalty *= completionMult;
+  const revenueMult = revenueType === 'recurring' ? 0.7 : 1.2;
+  fullRoyalty *= revenueMult;
+  const involvementMult = involvement === 'hands-off' ? 0.85 : involvement === 'stay-involved' ? 1.15 : 1.0;
+  fullRoyalty *= involvementMult;
+  const confidenceMult = 1 + confidenceFrac*0.4;
+  fullRoyalty *= confidenceMult;
+  fullRoyalty = Math.max(1, Math.min(35, fullRoyalty));
+
+  const upfrontBase = sunkCost * (0.9 + completionFrac*0.4);
+  const ideaPremium = profitMin * 0.05 * (0.5 + confidenceFrac*0.5);
+  let fullUpfront = (upfrontBase + ideaPremium) * 1.15;
+
+  const pref = prefOverride;
+  let dealType, finalUpfront, finalRoyalty, note;
+
+  if(pref <= 0.15){
+    dealType = 'Full Buyout';
+    finalUpfront = fullUpfront; finalRoyalty = 0;
+    note = `A clean one-time sale — cash now, no ongoing stake, nothing to track later.`;
+  } else if(pref >= 0.85){
+    dealType = 'Royalty / Revenue Share';
+    finalUpfront = 0; finalRoyalty = fullRoyalty;
+    note = `No cash today — the starter's entire return comes from an ongoing percentage of what this actually earns.`;
+  } else {
+    dealType = 'Hybrid (Advance + Royalty)';
+    finalUpfront = fullUpfront * (1 - pref);
+    finalRoyalty = fullRoyalty * pref;
+    note = `A blend: roughly ${Math.round((1-pref)*100)}% weighted toward cash now, ${Math.round(pref*100)}% toward an ongoing share.`;
+  }
+
+  finalUpfront = finalUpfront < 2000 ? Math.round(finalUpfront/50)*50 : Math.round(finalUpfront/250)*250;
+  finalRoyalty = Math.round(finalRoyalty * 10) / 10;
+
+  let altNote = null;
+  const profitMid = (profitMin + profitMax) / 2;
+  const riskFrac = 1 - confidenceFrac;
+  if(riskFrac > 0.45 && profitMid > 4000 && pref > 0.15 && pref < 0.85){
+    altNote = `Also worth considering: real upside here but not very proven yet — a Milestone Earn-Out (more paid out only once it hits real revenue) may suit a cautious finisher better than a flat ongoing %.`;
+  }
+
+  return { dealType, finalUpfront, finalRoyalty, note, altNote, completionMult, revenueMult, involvementMult, confidenceMult, fullRoyalty, fullUpfront, pref };
+}
+
+function neutralPreference(input){
+  const completionFrac = input.completionPct/100;
+  const confidenceFrac = input.forecastScore/100;
+  let pref = 0.55;
+  pref -= completionFrac * 0.4;
+  pref += (input.revenueType === 'recurring' ? 0.15 : -0.12);
+  pref += (confidenceFrac - 0.5) * 0.15;
+  return Math.max(0.05, Math.min(0.95, pref));
+}
+
+function renderMath(elId, r, input){
+  document.getElementById(elId).innerHTML = `
+    <div class="row"><span>Full royalty anchor (18% base)</span><b>18%</b></div>
+    <div class="row"><span>× completion (${input.completionPct}% done)</span><b>${r.completionMult.toFixed(2)}×</b></div>
+    <div class="row"><span>× revenue type (${input.revenueType})</span><b>${r.revenueMult.toFixed(2)}×</b></div>
+    <div class="row"><span>× involvement (${input.involvement})</span><b>${r.involvementMult.toFixed(2)}×</b></div>
+    <div class="row"><span>× confidence (forecast ${input.forecastScore}/100)</span><b>${r.confidenceMult.toFixed(2)}×</b></div>
+    <div class="row"><span>= full royalty, if 100% stake</span><b>${r.fullRoyalty.toFixed(1)}%</b></div>
+    <div class="row"><span>Full buyout, if 100% cash</span><b>${money(r.fullUpfront)}</b></div>
+    <div class="row"><span>Cash-vs-stake weighting used</span><b>${Math.round(r.pref*100)}% toward stake</b></div>
+  `;
+}
+
+function compute(){
+  const input = {
+    sunkCost: Number(els.sunkCost.value),
+    completionPct: Number(els.completionPct.value),
+    profitMin: Number(els.profitMin.value) || 0,
+    profitMax: Number(els.profitMax.value) || 0,
+    forecastScore: Number(els.forecastScore.value),
+    revenueType,
+    involvement: els.involvement.value,
+  };
+
+  document.getElementById('valSunk').textContent = money(input.sunkCost);
+  document.getElementById('valCompletion').textContent = input.completionPct + '%';
+  document.getElementById('valForecast').textContent = input.forecastScore;
+
+  const neutralPref = neutralPreference(input);
+  const rN = scoreDeal(input, neutralPref);
+  document.getElementById('neutralDealType').textContent = rN.dealType;
+  document.getElementById('neutralUpfront').textContent = money(rN.finalUpfront);
+  document.getElementById('neutralRoyalty').textContent = rN.finalRoyalty + '%';
+  document.getElementById('neutralNote').textContent = rN.note;
+  const naEl = document.getElementById('neutralAltNote');
+  if(rN.altNote){ naEl.style.display='block'; naEl.textContent = rN.altNote; } else { naEl.style.display='none'; }
+  renderMath('neutralMath', rN, input);
+
+  const statedPref = Number(els.preference.value) / 100;
+  const rS = scoreDeal(input, statedPref);
+  document.getElementById('statedDealType').textContent = rS.dealType;
+  document.getElementById('statedUpfront').textContent = money(rS.finalUpfront);
+  document.getElementById('statedRoyalty').textContent = rS.finalRoyalty + '%';
+  document.getElementById('statedNote').textContent = rS.note;
+  renderMath('statedMath', rS, input);
+}
+
+Object.values(els).forEach(el=>{
+  el.addEventListener('input', compute);
+  el.addEventListener('change', compute);
+});
+
+function loadPreset(p){
+  els.sunkCost.value = p.sunk; els.completionPct.value = p.completion;
+  els.profitMin.value = p.pMin; els.profitMax.value = p.pMax;
+  els.forecastScore.value = p.forecast; els.involvement.value = p.involve; els.preference.value = p.pref;
+  revenueType = p.revType;
+  document.querySelectorAll('.toggle-opt[data-group="revenueType"]').forEach(o=>o.classList.toggle('active', o.dataset.val===p.revType));
+  compute();
+}
+document.getElementById('presetIdea').addEventListener('click', ()=> loadPreset({sunk:600, completion:25, pMin:2000, pMax:6000, forecast:45, involve:'hands-off', pref:0, revType:'one-time'}));
+document.getElementById('presetRoyalty').addEventListener('click', ()=> loadPreset({sunk:4500, completion:90, pMin:3000, pMax:12000, forecast:68, involve:'occasional', pref:100, revType:'recurring'}));
+document.getElementById('presetReset').addEventListener('click', ()=> loadPreset({sunk:0, completion:0, pMin:500, pMax:2000, forecast:50, involve:'occasional', pref:50, revType:'one-time'}));
+
+(function prefillFromQuery(){
+  const q = new URLSearchParams(window.location.search);
+  if(![...q.keys()].length) return;
+  loadPreset({
+    sunk: Number(q.get('sunk')) || 0,
+    completion: Number(q.get('completion')) || 0,
+    pMin: Number(q.get('pMin')) || 500,
+    pMax: Number(q.get('pMax')) || 2000,
+    forecast: Number(q.get('forecast')) || 50,
+    involve: q.get('involve') || 'occasional',
+    pref: Number(q.get('pref')) || 50,
+    revType: q.get('revType') === 'recurring' ? 'recurring' : 'one-time',
+  });
+})();
+
+compute();
+</script>
+</body>
+</html>

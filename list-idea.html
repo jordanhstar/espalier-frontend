@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espalier — list your idea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F6F1; --surface:#FFFFFF; --ink:#15181D; --ink-soft:#454B52; --dim:#7B828A;
+    --border:#E4E1D6; --border-strong:#D6D2C4; --coral:#FF5A3C; --coral-dim:#FFE4DB;
+    --teal:#1F8A70; --teal-dim:#E1F1EA; --amber:#C97F1E; --amber-dim:#FBEDD8;
+    --blue:#3E6FF0; --pink:#E0517E; --plum:#6E52B5;
+    --font-display:'Sora', system-ui, sans-serif; --font-body:'Manrope', system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --bg:#111417; --surface:#171B1F; --ink:#EDEFEF; --ink-soft:#C2C7CB; --dim:#8A9096; --border:#262B30; --border-strong:#31373D; --coral-dim:#3A1F1A; --teal-dim:#12261F; --amber-dim:#2E2416; }
+  }
+  :root[data-theme="dark"]{ --bg:#111417; --surface:#171B1F; --ink:#EDEFEF; --ink-soft:#C2C7CB; --dim:#8A9096; --border:#262B30; --border-strong:#31373D; --coral-dim:#3A1F1A; --teal-dim:#12261F; --amber-dim:#2E2416; }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg); color:var(--ink); font-family:var(--font-body); -webkit-font-smoothing:antialiased;}
+  button{font-family:inherit; cursor:pointer;}
+  input,textarea,select{font-family:inherit;}
+
+  header{display:flex; align-items:center; justify-content:space-between; padding:14px 24px; border-bottom:1px solid var(--border); background:var(--surface); position:sticky; top:0; z-index:30;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:700; font-size:18px;}
+  .brand svg{width:22px;height:22px; color:var(--coral);}
+  .exit-link{font-size:14px; color:var(--dim); text-decoration:none;}
+
+  .btn{font-family:var(--font-body); font-weight:700; font-size:14.5px; background:linear-gradient(135deg, color-mix(in srgb, var(--coral) 85%, #FF8A5C), var(--coral)); color:#fff; padding:12px 22px; border-radius:10px; border:none; display:inline-flex; align-items:center; gap:8px; box-shadow:0 3px 10px color-mix(in srgb, var(--coral) 35%, transparent);}
+  .btn-outline{font-family:var(--font-body); font-weight:600; font-size:14px; background:transparent; color:var(--ink); border:1px solid var(--border-strong); padding:10px 18px; border-radius:10px;}
+  .btn-full{width:100%; justify-content:center;}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  /* ============ SCREEN A: empowering hero + categorized upload ============ */
+  .wrap{max-width:680px; margin:0 auto; padding:56px 24px 90px;}
+  .wrap.full{max-width:1160px; padding:48px 32px 90px;}
+  .hero-wash{background:linear-gradient(160deg, color-mix(in srgb, var(--coral) 7%, var(--bg)), color-mix(in srgb, var(--blue) 7%, var(--bg))); border-radius:0 0 32px 32px; margin:0 -32px 40px; padding:44px 32px 36px;}
+
+  .info-disclosure{background:var(--surface); border:1px solid var(--border); border-radius:16px; margin-bottom:32px; overflow:hidden;}
+  .info-disclosure summary{list-style:none; cursor:pointer; padding:16px 22px;}
+  .info-disclosure summary::-webkit-details-marker{display:none;}
+  .info-disclosure-row{display:flex; align-items:center; justify-content:space-between; gap:16px;}
+  .info-disclosure-title{font-size:13px; color:var(--ink-soft); line-height:1.5; flex:1 1 auto;}
+  .info-disclosure-title b{color:var(--ink); font-weight:700;}
+  .info-disclosure-chev{font-size:11px; color:var(--dim); flex:0 0 auto; transition:transform .15s;}
+  .info-disclosure[open] .info-disclosure-chev{transform:rotate(180deg);}
+  .info-disclosure-body{padding:4px 22px 22px; border-top:1px solid var(--border);}
+  .info-disclosure-body .privacy-note-title, .info-disclosure-body .quality-note-title{font-family:var(--font-display); font-weight:700; font-size:13.5px; margin:18px 0 10px;}
+  .info-disclosure-body .quality-note-title{color:var(--teal);}
+  .info-disclosure-body .quality-note-lead{font-size:12.5px; color:var(--ink-soft); line-height:1.55; margin:0 0 12px;}
+
+  .privacy-note{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px 22px; margin-bottom:36px;}
+  .privacy-note-title{font-family:var(--font-display); font-weight:700; font-size:14px; margin-bottom:12px;}
+  .privacy-note-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; font-size:12.5px; color:var(--ink-soft); line-height:1.55;}
+  .privacy-note-grid b{color:var(--ink); font-weight:700;}
+  @media (max-width:700px){ .privacy-note-grid{grid-template-columns:1fr;} }
+
+  .quality-note{background:var(--teal-dim); border:1px solid color-mix(in srgb, var(--teal) 30%, transparent); border-radius:16px; padding:20px 22px; margin-bottom:36px;}
+  .quality-note-title{font-family:var(--font-display); font-weight:700; font-size:14px; margin-bottom:8px; color:var(--teal);}
+  .quality-note-lead{font-size:12.5px; color:var(--ink-soft); line-height:1.55; margin:0 0 14px;}
+  .quality-note-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; font-size:12.5px; color:var(--ink-soft); line-height:1.55;}
+  .quality-note-grid b{color:var(--ink); font-weight:700;}
+  @media (max-width:700px){ .quality-note-grid{grid-template-columns:1fr;} }
+
+  .denied-wrap{max-width:560px; margin:80px auto; text-align:center; padding:0 24px;}
+  .denied-icon{width:56px; height:56px; border-radius:50%; background:var(--coral-dim); color:var(--coral); font-size:22px; font-weight:700; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;}
+  .denied-wrap h1{font-size:26px; margin-bottom:10px;}
+  .denied-wrap .sub{color:var(--dim); font-size:14px; line-height:1.6; margin-bottom:26px;}
+  .denied-reasons{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:6px 18px; text-align:left; margin-bottom:18px;}
+  .denied-reason-row{padding:12px 0; border-bottom:1px solid var(--border); font-size:13.5px; color:var(--ink-soft); line-height:1.55;}
+  .denied-reason-row:last-child{border-bottom:none;}
+  .denied-subnote{font-size:12.5px; color:var(--dim); margin-bottom:26px;}
+  .denied-actions{display:flex; gap:12px; justify-content:center;}
+  .kicker{text-align:center; font-size:12.5px; font-weight:700; color:var(--coral); text-transform:uppercase; letter-spacing:.05em; margin-bottom:14px;}
+  h1{font-family:var(--font-display); font-weight:700; font-size:clamp(28px,4.4vw,36px); margin:0 0 12px; text-align:center; line-height:1.2;}
+  .sub{color:var(--dim); font-size:15.5px; line-height:1.65; text-align:center; max-width:560px; margin:0 auto 8px;}
+
+  .section-heading{font-family:var(--font-display); font-weight:700; font-size:17px; margin:36px 0 6px;}
+  .section-heading .opt{font-weight:500; font-size:12.5px; color:var(--dim); text-transform:none;}
+  .section-subtext{font-size:13.5px; color:var(--dim); margin:0 0 18px; line-height:1.55; max-width:640px;}
+
+  /* type picker */
+  .type-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(130px,1fr)); gap:14px; margin-bottom:8px;}
+  .type-card{
+    border-radius:16px; padding:0; overflow:hidden; cursor:pointer; border:3px solid transparent; text-align:center;
+    transition:transform .15s, border-color .15s; position:relative;
+  }
+  .type-card:hover{transform:translateY(-2px);}
+  .type-card.selected{border-color:var(--ink);}
+  .type-card .tc-inner{position:relative; padding:22px 10px 14px; overflow:hidden;}
+  .type-card .tc-inner::after{content:""; position:absolute; inset:0; opacity:.15; background-image:radial-gradient(circle, #fff 1.5px, transparent 1.5px); background-size:14px 14px;}
+  .type-card .tc-glyph{font-size:30px; position:relative; z-index:2; display:block; margin-bottom:6px;}
+  .type-card .tc-label{position:relative; z-index:2; font-family:var(--font-display); font-weight:700; font-size:13px; color:#fff;}
+  .type-card .tc-check{position:absolute; top:8px; right:8px; width:20px; height:20px; border-radius:50%; background:#fff; color:var(--ink); font-size:11px; display:none; align-items:center; justify-content:center; z-index:3; font-weight:700;}
+  .type-card.selected .tc-check{display:flex;}
+  .type-app .tc-inner{background:linear-gradient(135deg, var(--blue), color-mix(in srgb, var(--blue) 60%, #8B5CF6));}
+  .type-website .tc-inner{background:linear-gradient(135deg, var(--teal), color-mix(in srgb, var(--teal) 55%, #A6E22E));}
+  .type-business .tc-inner{background:linear-gradient(135deg, var(--amber), color-mix(in srgb, var(--amber) 55%, #FFD23F));}
+  .type-event .tc-inner{background:linear-gradient(135deg, var(--pink), color-mix(in srgb, var(--pink) 55%, var(--coral)));}
+  .type-physical .tc-inner{background:linear-gradient(135deg, var(--coral), color-mix(in srgb, var(--coral) 55%, var(--amber)));}
+  .type-digital .tc-inner{background:linear-gradient(135deg, var(--plum), color-mix(in srgb, var(--plum) 55%, var(--blue)));}
+  .type-other .tc-inner{background:linear-gradient(135deg, #5B6169, color-mix(in srgb, #5B6169 55%, var(--blue)));}
+
+  /* describe-it section */
+  .describe-card{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px; margin-bottom:8px;}
+  .describe-card .field{margin-bottom:14px;}
+  .describe-card label{display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin-bottom:6px;}
+  .describe-card input[type=text], .describe-card textarea{
+    width:100%; border:1.5px solid var(--border-strong); border-radius:11px; padding:13px 15px; font-size:14.5px;
+    color:var(--ink); background:var(--bg); outline:none; line-height:1.55;
+  }
+  .describe-card textarea{resize:vertical;}
+  .describe-card input:focus, .describe-card textarea:focus{border-color:var(--coral);}
+  .describe-hint{font-size:12px; color:var(--dim); margin-top:6px; line-height:1.5;}
+
+  .links-section{margin-top:36px;}
+  .rep-list{display:flex; flex-direction:column; gap:8px; margin-bottom:10px;}
+  .rep-row{display:flex; gap:8px;}
+  .rep-row input{flex:1; border:1.5px solid var(--border-strong); border-radius:10px; padding:11px 13px; font-size:14px; font-family:inherit; color:var(--ink); background:var(--surface);}
+  .rep-row input:focus{outline:none; border-color:var(--coral);}
+  .rep-remove{background:var(--bg); border:1.5px solid var(--border-strong); border-radius:8px; width:38px; flex-shrink:0; color:var(--dim); cursor:pointer;}
+  .add-rep{font-size:13px; font-weight:700; color:var(--coral); background:none; border:none; padding:4px 0; cursor:pointer;}
+  .link-card{border:1.5px solid var(--border-strong); border-radius:12px; padding:12px; margin-bottom:10px;}
+  .link-card .rep-row{margin-bottom:8px;}
+  .link-card .link-note-input{width:100%; border:1.5px solid var(--border-strong); border-radius:10px; padding:9px 13px; font-size:13px; font-family:inherit; color:var(--ink-soft); background:var(--bg);}
+  .link-card .link-note-input:focus{outline:none; border-color:var(--coral);}
+  .mini-dropzone{
+    border:1.5px dashed var(--border-strong); border-radius:12px; padding:16px 12px; text-align:center; margin-top:14px;
+    font-size:12.5px; color:var(--dim); transition:border-color .15s, background .15s; cursor:pointer;
+  }
+  .mini-dropzone.drag{border-color:var(--coral); background:var(--coral-dim); color:var(--coral);}
+  .mini-dropzone b{color:var(--ink-soft); font-weight:600;}
+
+  .mini-file-list{margin-top:10px; display:flex; flex-direction:column; gap:6px;}
+  .mini-file-row{display:flex; align-items:center; gap:8px; background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:8px 10px; font-size:12px;}
+  .mini-file-row .f-icon{font-size:14px; flex-shrink:0;}
+  .mini-file-row .fname{flex:1; font-weight:600; color:var(--ink-soft); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .mini-file-row .mf-meta{font-size:10.5px; color:var(--dim); flex-shrink:0;}
+  .mini-file-failed{background:var(--coral-dim);}
+  .mf-meta-error{color:var(--coral); font-weight:600;}
+  .mini-file-row .fremove{background:none; border:none; color:var(--dim); font-size:12px; flex-shrink:0;}
+
+  .upload-single{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px 26px; margin-bottom:32px;
+  }
+  .upload-single .mini-dropzone{
+    margin-top:0; padding:32px 16px; font-size:14px;
+  }
+  .upload-single .mini-dropzone b{font-size:14.5px;}
+  .upload-single .dz-types{margin-top:8px; font-size:11.5px; color:var(--dim); font-weight:400;}
+  .upload-single .dz-icons{font-size:20px; margin-bottom:6px; letter-spacing:2px;}
+  .upload-single .mini-file-list{margin-top:16px;}
+
+  .dz-or{text-align:center; margin:6px 0 26px; color:var(--dim); font-size:13px;}
+  .dz-or a{color:var(--coral); font-weight:600; text-decoration:none;}
+
+  .actions{margin-top:22px; text-align:center;}
+  .actions .btn{width:auto; padding:14px 32px;}
+
+  .empower-strip{display:flex; gap:16px; justify-content:center; margin-top:30px; flex-wrap:wrap;}
+  .empower-item{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--ink-soft);}
+  .empower-item .ic{font-size:16px;}
+
+  /* ============ SCREEN B: scanning ============ */
+  .scan-wrap{text-align:center; padding:90px 20px;}
+  .scan-ring{width:88px; height:88px; margin:0 auto 26px; border-radius:50%; border:5px solid var(--border); border-top-color:var(--coral); animation:spin 1s linear infinite;}
+  @keyframes spin{ to{transform:rotate(360deg);} }
+  @media (prefers-reduced-motion: reduce){ .scan-ring{animation:none;} }
+  .scan-status{font-family:var(--font-display); font-weight:600; font-size:16px; margin-bottom:8px;}
+  .scan-sub{color:var(--dim); font-size:13.5px;}
+
+  /* ============ SCREEN B2: clarifying chat ============ */
+  .chat-thread{display:flex; flex-direction:column; gap:16px; margin-bottom:20px;}
+  .msg{display:flex; gap:12px; max-width:88%;}
+  .msg.ai{align-self:flex-start;}
+  .msg.user{align-self:flex-end; flex-direction:row-reverse; max-width:80%;}
+  .msg-avatar{width:30px; height:30px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#fff;}
+  .msg-avatar.ai{background:linear-gradient(135deg,#8B6FE8,#E0517E);}
+  .msg-avatar.user{background:linear-gradient(135deg,#FFB199,#FF5A3C);}
+  .msg-bubble{padding:12px 16px; border-radius:14px; font-size:14.5px; line-height:1.6;}
+  .msg.ai .msg-bubble{background:var(--surface); border:1px solid var(--border); border-top-left-radius:4px;}
+  .msg.user .msg-bubble{background:var(--coral); color:#fff; border-top-right-radius:4px;}
+  .chat-input-row{display:flex; gap:10px; align-items:center; border:1.5px solid var(--border-strong); border-radius:12px; padding:10px 10px 10px 16px; background:var(--surface); margin-top:8px;}
+  .chat-input-row input{flex:1; border:none; outline:none; background:none; font-size:14.5px; color:var(--dim);}
+  .send-btn{background:var(--border); color:var(--dim); border:none; width:36px; height:36px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .thinking-note{font-size:13px; color:var(--dim); display:flex; align-items:center; gap:8px; margin:14px 0 0; justify-content:center;}
+  .dotpulse{display:inline-flex; gap:3px;}
+  .dotpulse span{width:5px; height:5px; border-radius:50%; background:var(--dim); animation:pulse 1.2s infinite ease-in-out;}
+  .dotpulse span:nth-child(2){animation-delay:.15s;} .dotpulse span:nth-child(3){animation-delay:.3s;}
+  @keyframes pulse{ 0%,80%,100%{opacity:.25;} 40%{opacity:1;} }
+
+  /* ============ SCREEN C: structured form + live preview ============ */
+  .layout{display:grid; grid-template-columns:720px 1fr; gap:0; align-items:start;}
+  @media (max-width:980px){ .layout{grid-template-columns:1fr;} }
+
+  .form-col{padding:32px 40px 100px; max-width:640px;}
+  .form-col .credit-banner{
+    display:flex; align-items:center; gap:12px; background:var(--teal-dim); color:var(--teal); border-radius:13px;
+    padding:14px 18px; font-size:13.5px; font-weight:600; margin-bottom:26px; line-height:1.5;
+  }
+  .form-col .credit-banner .ic{font-size:20px; flex-shrink:0;}
+  .form-col h1{font-size:24px; text-align:left; margin:0 0 6px;}
+  .form-col .fsub{color:var(--dim); font-size:14.5px; margin:0 0 26px; text-align:left;}
+
+  .section{border:1px solid var(--border); border-radius:14px; margin-bottom:16px; background:var(--surface); overflow:hidden;}
+  .section-head{display:flex; align-items:center; justify-content:space-between; padding:16px 20px; cursor:pointer;}
+  .section-head .st{display:flex; align-items:center; gap:10px;}
+  .section-head .num{width:24px; height:24px; border-radius:50%; background:var(--bg); border:1px solid var(--border-strong); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; color:var(--dim);}
+  .section.complete .num{background:var(--teal); color:#fff; border-color:var(--teal);}
+  .section-head h3{font-family:var(--font-display); font-weight:600; font-size:15px; margin:0;}
+  .section-head .chev{color:var(--dim); font-size:12px; transition:transform .15s;}
+  .section.open .chev{transform:rotate(180deg);}
+  .section-body{display:none; padding:0 20px 20px;}
+  .section.open .section-body{display:block;}
+  .section-note{font-size:12.5px; color:var(--dim); margin:0 0 14px; line-height:1.55;}
+
+  .detected-tag{
+    display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; color:var(--teal);
+    background:var(--teal-dim); padding:3px 9px; border-radius:100px; margin-left:8px; vertical-align:middle;
+  }
+
+  .fsub-inline{font-weight:500; color:var(--dim); font-size:11.5px; margin-left:6px;}
+  .cover-upload-row{display:flex; align-items:center; gap:16px;}
+  .cover-preview{width:88px; height:66px; border-radius:12px; background:var(--bg); border:1.5px dashed var(--border-strong); display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; overflow:hidden; background-size:cover; background-position:center;}
+  .cover-upload-row .upload-btn{display:inline-block; font-size:13px; font-weight:700; color:var(--coral); cursor:pointer; margin-bottom:4px;}
+  .cover-upload-row input[type=file]{display:none;}
+  .cover-upload-row .hint{font-size:11.5px; color:var(--dim);}
+  .unsplash-thumb{position:relative; border-radius:8px; overflow:hidden; cursor:pointer; aspect-ratio:3/2; border:2px solid transparent;}
+  .unsplash-thumb:hover{border-color:var(--coral);}
+  .unsplash-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+  .unsplash-thumb .credit{position:absolute; bottom:0; left:0; right:0; font-size:9px; color:#fff; background:rgba(0,0,0,.55); padding:2px 4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin-bottom:6px;}
+  .field-caveat{font-size:11px; color:var(--dim); line-height:1.5; margin-top:6px;}
+  .field input[type=text], .field textarea, .field select{width:100%; border:1.5px solid var(--border-strong); border-radius:10px; padding:11px 13px; font-size:14px; color:var(--ink); background:var(--bg); outline:none;}
+  .field input:focus, .field textarea:focus, .field select:focus{border-color:var(--coral);}
+  .field-row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+
+  .step-toggle-row{display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-top:1px solid var(--border); gap:10px;}
+  .step-toggle-row:first-of-type{border-top:none;}
+  .step-toggle-row .stname{font-size:13.5px; color:var(--ink-soft);}
+  .status-toggle{display:flex; border:1px solid var(--border-strong); border-radius:8px; overflow:hidden; flex-shrink:0;}
+  .status-toggle button{font-size:11px; font-weight:600; padding:6px 10px; background:var(--surface); border:none; border-right:1px solid var(--border-strong); color:var(--dim);}
+  .status-toggle button:last-child{border-right:none;}
+  .status-toggle button.sel-solid{background:var(--teal); color:#fff;}
+  .status-toggle button.sel-partial{background:var(--amber); color:#fff;}
+  .status-toggle button.sel-open{background:var(--border-strong); color:var(--ink-soft);}
+
+  .chip-picker{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip-pick{font-size:12.5px; padding:7px 13px; border-radius:100px; border:1px solid var(--border-strong); background:var(--surface); color:var(--ink-soft);}
+  .chip-pick.sel{background:var(--coral); color:#fff; border-color:var(--coral);}
+  .blocker-checklist{display:flex; flex-direction:column; gap:1px;}
+  .blocker-check-row{display:flex; align-items:center; gap:10px; padding:8px 4px; font-size:13.5px; color:var(--ink-soft); cursor:pointer; border-radius:8px;}
+  .blocker-check-row:hover{background:var(--surface);}
+  .blocker-check-row.sel{color:var(--ink); font-weight:600;}
+  .blocker-check-row input[type=checkbox]{width:16px; height:16px; accent-color:var(--coral); cursor:pointer; flex-shrink:0;}
+  .check-inline{display:flex; align-items:center; gap:9px; font-size:14px; font-weight:600; color:var(--ink); cursor:pointer;}
+  .check-inline input[type=checkbox]{width:16px; height:16px; accent-color:var(--coral); cursor:pointer; flex-shrink:0;}
+
+  .blocker-note{font-size:12.5px; color:var(--ink-soft); line-height:1.6; background:var(--bg); border-radius:11px; padding:13px 15px; margin-bottom:16px;}
+
+  /* live preview */
+  .preview-col{position:sticky; top:65px; padding:32px; height:calc(100vh - 65px); overflow-y:auto; display:flex; flex-direction:column; align-items:center;}
+  .preview-inner{width:100%; max-width:340px;}
+  .preview-label{font-size:12px; font-weight:700; color:var(--dim); text-transform:uppercase; letter-spacing:.04em; margin-bottom:12px;}
+  .listing-card{background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; transition:box-shadow .5s ease, border-color .5s ease;}
+  .card-cover{height:84px; position:relative; display:flex; align-items:center; padding:0 16px; overflow:hidden; background:linear-gradient(120deg, var(--blue), color-mix(in srgb, var(--blue) 60%, #8B5CF6));}
+  .card-cover .glyph{font-size:30px; position:relative; z-index:2;}
+  .card-cover::after{content:""; position:absolute; inset:0; opacity:.14; background-image:radial-gradient(circle, #fff 1.5px, transparent 1.5px); background-size:14px 14px;}
+  .score-badge{position:absolute; top:10px; right:12px; z-index:3; font-family:var(--font-display); font-weight:800; font-size:14px; color:#fff; background:var(--score-color,#C97F1E); border:2px solid rgba(255,255,255,.6); border-radius:10px; padding:4px 9px;}
+  .score-badge .lbl{font-size:8px; font-weight:700; color:rgba(255,255,255,.85); display:block; text-align:center; text-transform:uppercase;}
+  .listing-body{padding:18px;}
+  .listing-body h2{font-family:var(--font-display); font-weight:700; font-size:17px; margin:0 0 5px;}
+  .listing-body .hook{font-size:13px; color:var(--dim); margin:0 0 14px; line-height:1.5;}
+  .progress-row{display:flex; align-items:center; gap:8px; margin-bottom:14px;}
+  .card-bar-seg{flex:1; height:6px; border-radius:100px; overflow:hidden; display:flex; background:var(--border);}
+  .card-bar-seg .seg{height:100%;}
+  .seg-solid{background:var(--teal);} .seg-partial{background:var(--amber);} .seg-open{background:var(--border-strong);}
+  .progress-pct{font-family:var(--font-display); font-weight:700; font-size:12px;}
+  .field-row{display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-top:1px solid var(--border); font-size:13px;}
+  .field-row .k{color:var(--dim);} .field-row .v{font-weight:600; text-align:right;}
+  .tag-wrap{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
+  .mini-tag{font-size:11px; background:var(--bg); border:1px solid var(--border); padding:3px 8px; border-radius:100px; color:var(--ink-soft);}
+  .reassure-note{font-size:12px; color:var(--dim); margin-top:16px; line-height:1.6; text-align:center;}
+  .completion-note{font-size:12.5px; font-weight:600; color:var(--coral); margin-top:14px; line-height:1.6; text-align:center;}
+
+  .deal-summary-box{background:var(--coral-dim); border-radius:14px; padding:18px 20px; margin-top:6px;}
+  .deal-summary-label{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:#9A3E23; margin-bottom:10px;}
+  .deal-option-row{background:var(--surface); border:1.5px solid var(--border-strong); border-radius:11px; padding:12px 14px; margin-bottom:8px; cursor:pointer;}
+  .deal-option-row:hover{border-color:var(--coral);}
+  .deal-option-row.sel{border-color:var(--coral); box-shadow:0 0 0 1px var(--coral);}
+  .deal-option-rank{font-size:10.5px; font-weight:700; color:var(--dim); text-transform:uppercase; letter-spacing:.03em; margin-bottom:3px;}
+  .deal-option-row:first-child .deal-option-rank{color:var(--coral);}
+  .deal-option-type{font-family:var(--font-display); font-weight:700; font-size:14.5px; color:var(--ink); margin-bottom:4px;}
+  .deal-option-nums{display:flex; gap:16px; font-size:12.5px; color:var(--ink-soft);}
+  .deal-option-nums b{font-family:var(--font-display); font-size:14px; color:var(--ink); margin-right:3px;}
+  .deal-summary-link{font-size:12px; font-weight:700; color:var(--coral);}
+  .deal-summary-actions{display:flex; align-items:center; flex-wrap:wrap; margin-top:8px;}
+  .deal-summary-actions > *{margin-right:16px;}
+  .deal-summary-shuffle{font-size:12px; font-weight:700; color:var(--ink-soft); background:none; border:none; cursor:pointer; padding:0;}
+  .deal-summary-shuffle:hover{color:var(--ink);}
+  .deal-summary-skip{font-size:12px; font-weight:600; color:var(--dim); background:none; border:none; cursor:pointer; padding:0; text-decoration:underline;}
+  .deal-summary-skip:hover{color:var(--ink-soft);}
+  .deal-summary-skipped{display:flex; align-items:center; justify-content:space-between; gap:14px; font-size:12.5px; color:var(--ink-soft); flex-wrap:wrap;}
+  .publish-error{background:var(--coral-dim); border:1px solid rgba(255,90,60,.4); color:#9A3E23; font-size:13px; padding:12px 14px; border-radius:10px; margin:0 0 14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 9 5 9 5 4C10 4 12 9 12 9M12 9C12 9 19 9 19 4C14 4 12 9 12 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Espalier</div>
+  <a class="exit-link" href="dashboard.html" id="saveExitBtn">Save & exit</a>
+</header>
+
+<!-- SCREEN A -->
+<div class="wrap full panel active" id="panel-a">
+  <div class="hero-wash">
+    <div class="kicker">Listing your idea</div>
+    <h1>You already did the hard part.</h1>
+    <p class="sub">Most ideas never get this far. Tell Espalier about it in your own words, attach anything you've got, and it'll find the progress you've already made.</p>
+  </div>
+
+  <details class="info-disclosure">
+    <summary>
+      <div class="info-disclosure-row">
+        <span class="info-disclosure-title">🔒 <b>Private until you publish.</b> Files are never shown to buyers, and ideas are checked for genuine effort — not polish.</span>
+        <span class="info-disclosure-chev">▾</span>
+      </div>
+    </summary>
+    <div class="info-disclosure-body">
+      <div class="privacy-note-title">What's private, what's shared</div>
+      <div class="privacy-note-grid">
+        <div><b>Shared with buyers once you publish:</b> your title, hook, description, type, profit range, estimated cost, and your note to a finisher.</div>
+        <div><b>Never shown to buyers:</b> any files or links you add here — Espalier reads them (including fetching what's at a link) only to help score your idea, and they stay private.</div>
+        <div><b>Before you publish:</b> nothing above exists as a real listing yet, so none of it is visible to anyone.</div>
+        <div><b>All deal talk stays here:</b> arranging or discussing a deal outside Espalier isn't allowed once you're talking with a buyer — everything happens in-platform so both sides are protected.</div>
+      </div>
+
+      <div class="quality-note-title">✓ What gets published here</div>
+      <p class="quality-note-lead">Espalier checks every idea before it goes live — not for quality or polish, just for whether it's a genuine, thought-out attempt. Here's exactly what that means:</p>
+      <div class="quality-note-grid">
+        <div><b>You'll need:</b> a real title and one-line hook, a description with some real substance (or files that show it), at least one step that's actually solid or partial — not everything left at "open" — and a real sense of what it could be worth.</div>
+        <div><b>You won't need:</b> a polished idea, a conventional one, or a finished one. Weird, ambitious, or rough ideas are exactly what this place is for — as long as there's something genuine behind it.</div>
+        <div><b>What gets turned away:</b> ideas with no real work behind them yet, or ones that don't read as a serious, coherent attempt at anything real.</div>
+        <div><b>If yours gets denied:</b> you'll see exactly why, and you can either fix it and resubmit, or ask a human to take a second look.</div>
+      </div>
+    </div>
+  </details>
+
+  <div class="section-heading">What kind of idea is it?</div>
+  <p class="section-subtext">This shapes everything else — the questions Espalier asks, the skills it looks for, and how it forecasts this idea's odds.</p>
+  <div class="type-grid" id="typeGrid">
+    <div class="type-card type-app selected" data-type="App"><div class="tc-inner"><span class="tc-check">✓</span><span class="tc-glyph">📱</span><span class="tc-label">App</span></div></div>
+    <div class="type-card type-website" data-type="Website"><div class="tc-inner"><span class="tc-check">✓</span><span class="tc-glyph">🌐</span><span class="tc-label">Website</span></div></div>
+    <div class="type-card type-business" data-type="Business"><div class="tc-inner"><span class="tc-check">✓</span><span class="tc-glyph">💼</span><span class="tc-label">Business</span></div></div>
+    <div class="type-card type-event" data-type="Event"><div class="tc-inner"><span class="tc-check">✓</span><span class="tc-glyph">🎉</span><span class="tc-label">Event</span></div></div>
+    <div class="type-card type-physical" data-type="Physical product"><div class="tc-inner"><span class="tc-check">✓</span><span class="tc-glyph">📦</span><span class="tc-label">Physical product</span></div></div>
+    <div class="type-card type-digital" data-type="Digital product"><div class="tc-inner"><span class="tc-check">✓</span><span class="tc-glyph">💾</span><span class="tc-label">Digital product</span></div></div>
+    <div class="type-card type-other" data-type="Other"><div class="tc-inner"><span class="tc-check">✓</span><span class="tc-glyph">✨</span><span class="tc-label">Other</span></div></div>
+  </div>
+
+  <div class="section-heading">Tell us about it</div>
+  <p class="section-subtext">In your own words — what it does, what you picture it becoming, and honestly, where it stands right now. Already wrote this up somewhere else? Just paste it in below. This matters more than any file you attach.</p>
+  <div class="describe-card">
+    <div class="field"><label>Title</label><input type="text" id="fTitleA" placeholder="e.g. Plate — meal-photo origin stories"></div>
+    <div class="field"><label>One-line hook</label><input type="text" id="fHookA" placeholder="Snap your plate, get a story of where each ingredient came from."></div>
+    <div class="field">
+      <label>Describe it — what it does, your vision for it, and where it's at</label>
+      <textarea id="fDescribeA" rows="12" placeholder="I'm building an app that recognizes food in a photo and tells a short story about where each ingredient came from. I want it to make people feel something about their food. Right now the recognition and story generation work well on a test set — but there's no real app around it yet, no onboarding, nothing polished."></textarea>
+      <p class="describe-hint">Already have a summary written up — notes, a doc, something you asked ChatGPT or Claude to put together? Paste the whole thing in here as-is. Long and unpolished is completely fine — the more specific you are, the less Espalier has to guess, and the sharper your forecast will be.</p>
+    </div>
+    <div class="field">
+      <label>Private notes for Espalier <span class="opt" style="text-transform:none; font-weight:500;">— never shown to buyers</span></label>
+      <textarea id="fPrivateNotesA" rows="6" placeholder="Anything you want factored into the analysis but don't want public — a status summary you pulled together elsewhere, blunt context about what's actually working, numbers you're not ready to publish yet."></textarea>
+      <p class="describe-hint">This stays private between you and Espalier — used only to sharpen the forecast and step-checklist, never shown on the public listing.</p>
+    </div>
+  </div>
+
+  <div class="section-heading">Got files too? <span class="opt">Optional</span></div>
+  <p class="section-subtext">Attach anything you've got for extra context — notes, screenshots, a voice memo, code, spreadsheets. Not required if you've already described it above.</p>
+  <div class="upload-single">
+    <div class="mini-dropzone" data-zone="auto">
+      <div class="dz-icons">📝 🎙️ 🖼️ 💻 📦</div>
+      <b>Drop files</b> or click to browse
+      <div class="dz-types">Notes, voice memos, screenshots, code, spreadsheets — we'll sort out what's what</div>
+    </div>
+    <div class="mini-file-list" data-list="all"></div>
+  </div>
+
+  <div class="links-section">
+    <div class="section-heading" style="margin-bottom:4px;">Any relevant links? <span class="opt">Optional</span></div>
+    <p class="section-subtext">A live demo, a GitHub repo, a Figma file, an App Store listing — anything worth pointing to. Add a quick note so Espalier (and a future finisher) knows what each one is.</p>
+    <div class="rep-list idea-links-target" id="ideaLinksList"></div>
+    <button class="add-rep" id="addIdeaLink" type="button">+ Add a link</button>
+  </div>
+
+  <div class="actions"><button class="btn" id="analyzeBtn">Continue</button></div>
+
+  <div class="empower-strip">
+    <div class="empower-item"><span class="ic">🕶️</span> Kept private until you publish</div>
+    <div class="empower-item"><span class="ic">✏️</span> Everything's editable after</div>
+    <div class="empower-item"><span class="ic">🤝</span> No judgment — just context</div>
+  </div>
+</div>
+
+<!-- SCREEN B -->
+<div class="wrap panel" id="panel-b">
+  <div class="scan-wrap">
+    <div class="scan-ring"></div>
+    <div class="scan-status" id="scanStatus">Finding what you've already built…</div>
+    <p class="scan-sub">Give us a moment — good work takes a second to recognize</p>
+  </div>
+</div>
+
+<!-- SCREEN B2: clarifying chat -->
+<div class="wrap panel" id="panel-b2">
+  <div class="kicker" style="margin-bottom:6px;">A few things Espalier couldn't find</div>
+  <h1 style="font-size:24px;">Quick questions before we draft it</h1>
+  <p class="sub" style="margin-bottom:28px;">Everything else came straight from your files — this is just the handful of gaps.</p>
+  <div class="chat-thread" id="qaThread"></div>
+  <div class="chat-input-row"><input type="text" id="qaInput" placeholder="Type a reply…"><button class="send-btn" id="qaSend">↑</button></div>
+  <p class="thinking-note" id="thinkingNote" style="display:none;">Espalier is drafting your listing <span class="dotpulse"><span></span><span></span><span></span></span></p>
+  <div class="actions"><button class="btn" id="genListingBtn" style="display:none;">Generate my listing</button></div>
+</div>
+
+<!-- SCREEN C -->
+<div class="panel" id="panel-c">
+  <div class="layout">
+    <div class="form-col">
+      <div class="credit-banner"><span class="ic">✓</span> Espalier found real progress in your files — that's already filled in below. You're further along than a blank page would suggest.</div>
+      <h1>Round out your listing</h1>
+      <p class="fsub">Fields marked <span class="detected-tag">🔍 Detected</span> came straight from what you uploaded — check them, then fill in the rest.</p>
+
+      <div class="section open complete" id="sec1">
+        <div class="section-head" data-toggle="sec1"><div class="st"><span class="num">1</span><h3>Basics</h3></div><span class="chev">▾</span></div>
+        <div class="section-body">
+          <div class="field">
+            <label>Cover photo <span class="fsub-inline">optional — buyers will see this</span></label>
+            <div class="cover-upload-row">
+              <div class="cover-preview" id="coverPreview">🖼️</div>
+              <div>
+                <label class="upload-btn" for="coverInput">Upload a photo</label>
+                <input type="file" id="coverInput" accept="image/*">
+                <span class="upload-btn" id="unsplashToggleBtn" style="margin-left:10px;">or search Unsplash</span>
+                <div class="hint">A real screenshot beats a generic icon · best at ~1200×400px, landscape</div>
+              </div>
+            </div>
+            <div id="unsplashSearchBox" style="display:none; margin-top:12px;">
+              <div class="rep-row">
+                <input type="text" id="unsplashQuery" placeholder="Search Unsplash — e.g. &quot;coffee shop&quot;, &quot;team meeting&quot;">
+                <button type="button" class="rep-remove" id="unsplashSearchBtn" style="width:44px;">🔍</button>
+              </div>
+              <p class="describe-hint" id="unsplashStatus"></p>
+              <div id="unsplashResults" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:8px;"></div>
+            </div>
+          </div>
+          <div class="field"><label>Title <span class="detected-tag">🔍 Detected</span></label><input type="text" id="fTitle" value="Plate — meal-photo origin stories"></div>
+          <div class="field"><label>One-line hook <span class="detected-tag">🔍 Detected</span></label><textarea id="fHook" rows="2">Snap your plate, get a lyrical animated story of where each ingredient came from.</textarea></div>
+          <div class="field"><label>Type <span class="detected-tag">🔍 Detected</span></label>
+            <select id="fType"><option value="App" selected>App</option><option value="Website">Website</option><option value="Business">Business</option><option value="Event">Event</option><option value="Physical product">Physical product</option><option value="Digital product">Digital product</option><option value="Other">Other</option></select>
+          </div>
+          <div class="field"><label>Description</label><textarea id="fDescribe" rows="6"></textarea></div>
+          <div class="field">
+            <label>Private notes for Espalier <span class="fsub-inline" style="text-transform:none;">— never shown to buyers</span></label>
+            <textarea id="fPrivateNotes" rows="4" placeholder="Extra context for the analysis only — status details, blunt notes, anything not meant for a public listing."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="section open" id="sec2">
+        <div class="section-head" data-toggle="sec2"><div class="st"><span class="num">2</span><h3>What's built <span class="detected-tag" id="stepsDetectedTag" style="display:none;">🔍 Detected from your files</span></h3></div><span class="chev">▾</span></div>
+        <div class="section-body">
+          <p class="section-note" id="stepsDetectedNote">Mark what's actually built so far — be honest, partial counts for something.</p>
+          <div id="stepsList"></div>
+          <div id="reanalyzeRow" style="display:none; margin-top:16px; padding-top:16px; border-top:1px solid var(--border);">
+            <p class="field-caveat" style="margin-bottom:10px;">Have more to show — more files, links, or detail that would close some of these gaps? Add it right here and we'll take another look. Otherwise, you're all set to publish as-is — a finisher picks up from wherever this actually sits.</p>
+            <button type="button" class="btn-outline" id="toggleAddMoreBtn">+ Add more files or links</button>
+            <div id="addMoreInline" style="display:none; margin-top:16px;">
+              <div class="mini-dropzone" data-zone="auto">
+                <b>Drop files</b> or click to browse
+                <div class="dz-types">Notes, voice memos, screenshots, code, spreadsheets</div>
+              </div>
+              <div class="mini-file-list" data-list="all"></div>
+              <div class="rep-list idea-links-target" style="margin-top:14px;"></div>
+              <button class="add-rep" id="addIdeaLink2" type="button">+ Add a link</button>
+              <div style="margin-top:16px;"><button type="button" class="btn-outline" id="recheckBtn">Check my listing again</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section open" id="sec3">
+        <div class="section-head" data-toggle="sec3"><div class="st"><span class="num">3</span><h3>What's in the way?</h3></div><span class="chev">▾</span></div>
+        <div class="section-body">
+          <p class="blocker-note">Nobody finishes everything — this stays private and just helps us match you well.</p>
+          <div class="field">
+            <label>What's stopping you from finishing it?</label>
+            <textarea id="fBlockerNote" rows="3" placeholder="Optional, and just between us — e.g. Once the core piece worked, I lost the itch to keep pushing on it. Or: I don't have the design skills for what's left. Whatever's true."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="sec4">
+        <div class="section-head" data-toggle="sec4"><div class="st"><span class="num">4</span><h3>Skills & money</h3></div><span class="chev">▾</span></div>
+        <div class="section-body">
+          <div class="field"><label>Skills a finisher would need <span class="detected-tag">🔍 Detected</span></label>
+            <div class="chip-picker" id="skillsPicker">
+              <button class="chip-pick sel">Frontend / app dev</button><button class="chip-pick sel">Product & UI design</button>
+              <button class="chip-pick">Marketing & growth</button><button class="chip-pick">Sales & partnerships</button><button class="chip-pick">AI proficiency</button>
+            </div>
+          </div>
+          <div class="field"><label>Social impact <span style="font-weight:400; color:var(--dim); font-size:12px;">(optional — tag if this genuinely applies)</span></label>
+            <div class="chip-picker" id="socialImpactPicker">
+              <button class="chip-pick">Environmental sustainability</button>
+              <button class="chip-pick">Accessibility & disability</button>
+              <button class="chip-pick">Education</button>
+              <button class="chip-pick">Health & wellbeing</button>
+              <button class="chip-pick">Economic opportunity</button>
+              <button class="chip-pick">Community & belonging</button>
+              <button class="chip-pick">Civic & social justice</button>
+              <button class="chip-pick">Animal welfare</button>
+            </div>
+            <div class="field-caveat">Self-reported, not verified by Espalier — buyers can filter and sort by this.</div>
+          </div>
+          <div class="field-row2">
+            <div class="field">
+              <label>Opportunity size</label>
+              <select id="fProfit">
+                <option value="side_income">Side income — a nice bonus for whoever finishes it</option>
+                <option value="solid_income" selected>Solid income — could genuinely support someone</option>
+                <option value="big_swing">Big swing — real business potential if it lands</option>
+              </select>
+              <div class="field-caveat">This is the idea's ceiling, not a promise — how far it actually gets depends enormously on who finishes it and what they bring (budget, skills, network).</div>
+            </div>
+            <div class="field">
+              <label>Est. cost to finish & market <span class="detected-tag" id="costDetectedTag" style="display:none;">🔍 Detected</span></label>
+              <input type="text" id="fCost" value="$1,500">
+              <p class="field-caveat">Just a starting estimate — this field is yours to edit, change it to whatever's actually right.</p>
+              <p class="field-caveat" id="costRationaleNote" style="display:none;"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="sec5">
+        <div class="section-head" data-toggle="sec5"><div class="st"><span class="num">5</span><h3>Working style</h3></div><span class="chev">▾</span></div>
+        <div class="section-body">
+          <div class="field-row2">
+            <div class="field"><label>Estimated time to finish</label><select id="fTime"><option>Under 2 hrs</option><option>A few hours</option><option selected>A weekend</option><option>Multiple weeks</option></select></div>
+            <div class="field"><label>Ongoing effort after launch</label><select id="fEffort"><option>Runs itself</option><option selected>Light upkeep</option><option>Regular attention</option><option>Heavy management</option></select></div>
+          </div>
+          <div class="field"><label>How involved do you want to stay?</label><select id="fInvolve"><option>Hands-off</option><option selected>Occasional input</option><option>Wants to stay involved</option><option>I'm open / flexible</option></select></div>
+          <div class="field"><label>Want credit as the original creator?</label><select id="fAttribution"><option value="none" selected>No — make it yours</option><option value="wants-credit">Yes — I'd like credit</option></select></div>
+          <div class="field">
+            <label class="check-inline"><input type="checkbox" id="fAnonymous"> List this anonymously</label>
+            <p class="describe-hint">Your name and profile won't be shown to buyers on this listing — it'll just say "Anonymous creator." You'll still see and manage it normally from your own dashboard.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section open" id="sec6">
+        <div class="section-head" data-toggle="sec6"><div class="st"><span class="num">6</span><h3>Suggested deal</h3></div><span class="chev">▾</span></div>
+        <div class="section-body">
+          <div class="field"><label>What do you actually want from this?</label>
+            <select id="fDealPref">
+              <option value="0">Cash now — no ongoing stake</option>
+              <option value="25">Mostly cash now, small ongoing share too</option>
+              <option value="50" selected>A fair mix of both</option>
+              <option value="75">Mostly an ongoing share, a little cash too</option>
+              <option value="100">No cash now — ongoing share only</option>
+            </select>
+          </div>
+          <div class="field-row2">
+            <div class="field"><label>Cash you've already put in</label><input type="text" id="fSunkCost" value="$0" placeholder="$0"></div>
+            <div class="field"><label>Hours you've put in</label><input type="text" id="fSunkHours" value="0" placeholder="0"></div>
+          </div>
+          <div class="field-row2">
+            <div class="field"><label>What's your time worth, per hour?</label><input type="text" id="fSunkRate" value="$75" placeholder="$75"></div>
+            <div class="field"><label>Once it's making money, is that...</label><select id="fRevType"><option value="one-time" selected>A one-time sale</option><option value="recurring">Ongoing / recurring</option></select></div>
+          </div>
+          <p class="field-caveat">Your time counts as real investment too — hours × rate gets added to your cash invested when we suggest a fair upfront amount below.</p>
+
+          <div class="deal-summary-box" id="dealSummaryBox">
+            <div class="deal-summary-label">Espalier's take — ranked by fit for this idea <span class="detected-tag" style="margin-left:4px;">✦ Generated</span></div>
+            <div id="dealOptionsList"></div>
+            <div class="deal-summary-actions">
+              <a id="dealSummaryLink" href="#" target="_blank" class="deal-summary-link">See the full breakdown →</a>
+              <button type="button" class="deal-summary-skip" id="dealSkipBtn">Skip this</button>
+            </div>
+          </div>
+          <div class="deal-summary-box deal-summary-skipped" id="dealSummarySkippedNote" style="display:none;">
+            <span>No suggestion shown — you can price this yourself, or check the calculator anytime.</span>
+            <button type="button" class="deal-summary-shuffle" id="dealUnskipBtn">Show a suggestion</button>
+          </div>
+        </div>
+      </div>
+
+      <p class="publish-error" id="publishError" style="display:none;"></p>
+      <div class="actions" style="display:flex; gap:12px;"><button class="btn-outline" id="saveDraftBtn" type="button">Save draft</button><button class="btn" id="publishBtn">Publish listing</button></div>
+    </div>
+
+    <div class="preview-col">
+      <div class="preview-inner">
+        <div class="preview-label">Live preview</div>
+        <div class="listing-card" id="listingCard">
+          <div class="card-cover">
+            <span class="glyph" id="pvGlyph">📱</span>
+            <div class="score-badge" id="pvScoreBadge">62<span class="lbl">forecast</span></div>
+          </div>
+          <div class="listing-body">
+            <h2 id="pvTitle">Plate — meal-photo origin stories</h2>
+            <p class="hook" id="pvHook">Snap your plate, get a lyrical animated story of where each ingredient came from.</p>
+            <div class="progress-row">
+              <div class="card-bar-seg" id="pvBar"><div class="seg seg-solid" style="width:0%"></div><div class="seg seg-partial" style="width:0%"></div><div class="seg seg-open" style="width:100%"></div></div>
+              <span class="progress-pct" id="pvPct">0%</span>
+            </div>
+            <div class="field-row"><span class="k">Profit potential</span><span class="v" id="pvProfit">$2k–10k/mo</span></div>
+            <div class="field-row"><span class="k">Time to finish</span><span class="v" id="pvTime">A weekend</span></div>
+            <div class="field-row" style="display:block;"><span class="k">Skills needed</span><div class="tag-wrap" id="pvSkills"></div></div>
+          </div>
+        </div>
+        <p class="completion-note" id="pvCompletion">You're already 3 of 5 sections in — that's more than most ideas ever get.</p>
+        <p class="reassure-note">Buyers see this preview. What's in "What's in the way?" stays private between you and Espalier — it's used only to help find the right match, and it's never shown to anyone.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-denied">
+  <div class="denied-wrap">
+    <div class="denied-icon">✕</div>
+    <h1>This one didn't make it through</h1>
+    <p class="sub">Espalier checks every idea before it goes live — not for quality, just for whether it's a genuine, thought-out attempt. Here's what didn't pass:</p>
+    <div class="denied-reasons" id="deniedReasons"></div>
+    <p class="denied-subnote">You can fix these and try again, or ask a human at Espalier to take a second look.</p>
+    <div class="denied-actions">
+      <button class="btn-outline" id="deniedEditBtn">Edit and try again</button>
+      <button class="btn" id="deniedReviewBtn">Request a manual review</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TYPE_STEPS = {
+  App: ['Problem validated','Core feature built','Tested with real users','People come back and use it','Onboarding polished','Distribution plan','Monetization set up'],
+  Website: ['Concept validated','Core content/logic built','Tested with real visitors','People come back or share it','Design polished','Traffic plan','Monetization set up'],
+  Business: ['Problem identified','Offer defined','Product/process built','First paying customer','Pricing set','Repeatable delivery process','Customer acquisition plan'],
+  Event: ['Run at least once','Real turnout or ticket sales','Format documented','Could run again (repeatable)','Vendor/venue relationships','Ticketing/booking system','Guest acquisition plan'],
+  'Physical product': ['Concept validated','Prototype built','Tested with real users','Designed to be manufacturable','Production/sourcing plan','Pricing set','Distribution plan'],
+  'Digital product': ['Concept validated','Has an audience to sell to','Core product built','Tested with real users','Production-ready / polished','Distribution channel secured','Pricing set'],
+  Other: ['Concept tested informally','Initial prototype/sample made','Audience validated','Path to revenue defined'],
+};
+let stepStatus = [];
+let detectedSteps = []; // indices Espalier actually found evidence for — only set by real analysis
+
+function currentTypeSteps(){
+  return TYPE_STEPS[selectedType] || TYPE_STEPS.Other;
+}
+function resetStepsForType(){
+  const names = currentTypeSteps();
+  stepStatus = new Array(names.length).fill('open');
+  detectedSteps = [];
+}
+
+function stepsListHTML(){
+  return currentTypeSteps().map((name,i)=>`
+    <div class="step-toggle-row">
+      <span class="stname">${name}${detectedSteps.includes(i) ? ' <span class="detected-tag" style="margin-left:6px;">🔍</span>' : ''}</span>
+      <div class="status-toggle" data-idx="${i}">
+        <button data-val="open" class="${stepStatus[i]==='open'?'sel-open':''}">Open</button>
+        <button data-val="partial" class="${stepStatus[i]==='partial'?'sel-partial':''}">Partial</button>
+        <button data-val="solid" class="${stepStatus[i]==='solid'?'sel-solid':''}">Solid</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updatePreview(){
+  document.getElementById('pvTitle').textContent = document.getElementById('fTitle').value || 'Untitled idea';
+  document.getElementById('pvHook').textContent = document.getElementById('fHook').value;
+  document.getElementById('pvTime').textContent = document.getElementById('fTime').value;
+  const profitMap = {side_income:'Side income', solid_income:'Solid income', big_swing:'Big swing'};
+  document.getElementById('pvProfit').textContent = profitMap[document.getElementById('fProfit').value];
+
+  const skills = [...document.querySelectorAll('#skillsPicker .sel')].map(b=>b.textContent);
+  document.getElementById('pvSkills').innerHTML = skills.map(s=>`<span class="mini-tag">${s}</span>`).join('') || '<span class="mini-tag">None selected yet</span>';
+
+  const total = stepStatus.length;
+  const solid = stepStatus.filter(s=>s==='solid').length;
+  const partial = stepStatus.filter(s=>s==='partial').length;
+  const open = total - solid - partial;
+  const selfReportedPct = Math.round(((solid*1)+(partial*0.5))/total*100);
+  // Whichever's bigger wins — same rule the backend applies once this is saved,
+  // so the number shown here while building never contradicts what shows up
+  // again after publishing.
+  const pct = (lastFileAnalysis && typeof lastFileAnalysis.completionPct === 'number')
+    ? Math.max(selfReportedPct, lastFileAnalysis.completionPct)
+    : selfReportedPct;
+  document.getElementById('pvPct').textContent = pct+'%';
+  document.getElementById('pvBar').innerHTML = `<div class="seg seg-solid" style="width:${solid/total*100}%"></div><div class="seg seg-partial" style="width:${partial/total*100}%"></div><div class="seg seg-open" style="width:${open/total*100}%"></div>`;
+
+  let score = 20 + pct*0.5;
+  score += document.getElementById('fProfit').value==='big_swing'?20:document.getElementById('fProfit').value==='solid_income'?12:5;
+  score = Math.max(5, Math.min(96, Math.round(score)));
+  const badge = document.getElementById('pvScoreBadge');
+  badge.innerHTML = score+'<span class="lbl">forecast</span>';
+  badge.style.setProperty('--score-color', score>=75?'#1F8A70':score>=55?'#C97F1E':score>=35?'#E0517E':'#8A5252');
+
+  const emojiMap = {App:'📱', Website:'🌐', Business:'💼', Event:'🎉', 'Physical product':'📦', 'Digital product':'💾', Other:'✨'};
+  document.getElementById('pvGlyph').textContent = emojiMap[document.getElementById('fType').value];
+
+  let filled = 1;
+  if(stepStatus.some(s=>s!=='open')) filled++;
+  if(document.getElementById('fBlockerNote')?.value.trim()) filled++;
+  if(skills.length) filled++;
+  if(document.getElementById('fTime').value) filled++;
+  document.getElementById('pvCompletion').textContent = filled>=5
+    ? "Nice — every section's filled in. That's a strong listing."
+    : `You're already ${filled} of 5 sections in — that's more than most ideas ever get.`;
+
+  updateCardGlow(pct);
+  updateDealSummary(pct, score);
+}
+
+// The card's glow grows brighter and wider as the listing actually fills in —
+// faint at the start, glowing warmly once it's mostly built out. Coral to
+// match the brand accent used everywhere else the app signals "this matters."
+function updateCardGlow(pct){
+  const card = document.getElementById('listingCard');
+  if(!card) return;
+  const t = Math.max(0, Math.min(100, pct)) / 100;
+  const blur = Math.round(6 + t * 28);
+  const spread = Math.round(1 + t * 5);
+  const glowOpacity = (0.12 + t * 0.5).toFixed(2);
+  const borderOpacity = (0.25 + t * 0.65).toFixed(2);
+  card.style.borderColor = `rgba(255,90,60,${borderOpacity})`;
+  card.style.boxShadow = `0 0 ${blur}px ${spread}px rgba(255,90,60,${glowOpacity})`;
+}
+
+const DEAL_SUGGESTER_URL = 'deal-suggester.html';
+
+function parseMoney(str){
+  const n = Number(String(str).replace(/[^0-9.]/g, ''));
+  return isNaN(n) ? 0 : n;
+}
+const PROFIT_RANGES = { side_income: [500, 2000], solid_income: [2000, 10000], big_swing: [10000, 20000] };
+const INVOLVE_MAP = { 'Hands-off': 'hands-off', 'Occasional input': 'occasional', 'Wants to stay involved': 'stay-involved', "I'm open / flexible": 'flexible' };
+
+function suggestDeal(input){
+  const { sunkCost, completionPct, profitMin, forecastScore, revenueType, involvement, pref } = input;
+  const completionFrac = completionPct/100;
+  const confidenceFrac = forecastScore/100;
+
+  let fullRoyalty = 18;
+  fullRoyalty *= (1 - completionFrac*0.85);
+  fullRoyalty *= revenueType === 'recurring' ? 0.7 : 1.2;
+  fullRoyalty *= involvement === 'hands-off' ? 0.85 : involvement === 'stay-involved' ? 1.15 : 1.0;
+  fullRoyalty *= (1 + confidenceFrac*0.4);
+  fullRoyalty = Math.max(1, Math.min(35, fullRoyalty));
+
+  const upfrontBase = sunkCost * (0.9 + completionFrac*0.4);
+  const ideaPremium = profitMin * 0.05 * (0.5 + confidenceFrac*0.5);
+  const fullUpfront = (upfrontBase + ideaPremium) * 1.15;
+
+  let dealType, upfront, royalty;
+  if(pref <= 0.15){ dealType = 'Full Buyout'; upfront = fullUpfront; royalty = 0; }
+  else if(pref >= 0.85){ dealType = 'Royalty / Revenue Share'; upfront = 0; royalty = fullRoyalty; }
+  else { dealType = 'Hybrid (Advance + Royalty)'; upfront = fullUpfront*(1-pref); royalty = fullRoyalty*pref; }
+
+  upfront = upfront < 2000 ? Math.round(upfront/50)*50 : Math.round(upfront/250)*250;
+  royalty = Math.round(royalty*10)/10;
+  return { dealType, upfront, royalty };
+}
+
+function updateDealSummary(completionPct, forecastScore){
+  const profitKey = document.getElementById('fProfit').value;
+  const [profitMin, profitMax] = PROFIT_RANGES[profitKey];
+  const cashInvested = parseMoney(document.getElementById('fSunkCost').value);
+  const hoursInvested = parseFloat(document.getElementById('fSunkHours').value) || 0;
+  const hourlyRate = parseMoney(document.getElementById('fSunkRate').value);
+  const sunkCost = cashInvested + (hoursInvested * hourlyRate);
+  const revenueType = document.getElementById('fRevType').value;
+  const involvement = INVOLVE_MAP[document.getElementById('fInvolve').value] || 'occasional';
+
+  const base = { sunkCost, completionPct, profitMin, forecastScore, revenueType, involvement };
+  const options = [0, 0.5, 1].map(pref => ({ ...suggestDeal({ ...base, pref }), pref }));
+
+  // A simple, explainable rule of thumb — not a second AI call, just a
+  // reasonable default ordering: well-along, well-regarded ideas tend to
+  // price cleanest as a straight buyout; early or uncertain ones are fairer
+  // priced as mostly ongoing share; everything else defaults to a blended mix.
+  let order;
+  if(completionPct >= 65 && forecastScore >= 60) order = [0, 1, 2];
+  else if(completionPct < 35) order = [2, 1, 0];
+  else order = forecastScore >= 50 ? [1, 0, 2] : [1, 2, 0];
+  const ranked = order.map(i => options[i]);
+
+  const currentPref = Number(document.getElementById('fDealPref').value) / 100;
+  document.getElementById('dealOptionsList').innerHTML = ranked.map((r, i) => `
+    <div class="deal-option-row ${Math.abs(r.pref - currentPref) < 0.01 ? 'sel' : ''}" data-pref="${Math.round(r.pref*100)}">
+      <div class="deal-option-rank">${i === 0 ? '★ Recommended' : '#' + (i+1)}</div>
+      <div class="deal-option-type">${r.dealType}</div>
+      <div class="deal-option-nums"><span><b>$${r.upfront.toLocaleString()}</b> upfront</span><span><b>${r.royalty}%</b> ongoing</span></div>
+    </div>
+  `).join('');
+
+  const params = new URLSearchParams({
+    sunk: sunkCost, completion: completionPct, pMin: profitMin, pMax: profitMax,
+    forecast: forecastScore, involve: involvement, pref: Math.round(currentPref*100), revType: revenueType,
+  });
+  document.getElementById('dealSummaryLink').href = DEAL_SUGGESTER_URL + '?' + params.toString();
+}
+
+document.getElementById('dealOptionsList').addEventListener('click', (e)=>{
+  const row = e.target.closest('.deal-option-row');
+  if(!row) return;
+  document.getElementById('fDealPref').value = row.dataset.pref;
+  updatePreview();
+});
+
+document.getElementById('fDealPref').addEventListener('change', updatePreview);
+document.getElementById('fCost').addEventListener('blur', (e)=>{
+  // People type this in every format imaginable (1500, 1,500, $1500) — normalize
+  // to one consistent $X,XXX shape whenever they leave the field, rather than
+  // just whatever they happened to type.
+  const n = parseMoney(e.target.value);
+  e.target.value = '$' + n.toLocaleString();
+  updatePreview();
+});
+document.getElementById('fSunkCost').addEventListener('blur', (e)=>{
+  const n = parseMoney(e.target.value);
+  e.target.value = '$' + n.toLocaleString();
+});
+document.getElementById('fSunkCost').addEventListener('input', updatePreview);
+document.getElementById('fSunkHours').addEventListener('input', updatePreview);
+document.getElementById('fSunkRate').addEventListener('input', updatePreview);
+document.getElementById('fRevType').addEventListener('change', updatePreview);
+
+document.getElementById('dealSkipBtn').addEventListener('click', ()=>{
+  document.getElementById('dealSummaryBox').style.display = 'none';
+  document.getElementById('dealSummarySkippedNote').style.display = 'flex';
+});
+document.getElementById('dealUnskipBtn').addEventListener('click', ()=>{
+  document.getElementById('dealSummaryBox').style.display = '';
+  document.getElementById('dealSummarySkippedNote').style.display = 'none';
+});
+
+document.querySelectorAll('.section-head').forEach(h=>{
+  h.addEventListener('click', ()=> document.getElementById(h.dataset.toggle).classList.toggle('open'));
+});
+document.getElementById('stepsList').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.status-toggle button');
+  if(!btn) return;
+  const idx = Number(btn.closest('.status-toggle').dataset.idx);
+  stepStatus[idx] = btn.dataset.val;
+  document.getElementById('stepsList').innerHTML = stepsListHTML();
+  updatePreview();
+});
+document.getElementById('skillsPicker').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.chip-pick'); if(!btn) return;
+  btn.classList.toggle('sel'); updatePreview();
+});
+document.getElementById('socialImpactPicker').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.chip-pick'); if(!btn) return;
+  btn.classList.toggle('sel'); updatePreview();
+});
+document.getElementById('fBlockerNote').addEventListener('input', updatePreview);
+document.getElementById('toggleAddMoreBtn').addEventListener('click', (e)=>{
+  const box = document.getElementById('addMoreInline');
+  const showing = box.style.display !== 'none';
+  box.style.display = showing ? 'none' : 'block';
+  e.currentTarget.textContent = showing ? '+ Add more files or links' : '− Hide';
+});
+document.getElementById('addIdeaLink2').addEventListener('click', addIdeaLinkRow);
+document.getElementById('recheckBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('recheckBtn');
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Checking…';
+  await analyzeUploadedFiles(qaState.answers.length ? qaState.answers : undefined);
+  btn.disabled = false;
+  btn.textContent = original;
+});
+document.querySelectorAll('#fTitle,#fHook,#fType,#fProfit,#fCost,#fTime,#fEffort,#fInvolve,#fAttribution').forEach(el=>{
+  el.addEventListener('input', updatePreview);
+  el.addEventListener('change', updatePreview);
+});
+
+/* screen transitions */
+function goTo(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+let selectedType = 'App';
+document.getElementById('typeGrid').addEventListener('click', (e)=>{
+  const card = e.target.closest('.type-card');
+  if(!card) return;
+  document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedType = card.dataset.type;
+});
+
+// If the type gets corrected here (after AI detection, or by hand), the steps
+// list needs to regenerate for the new type — otherwise it'd silently keep
+// showing whichever type's checklist was picked earlier.
+document.getElementById('fType').addEventListener('change', (e)=>{
+  selectedType = e.target.value;
+  resetStepsForType();
+  document.getElementById('stepsList').innerHTML = stepsListHTML();
+  updatePreview();
+});
+
+document.getElementById('analyzeBtn').addEventListener('click', ()=>{
+  const titleVal = document.getElementById('fTitleA').value.trim();
+  const hookVal = document.getElementById('fHookA').value.trim();
+  if(titleVal) document.getElementById('fTitle').value = titleVal;
+  if(hookVal) document.getElementById('fHook').value = hookVal;
+  document.getElementById('fType').value = selectedType;
+
+  const description = document.getElementById('fDescribeA')?.value.trim() || '';
+  document.getElementById('fDescribe').value = description;
+  const privateNotes = document.getElementById('fPrivateNotesA')?.value.trim() || '';
+  document.getElementById('fPrivateNotes').value = privateNotes;
+
+  resetStepsForType();
+  document.getElementById('stepsList').innerHTML = stepsListHTML();
+
+  const hasFiles = Object.values(uploadedFiles).some(arr => arr.length);
+  const hasLinks = ideaLinks.some(l => l && l.url && l.url.trim());
+  const hasSubstantialDescription = description.length >= 15;
+  if(hasFiles || hasLinks || hasSubstantialDescription) analyzeUploadedFiles();
+  const questionsPromise = fetchFollowUpQuestions();
+
+  goTo('panel-b');
+  const statuses = ['Reading what you wrote…','Listening to your voice memo…','Looking at your wireframes…','Matching skills to what\'s left…'];
+  let i = 0;
+  const el = document.getElementById('scanStatus');
+  const iv = setInterval(()=>{
+    i++;
+    if(i < statuses.length){ el.textContent = statuses[i]; }
+    else{
+      clearInterval(iv);
+      questionsPromise.then(result=>{
+        if(result.questions.length){ renderQuestionFlow(result.questions); goTo('panel-b2'); }
+        else {
+          goTo('panel-c');
+          updatePreview();
+          if(result.failed){
+            const note = document.createElement('div');
+            note.className = 'section-note';
+            note.style.cssText = 'background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 14px; margin-bottom:20px; color:var(--dim);';
+            note.textContent = "Couldn't reach Espalier for follow-up questions this time (" + result.reason + ") — no worries, just fill in anything important below.";
+            document.querySelector('.form-col')?.prepend(note);
+          }
+        }
+      });
+    }
+  }, 700);
+});
+
+async function fetchFollowUpQuestions(){
+  try {
+    const description = document.getElementById('fDescribeA')?.value.trim() || '';
+    const privateNotes = document.getElementById('fPrivateNotesA')?.value.trim() || '';
+    const res = await fetch(`${API_BASE}/api/analyze/questions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + authToken },
+      body: JSON.stringify({ draftId, description, privateNotes, links: ideaLinks.filter(l => l && l.url && l.url.trim()) }),
+    });
+    const data = await res.json().catch(()=>({questions:[]}));
+    if(!res.ok) return { questions: [], failed: true, reason: data.message || `server error (${res.status})` };
+    return { questions: Array.isArray(data.questions) ? data.questions : [], failed: false };
+  } catch(err){ return { questions: [], failed: true, reason: 'network error' }; }
+}
+
+let qaState = { questions: [], index: 0, answers: [] };
+function addChatMsg(role, text){
+  const thread = document.getElementById('qaThread');
+  const div = document.createElement('div');
+  div.className = 'msg ' + (role === 'ai' ? 'ai' : 'user');
+  div.innerHTML = role === 'ai'
+    ? `<div class="msg-avatar ai">✦</div><div class="msg-bubble"></div>`
+    : `<div class="msg-avatar user">JS</div><div class="msg-bubble"></div>`;
+  div.querySelector('.msg-bubble').textContent = text;
+  thread.appendChild(div);
+  thread.scrollTop = thread.scrollHeight;
+}
+function askNextQuestion(){
+  if(qaState.index >= qaState.questions.length){
+    addChatMsg('ai', "That's enough for a strong draft. Let me put your listing together.");
+    document.getElementById('qaInput').disabled = true;
+    document.getElementById('qaSend').disabled = true;
+    document.getElementById('genListingBtn').style.display = 'inline-block';
+    return;
+  }
+  addChatMsg('ai', qaState.questions[qaState.index]);
+}
+function renderQuestionFlow(questions){
+  qaState = { questions, index: 0, answers: [] };
+  document.getElementById('qaThread').innerHTML = '';
+  document.getElementById('genListingBtn').style.display = 'none';
+  document.getElementById('qaInput').disabled = false;
+  document.getElementById('qaSend').disabled = false;
+  askNextQuestion();
+}
+function submitAnswer(){
+  const input = document.getElementById('qaInput');
+  const val = input.value.trim();
+  if(!val || qaState.index >= qaState.questions.length) return;
+  addChatMsg('user', val);
+  qaState.answers.push({ question: qaState.questions[qaState.index], answer: val });
+  qaState.index++;
+  input.value = '';
+  askNextQuestion();
+}
+document.getElementById('qaSend').addEventListener('click', submitAnswer);
+document.getElementById('qaInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') submitAnswer(); });
+
+let lastFileAnalysis = null;
+let coverImageDataUrl = null;
+let publishedDeniedIdeaId = null;
+document.getElementById('coverInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  if(file.size > 900_000){ alert('That photo is a bit large — try one under 900KB.'); e.target.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    coverImageDataUrl = reader.result;
+    document.getElementById('coverPreview').style.backgroundImage = `url(${coverImageDataUrl})`;
+    document.getElementById('coverPreview').textContent = '';
+  };
+  reader.readAsDataURL(file);
+});
+
+let unsplashConfigured = true; // assumed until a search proves otherwise
+document.getElementById('unsplashToggleBtn').addEventListener('click', ()=>{
+  const box = document.getElementById('unsplashSearchBox');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+  if(box.style.display === 'block') document.getElementById('unsplashQuery').focus();
+});
+async function runUnsplashSearch(){
+  const q = document.getElementById('unsplashQuery').value.trim();
+  const statusEl = document.getElementById('unsplashStatus');
+  const resultsEl = document.getElementById('unsplashResults');
+  if(!q){ statusEl.textContent = ''; resultsEl.innerHTML = ''; return; }
+  statusEl.textContent = 'Searching…';
+  resultsEl.innerHTML = '';
+  try {
+    const res = await fetch(`${API_BASE}/api/images/unsplash-search?q=${encodeURIComponent(q)}`, {
+      headers: { Authorization: 'Bearer ' + authToken },
+    });
+    const data = await res.json().catch(()=>({results:[]}));
+    if(res.status === 503 || data.error === 'not_configured'){
+      unsplashConfigured = false;
+      document.getElementById('unsplashToggleBtn').style.display = 'none';
+      document.getElementById('unsplashSearchBox').style.display = 'none';
+      return;
+    }
+    if(!res.ok || !data.results?.length){
+      statusEl.textContent = res.ok ? 'No results — try a different search.' : "Couldn't search Unsplash right now — try again.";
+      return;
+    }
+    statusEl.textContent = '';
+    resultsEl.innerHTML = data.results.map((p, i) => `
+      <div class="unsplash-thumb" data-idx="${i}">
+        <img src="${p.thumbUrl}" loading="lazy" alt="">
+        <div class="credit">📷 ${p.photographerName}</div>
+      </div>
+    `).join('');
+    resultsEl.querySelectorAll('.unsplash-thumb').forEach(el => {
+      el.addEventListener('click', () => selectUnsplashPhoto(data.results[Number(el.dataset.idx)]));
+    });
+  } catch(err){
+    statusEl.textContent = "Couldn't reach the server to search — check your connection.";
+  }
+}
+async function selectUnsplashPhoto(photo){
+  coverImageDataUrl = photo.fullUrl;
+  document.getElementById('coverPreview').style.backgroundImage = `url(${photo.fullUrl})`;
+  document.getElementById('coverPreview').textContent = '';
+  document.getElementById('unsplashSearchBox').style.display = 'none';
+  // Required by Unsplash's API terms whenever a photo is actually used, not just shown in results
+  try {
+    await fetch(`${API_BASE}/api/images/unsplash-track`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + authToken },
+      body: JSON.stringify({ downloadLocation: photo.downloadLocation }),
+    });
+  } catch(err){ /* best-effort, never blocks selecting the photo */ }
+}
+document.getElementById('unsplashSearchBtn').addEventListener('click', runUnsplashSearch);
+document.getElementById('unsplashQuery').addEventListener('keydown', (e)=>{ if(e.key === 'Enter') runUnsplashSearch(); });
+
+async function analyzeUploadedFiles(qaContext){
+  try {
+    const description = document.getElementById('fDescribe')?.value.trim()
+      || document.getElementById('fDescribeA')?.value.trim() || '';
+    const privateNotes = document.getElementById('fPrivateNotes')?.value.trim()
+      || document.getElementById('fPrivateNotesA')?.value.trim() || '';
+    const res = await fetch(`${API_BASE}/api/analyze/draft`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + authToken },
+      body: JSON.stringify({ draftId, type: selectedType, stepNames: currentTypeSteps(), description, privateNotes, links: ideaLinks.filter(l => l && l.url && l.url.trim()), qaContext: qaContext || undefined }),
+    });
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok || !data.analysis){
+      document.getElementById('stepsDetectedNote').textContent = "Couldn't get an automatic read on this one — mark each step yourself below.";
+      return;
+    }
+
+    const { analysis } = data;
+    lastFileAnalysis = analysis;
+    if(Array.isArray(analysis.steps)){
+      analysis.steps.forEach(s => {
+        const idx = currentTypeSteps().indexOf(s.name);
+        if(idx !== -1 && ['solid','partial','open'].includes(s.status)){
+          stepStatus[idx] = s.status;
+          if(!detectedSteps.includes(idx)) detectedSteps.push(idx);
+        }
+      });
+    }
+    if(typeof analysis.estimatedCostToFinish === 'number' && analysis.estimatedCostToFinish > 0){
+      document.getElementById('fCost').value = '$' + analysis.estimatedCostToFinish.toLocaleString();
+      document.getElementById('costDetectedTag').style.display = 'inline';
+      if(analysis.costRationale){
+        const note = document.getElementById('costRationaleNote');
+        note.textContent = 'Why this number: ' + analysis.costRationale;
+        note.style.display = 'block';
+      }
+    }
+
+    document.getElementById('stepsList').innerHTML = stepsListHTML();
+    document.getElementById('stepsDetectedTag').style.display = 'inline';
+    document.getElementById('reanalyzeRow').style.display = 'block';
+    const sharedLabel = qaContext && qaContext.length ? 'From what you shared, including your follow-up answers' : 'From what you shared';
+    const rationaleText = analysis.rationale
+      ? `${sharedLabel}: ${analysis.rationale} Check these, then adjust anything that's not quite right.`
+      : `Based on what you shared. Check these, then adjust anything that's not quite right.`;
+    document.getElementById('stepsDetectedNote').innerHTML = analysis.nextSteps
+      ? `${rationaleText}<br><br><b>What's typically next:</b> ${analysis.nextSteps}`
+      : rationaleText;
+    updatePreview();
+  } catch(err){
+    document.getElementById('stepsDetectedNote').textContent = "Couldn't get an automatic read on this one — mark each step yourself below.";
+  }
+}
+document.getElementById('genListingBtn').addEventListener('click', async ()=>{
+  document.getElementById('thinkingNote').style.display = 'flex';
+  if(qaState.answers.length){
+    await analyzeUploadedFiles(qaState.answers);
+  }
+  goTo('panel-c'); updatePreview();
+});
+document.querySelectorAll('.fremove').forEach(b=> b.addEventListener('click', (e)=> e.target.closest('.mini-file-row, .file-row').remove()));
+
+/* ---------- real file upload wiring ---------- */
+// categories still exist behind the scenes (backend expects one per file —
+// it drives transcription for voice, and how the AI weighs each file) but
+// the person just sees one dropzone; we sort files into these by extension/type.
+const CATEGORY_ICON = { notes:'📝', voice:'🎙️', screens:'🖼️', code:'💻', other:'📦' };
+const CODE_EXT = ['.js','.jsx','.ts','.tsx','.py','.rb','.go','.java','.c','.cpp','.json','.html','.css'];
+const NOTE_EXT = ['.pdf','.doc','.docx','.txt','.md'];
+function detectCategory(file){
+  const type = file.type || '';
+  if(type.startsWith('audio/')) return 'voice';
+  if(type.startsWith('image/')) return 'screens';
+  const name = (file.name || '').toLowerCase();
+  const ext = name.includes('.') ? name.slice(name.lastIndexOf('.')) : '';
+  if(CODE_EXT.includes(ext)) return 'code';
+  if(NOTE_EXT.includes(ext)) return 'notes';
+  return 'other';
+}
+const uploadedFiles = { notes: [], voice: [], screens: [], code: [], other: [] };
+
+let ideaLinks = [];
+function renderIdeaLinks(){
+  const html = ideaLinks.map((link, i) => `
+    <div class="link-card">
+      <div class="rep-row">
+        <input type="text" value="${(link.url||'').replace(/"/g,'&quot;')}" data-idx="${i}" data-field="url" placeholder="https://">
+        <button type="button" class="rep-remove" data-remove-link="${i}">✕</button>
+      </div>
+      <input type="text" class="link-note-input" value="${(link.note||'').replace(/"/g,'&quot;')}" data-idx="${i}" data-field="note" placeholder="What is this? e.g. &quot;Private preview link — this is what's actually built so far&quot;">
+    </div>
+  `).join('');
+  document.querySelectorAll('.idea-links-target').forEach(list => {
+    list.innerHTML = html;
+    list.querySelectorAll('input[data-field="url"]').forEach(inp => {
+      inp.addEventListener('input', () => { ideaLinks[Number(inp.dataset.idx)].url = inp.value; });
+    });
+    list.querySelectorAll('input[data-field="note"]').forEach(inp => {
+      inp.addEventListener('input', () => { ideaLinks[Number(inp.dataset.idx)].note = inp.value; });
+    });
+    list.querySelectorAll('[data-remove-link]').forEach(btn => {
+      btn.addEventListener('click', () => { ideaLinks.splice(Number(btn.dataset.removeLink), 1); renderIdeaLinks(); });
+    });
+  });
+}
+function addIdeaLinkRow(){
+  if(ideaLinks.length >= 5) return;
+  ideaLinks.push({url:'', note:''});
+  renderIdeaLinks();
+}
+document.getElementById('addIdeaLink').addEventListener('click', addIdeaLinkRow);
+renderIdeaLinks();
+
+function fmtSize(bytes){
+  if(bytes < 1024) return bytes + ' B';
+  if(bytes < 1024*1024) return Math.round(bytes/1024) + ' KB';
+  return (bytes/(1024*1024)).toFixed(1) + ' MB';
+}
+
+function renderFileList(){
+  const targets = document.querySelectorAll('.mini-file-list[data-list="all"]');
+  if(!targets.length) return;
+  const all = ['notes','voice','screens','code','other'].flatMap(cat => uploadedFiles[cat]);
+  const html = all.map(f => {
+    const icon = CATEGORY_ICON[f.category] || '📦';
+    if(f.uploading){
+      return `<div class="mini-file-row" data-file-id="${f.id}"><span class="f-icon">${icon}</span><span class="fname">${f.filename}</span><span class="mf-meta">Uploading…</span></div>`;
+    }
+    if(f.failed){
+      return `<div class="mini-file-row mini-file-failed" data-file-id="${f.id}"><span class="f-icon">${icon}</span><span class="fname">${f.filename}</span><span class="mf-meta mf-meta-error">⚠ ${f.failMessage || 'Upload failed'}</span><button type="button" class="fremove" data-remove-file="${f.id}" data-remove-category="${f.category}">✕</button></div>`;
+    }
+    return `
+    <div class="mini-file-row" data-file-id="${f.id}">
+      <span class="f-icon">${icon}</span>
+      <span class="fname">✓ ${f.filename}</span>
+      <span class="mf-meta">${f.transcribing ? 'Transcribing…' : (f.category === 'voice' ? '✓ Transcribed' : fmtSize(f.sizeBytes))}</span>
+      <button type="button" class="fremove" data-remove-file="${f.id}" data-remove-category="${f.category}">✕</button>
+    </div>
+  `;
+  }).join('');
+  targets.forEach(el => { el.innerHTML = html; });
+}
+
+async function uploadFile(category, file){
+  // show an immediate, visible "uploading" placeholder so something happens
+  // on screen right away — no more silent nothing while a request is in flight
+  const tempId = 'temp-' + Math.random().toString(36).slice(2);
+  uploadedFiles[category].push({ id: tempId, filename: file.name, sizeBytes: file.size, category, uploading: true });
+  renderFileList();
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('category', category);
+  fd.append('draftId', draftId);
+  try {
+    const res = await fetch(API_BASE + '/api/files/upload', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + authToken },
+      body: fd,
+    });
+    const data = await res.json().catch(()=>({}));
+    const idx = uploadedFiles[category].findIndex(f => f.id === tempId);
+    if(!res.ok){
+      if(idx !== -1) uploadedFiles[category][idx] = { id: tempId, filename: file.name, sizeBytes: file.size, category, failed: true, failMessage: data.message || `Upload failed (${res.status})` };
+      renderFileList();
+      return;
+    }
+    const entry = { ...data.file, transcribing: category === 'voice' };
+    if(idx !== -1) uploadedFiles[category][idx] = entry; else uploadedFiles[category].push(entry);
+    renderFileList();
+    if(category === 'voice') transcribeFile(entry.id, category);
+  } catch(err){
+    const idx = uploadedFiles[category].findIndex(f => f.id === tempId);
+    if(idx !== -1) uploadedFiles[category][idx] = { id: tempId, filename: file.name, sizeBytes: file.size, category, failed: true, failMessage: "Couldn't reach the server — check your connection and try again." };
+    renderFileList();
+  }
+}
+
+async function transcribeFile(fileId, category){
+  try {
+    const res = await fetch(`${API_BASE}/api/files/${fileId}/transcribe`, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + authToken },
+    });
+    const entry = uploadedFiles[category].find(f => f.id === fileId);
+    if(entry){ entry.transcribing = false; entry.hasText = res.ok; renderFileList(); }
+  } catch(err){
+    const entry = uploadedFiles[category].find(f => f.id === fileId);
+    if(entry){ entry.transcribing = false; renderFileList(); }
+  }
+}
+
+async function removeFile(fileId, category){
+  if(!String(fileId).startsWith('temp-')){
+    try { await fetch(`${API_BASE}/api/files/${fileId}`, { method:'DELETE', headers:{ Authorization:'Bearer '+authToken } }); } catch(e){}
+  }
+  uploadedFiles[category] = uploadedFiles[category].filter(f => f.id !== fileId);
+  renderFileList();
+}
+
+document.addEventListener('click', (e)=>{
+  const removeBtn = e.target.closest('[data-remove-file]');
+  if(removeBtn){
+    removeFile(removeBtn.dataset.removeFile, removeBtn.dataset.removeCategory);
+  }
+});
+
+// stop the browser's default "navigate away and open this file" behavior —
+// without this, a drop can get swallowed before it reliably reaches a dropzone
+window.addEventListener('dragover', (e)=> e.preventDefault());
+window.addEventListener('drop', (e)=> e.preventDefault());
+
+document.querySelectorAll('.mini-dropzone').forEach(dz=>{
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.multiple = true;
+  input.accept = '*';
+  input.style.display = 'none';
+  dz.appendChild(input);
+
+  dz.addEventListener('click', (e)=>{ if(e.target !== input) input.click(); });
+  input.addEventListener('change', ()=>{
+    [...input.files].forEach(f => uploadFile(detectCategory(f), f));
+    input.value = '';
+  });
+
+  ['dragenter','dragover'].forEach(ev=> dz.addEventListener(ev, (e)=>{ e.preventDefault(); e.stopPropagation(); dz.classList.add('drag'); if(e.dataTransfer) e.dataTransfer.dropEffect = 'copy'; }));
+  ['dragleave'].forEach(ev=> dz.addEventListener(ev, (e)=>{ e.preventDefault(); e.stopPropagation(); dz.classList.remove('drag'); }));
+  dz.addEventListener('drop', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    dz.classList.remove('drag');
+    [...e.dataTransfer.files].forEach(f => uploadFile(detectCategory(f), f));
+  });
+});
+
+updatePreview();
+
+/* ---------- auth guard + publish ---------- */
+const API_BASE = 'https://baton-backend.jordanhstar.workers.dev';
+const authToken = localStorage.getItem('espalier_token');
+
+// A brand-new draftId every time this page loads, rather than reusing one
+// forever from localStorage. The backend looks up "which files belong to this
+// draft" purely by this id, so reusing one across unrelated listing attempts
+// meant an old draft's files (screenshots, etc.) could silently get pulled
+// into a totally different, "blank-looking" listing later.
+let draftId = crypto.randomUUID();
+localStorage.setItem('espalier_draft_id', draftId);
+if(!authToken){
+  window.location.href = 'index.html';
+}
+
+function showPublishError(msg){
+  const el = document.getElementById('publishError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+const editIdeaId = new URLSearchParams(window.location.search).get('editId') || null;
+const INVOLVE_MAP_REVERSE = Object.fromEntries(Object.entries(INVOLVE_MAP).map(([k,v]) => [v,k]));
+
+async function loadIdeaForEdit(){
+  if(!editIdeaId) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/ideas/${editIdeaId}`, {
+      headers: { 'Authorization': 'Bearer ' + authToken },
+    });
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok || !data.idea){
+      alert("Couldn't load that idea to edit — taking you back to your dashboard.");
+      window.location.href = 'dashboard.html';
+      return;
+    }
+    const idea = data.idea;
+
+    document.getElementById('fTitle').value = idea.title || '';
+    document.getElementById('fHook').value = idea.hook || '';
+    document.getElementById('fDescribe').value = idea.description || '';
+    document.getElementById('fPrivateNotes').value = idea.privateNotes || '';
+    document.getElementById('fType').value = idea.type;
+    selectedType = idea.type;
+
+    const names = currentTypeSteps();
+    stepStatus = names.map((name) => {
+      const match = (idea.steps || []).find(s => s.name === name);
+      return match ? match.status : 'open';
+    });
+    detectedSteps = [];
+    document.getElementById('stepsList').innerHTML = stepsListHTML();
+
+    document.querySelectorAll('#skillsPicker .chip-pick').forEach(btn => {
+      btn.classList.toggle('sel', (idea.skills || []).includes(btn.textContent));
+    });
+    document.querySelectorAll('#socialImpactPicker .chip-pick').forEach(btn => {
+      btn.classList.toggle('sel', (idea.socialImpactTags || []).includes(btn.textContent));
+    });
+
+    const tierKey = ['side_income','solid_income','big_swing'].includes(idea.opportunityTier) ? idea.opportunityTier : 'solid_income';
+    document.getElementById('fProfit').value = tierKey;
+    document.getElementById('fCost').value = '$' + (idea.estimatedCost || 0).toLocaleString();
+    document.getElementById('fTime').value = idea.timeToFinish || 'A weekend';
+    document.getElementById('fEffort').value = idea.ongoingEffort || 'Light upkeep';
+    document.getElementById('fInvolve').value = INVOLVE_MAP_REVERSE[idea.involvement] || 'Occasional input';
+    document.getElementById('fAttribution').value = idea.attribution || 'none';
+    document.getElementById('fAnonymous').checked = !!idea.isAnonymous;
+    document.getElementById('fRevType').value = idea.revenueType === 'recurring' ? 'recurring' : 'one-time';
+    document.getElementById('fBlockerNote').value = idea.blockerNote || '';
+
+    if(idea.coverImageUrl){
+      coverImageDataUrl = idea.coverImageUrl;
+      document.getElementById('coverPreview').style.backgroundImage = `url(${idea.coverImageUrl})`;
+      document.getElementById('coverPreview').textContent = '';
+    }
+    ideaLinks = Array.isArray(idea.links)
+      ? idea.links.map(l => typeof l === 'string' ? { url: l, note: '' } : { url: l.url || '', note: l.note || '' })
+      : [];
+    renderIdeaLinks();
+
+    document.getElementById('publishBtn').textContent = 'Save changes';
+    const draftBtnEl = document.querySelector('#panel-c .actions .btn-outline');
+    if(draftBtnEl) draftBtnEl.style.display = 'none';
+    goTo('panel-c');
+    updatePreview();
+  } catch(err){
+    alert("Couldn't reach the server to load this idea — taking you back to your dashboard.");
+    window.location.href = 'dashboard.html';
+  }
+}
+loadIdeaForEdit();
+
+// Saves whatever's currently filled in as a draft (status: 'draft') — never
+// goes through moderation, never becomes publicly visible, just sits on the
+// dashboard until the creator comes back and publishes it for real. Used by
+// both "Save & exit" in the header and "Save draft" on the form screen.
+// Pulls from panel-c's fields when they're populated, falling back to
+// panel-a's fields for someone who exits before ever reaching panel-c.
+async function saveAsDraft(){
+  const title = document.getElementById('fTitle')?.value.trim()
+    || document.getElementById('fTitleA')?.value.trim()
+    || 'Untitled idea';
+  const hook = document.getElementById('fHook')?.value.trim()
+    || document.getElementById('fHookA')?.value.trim() || '';
+  const description = document.getElementById('fDescribe')?.value.trim()
+    || document.getElementById('fDescribeA')?.value.trim() || '';
+  const privateNotes = document.getElementById('fPrivateNotes')?.value.trim()
+    || document.getElementById('fPrivateNotesA')?.value.trim() || '';
+  const type = document.getElementById('fType') ? document.getElementById('fType').value : selectedType;
+
+  const stepNames = TYPE_STEPS[type] || TYPE_STEPS.Other;
+  const steps = stepNames.map((name, i) => ({ name, status: stepStatus[i] || 'open' }));
+  const skills = document.getElementById('skillsPicker')
+    ? [...document.querySelectorAll('#skillsPicker .sel')].map(b => b.textContent)
+    : [];
+  const profitKey = document.getElementById('fProfit')?.value || 'solid_income';
+  const [profitMin, profitMax] = PROFIT_RANGES[profitKey];
+
+  const payload = {
+    title, hook, description, privateNotes, type, steps, skills,
+    profitMin, profitMax,
+    opportunityTier: profitKey,
+    revenueType: document.getElementById('fRevType')?.value === 'recurring' ? 'recurring' : 'one_time',
+    estimatedCost: document.getElementById('fCost') ? parseMoney(document.getElementById('fCost').value) : 0,
+    timeToFinish: document.getElementById('fTime')?.value || 'A weekend',
+    ongoingEffort: document.getElementById('fEffort')?.value || 'Light upkeep',
+    involvement: INVOLVE_MAP[document.getElementById('fInvolve')?.value] || 'occasional',
+    attribution: document.getElementById('fAttribution')?.value || 'none',
+    isAnonymous: document.getElementById('fAnonymous')?.checked || false,
+    blockerTags: [],
+    blockerNote: document.getElementById('fBlockerNote')?.value.trim() || '',
+    coverImageUrl: coverImageDataUrl || undefined,
+    links: ideaLinks.filter(l => l && l.url && l.url.trim()),
+    status: 'draft',
+  };
+
+  try {
+    let res;
+    if(editIdeaId){
+      res = await fetch(`${API_BASE}/api/ideas/${editIdeaId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + authToken },
+        body: JSON.stringify(payload),
+      });
+    } else {
+      payload.draftId = draftId;
+      payload.aiAnalysis = lastFileAnalysis || undefined;
+      res = await fetch(`${API_BASE}/api/ideas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + authToken },
+        body: JSON.stringify(payload),
+      });
+    }
+    if(!res.ok){
+      const data = await res.json().catch(()=>({}));
+      alert(data.message || "Couldn't save your draft — try again.");
+      return false;
+    }
+    return true;
+  } catch(err){
+    alert("Couldn't reach the server to save your draft — check your connection and try again.");
+    return false;
+  }
+}
+
+document.getElementById('saveExitBtn').addEventListener('click', async (e)=>{
+  e.preventDefault();
+  const el = e.currentTarget;
+  const original = el.textContent;
+  el.textContent = 'Saving…';
+  const ok = await saveAsDraft();
+  el.textContent = original;
+  window.location.href = 'dashboard.html'; // leave either way — a failed save already alerted, and staying stuck here helps no one
+});
+
+document.getElementById('saveDraftBtn')?.addEventListener('click', async ()=>{
+  const btn = document.getElementById('saveDraftBtn');
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  const ok = await saveAsDraft();
+  if(ok){
+    window.location.href = 'dashboard.html';
+  } else {
+    btn.disabled = false;
+    btn.textContent = original;
+  }
+});
+
+document.getElementById('publishBtn').addEventListener('click', async ()=>{
+  const title = document.getElementById('fTitle').value.trim();
+  if(!title){ showPublishError('Give this idea a title before publishing.'); return; }
+
+  const profitKey = document.getElementById('fProfit').value;
+  const [profitMin, profitMax] = PROFIT_RANGES[profitKey];
+  const stepNames = currentTypeSteps();
+  const steps = stepNames.map((name, i) => ({ name, status: stepStatus[i] || 'open' }));
+  const skills = [...document.querySelectorAll('#skillsPicker .sel')].map(b => b.textContent);
+  const socialImpactTags = [...document.querySelectorAll('#socialImpactPicker .sel')].map(b => b.textContent);
+
+  const payload = {
+    title,
+    hook: document.getElementById('fHook').value.trim(),
+    description: document.getElementById('fDescribe')?.value.trim() || '',
+    privateNotes: document.getElementById('fPrivateNotes')?.value.trim() || '',
+    type: document.getElementById('fType').value,
+    steps,
+    skills,
+    socialImpactTags,
+    profitMin, profitMax,
+    opportunityTier: document.getElementById('fProfit').value,
+    revenueType: document.getElementById('fRevType').value === 'recurring' ? 'recurring' : 'one_time',
+    estimatedCost: parseMoney(document.getElementById('fCost').value),
+    timeToFinish: document.getElementById('fTime').value,
+    ongoingEffort: document.getElementById('fEffort').value,
+    involvement: INVOLVE_MAP[document.getElementById('fInvolve').value] || 'occasional',
+    attribution: document.getElementById('fAttribution').value,
+    isAnonymous: document.getElementById('fAnonymous').checked,
+    blockerTags: [],
+    blockerNote: document.getElementById('fBlockerNote')?.value.trim() || '',
+    coverImageUrl: coverImageDataUrl || undefined,
+    links: ideaLinks.filter(l => l && l.url && l.url.trim()),
+  };
+  if(!editIdeaId){
+    payload.draftId = draftId;
+    payload.aiAnalysis = lastFileAnalysis || undefined;
+  }
+
+  const btn = document.getElementById('publishBtn');
+  btn.disabled = true;
+  btn.textContent = editIdeaId ? 'Saving…' : 'Publishing…';
+
+  try {
+    const res = await fetch(API_BASE + '/api/ideas' + (editIdeaId ? '/' + editIdeaId : ''), {
+      method: editIdeaId ? 'PATCH' : 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok){
+      showPublishError(data.message || `Something went wrong ${editIdeaId ? 'saving' : 'publishing'} this idea — try again.`);
+      btn.disabled = false;
+      btn.textContent = editIdeaId ? 'Save changes' : 'Publish listing';
+      return;
+    }
+    if(!editIdeaId && data.idea && data.idea.moderationStatus === 'denied'){
+      publishedDeniedIdeaId = data.idea.id;
+      document.getElementById('deniedReasons').innerHTML = (data.idea.moderationReasons || []).map(r =>
+        `<div class="denied-reason-row">${r}</div>`
+      ).join('') || '<div class="denied-reason-row">This didn\'t read as a genuine, thought-out idea.</div>';
+      goTo('panel-denied');
+      btn.disabled = false;
+      btn.textContent = 'Publish listing';
+      return;
+    }
+    window.location.href = 'dashboard.html';
+  } catch(err){
+    showPublishError("Couldn't reach the server — check your connection and try again.");
+    btn.disabled = false;
+    btn.textContent = editIdeaId ? 'Save changes' : 'Publish listing';
+  }
+});
+
+document.getElementById('deniedEditBtn').addEventListener('click', ()=>{
+  goTo('panel-c');
+});
+document.getElementById('deniedReviewBtn').addEventListener('click', async ()=>{
+  const reviewBtn = document.getElementById('deniedReviewBtn');
+  reviewBtn.disabled = true;
+  reviewBtn.textContent = 'Sending…';
+  try {
+    const res = await fetch(`${API_BASE}/api/ideas/${publishedDeniedIdeaId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + authToken },
+      body: JSON.stringify({ requestReview: true }),
+    });
+    if(!res.ok){
+      reviewBtn.disabled = false;
+      reviewBtn.textContent = 'Request a manual review';
+      alert("Couldn't send that for review — try again.");
+      return;
+    }
+    window.location.href = 'dashboard.html';
+  } catch(err){
+    reviewBtn.disabled = false;
+    reviewBtn.textContent = 'Request a manual review';
+    alert("Couldn't reach the server — try again.");
+  }
+});
+</script>
+</body>
+</html>
