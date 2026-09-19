@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espalier — Your profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F6F1; --surface:#FFFFFF; --ink:#15181D; --ink-soft:#454B52; --dim:#7B828A;
+    --border:#E4E1D6; --border-strong:#D6D2C4; --coral:#FF5A3C; --coral-dim:#FFE4DB;
+    --teal:#1F8A70; --teal-dim:#E1F1EA; --plum:#6E52B5; --plum-dim:#EDE7F7;
+    --font-display:'Sora', system-ui, sans-serif; --font-body:'Manrope', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body);}
+  a{color:inherit;}
+
+  header{display:flex; align-items:center; justify-content:space-between; padding:24px 36px; position:sticky; top:0; background:var(--bg); z-index:10; border-bottom:1px solid var(--border);}
+  .brand{display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:800; font-size:16px;}
+  .brand svg{width:19px; height:19px; color:var(--coral);}
+
+  section{padding:70px 24px; display:flex; justify-content:center;}
+  .inner{width:100%; max-width:560px;}
+  .step-num{font-family:var(--font-display); font-weight:800; font-size:13px; margin-bottom:14px;}
+  h2{font-family:var(--font-display); font-weight:800; font-size:clamp(24px,4vw,32px); line-height:1.25; margin:0 0 10px;}
+  .sub{font-size:14.5px; color:var(--ink-soft); margin:0 0 32px; line-height:1.6;}
+
+  .sec-photo{background:var(--coral-dim);}
+  .sec-photo .step-num{color:var(--coral);}
+  .sec-headline{background:var(--bg);}
+  .sec-headline .step-num{color:var(--ink);}
+  .sec-bio{background:var(--teal-dim);}
+  .sec-bio .step-num{color:var(--teal);}
+  .sec-acc{background:var(--plum-dim);}
+  .sec-acc .step-num{color:var(--plum);}
+  .sec-final{background:var(--bg);}
+
+  .photo-row{display:flex; align-items:center; gap:20px;}
+  .photo-preview{width:96px; height:96px; border-radius:50%; background:linear-gradient(135deg, color-mix(in srgb, var(--coral) 45%, white), var(--coral)); display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-display); font-weight:700; font-size:28px; flex-shrink:0; overflow:hidden; background-size:cover; background-position:center; box-shadow:0 10px 26px rgba(255,90,60,.25);}
+  label.upload-btn{display:inline-block; font-size:14px; font-weight:700; color:var(--coral); cursor:pointer; margin-bottom:4px; border-bottom:2px solid var(--coral);}
+  .hint{font-size:12px; color:var(--dim); margin-top:4px;}
+  input[type=file]{display:none;}
+
+  input[type=text], textarea{width:100%; border:none; border-bottom:2px solid var(--border-strong); border-radius:0; padding:12px 2px; font-size:19px; font-family:var(--font-display); font-weight:700; color:var(--ink); background:transparent;}
+  input[type=text]:focus, textarea:focus{outline:none; border-color:var(--ink);}
+  textarea{font-family:var(--font-body); font-weight:400; font-size:15px; resize:vertical;}
+  ::placeholder{color:var(--dim); font-weight:500;}
+
+  .rep-list{display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
+  .rep-row{display:flex; gap:10px; align-items:center;}
+  .rep-row input{flex:1; font-size:15px; font-weight:600; padding:9px 2px;}
+  .rep-remove{background:none; border:none; color:var(--dim); font-size:16px; width:24px; flex-shrink:0; cursor:pointer;}
+  .add-rep{font-size:13.5px; font-weight:700; background:none; border:none; padding:6px 0; cursor:pointer;}
+  .sec-acc .add-rep{color:var(--plum);}
+  .sec-final .add-rep{color:var(--coral);}
+
+  .final-actions{display:flex; align-items:center; justify-content:space-between; margin-top:10px;}
+  .btn{font-family:var(--font-body); font-weight:700; font-size:15px; background:linear-gradient(135deg, color-mix(in srgb, var(--coral) 85%, #FF8A5C), var(--coral)); color:#fff; padding:14px 32px; border-radius:100px; border:none; cursor:pointer;}
+  .btn:disabled{opacity:.6;}
+  .skip-link{font-size:13.5px; color:var(--dim); background:none; border:none; cursor:pointer;}
+  .save-error{background:var(--coral-dim); border:1px solid rgba(255,90,60,.4); color:#9A3E23; font-size:13px; padding:12px 14px; border-radius:10px; margin-bottom:18px; display:none; max-width:560px; margin-left:auto; margin-right:auto;}
+
+  /* ---------- assistant widget ---------- */
+  .assist-fab{position:fixed; bottom:26px; right:26px; z-index:50; width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg, color-mix(in srgb, var(--coral) 85%, #FF8A5C), var(--coral)); border:none; color:#fff; font-size:22px; box-shadow:0 10px 26px rgba(255,90,60,.35); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .assist-panel{position:fixed; bottom:94px; right:26px; z-index:51; width:340px; max-width:calc(100vw - 40px); height:440px; background:var(--surface); border:1px solid var(--border); border-radius:18px; box-shadow:0 30px 70px rgba(0,0,0,.18); display:flex; flex-direction:column; overflow:hidden; opacity:0; pointer-events:none; transform:translateY(12px); transition:opacity .18s, transform .18s;}
+  .assist-panel.show{opacity:1; pointer-events:auto; transform:translateY(0);}
+  .assist-head{padding:16px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;}
+  .assist-head .ic{width:30px; height:30px; border-radius:50%; background:var(--coral-dim); color:var(--coral); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;}
+  .assist-head .t{font-family:var(--font-display); font-weight:700; font-size:13.5px;}
+  .assist-head .s{font-size:11px; color:var(--dim);}
+  .assist-close{margin-left:auto; background:none; border:none; color:var(--dim); font-size:14px; cursor:pointer;}
+  .assist-thread{flex:1; overflow-y:auto; padding:16px 18px; display:flex; flex-direction:column; gap:12px;}
+  .a-msg{font-size:13px; line-height:1.55; max-width:88%;}
+  .a-msg.bot{align-self:flex-start; background:var(--bg); border-radius:4px 12px 12px 12px; padding:9px 12px;}
+  .a-msg.user{align-self:flex-end; background:var(--coral); color:#fff; border-radius:12px 4px 12px 12px; padding:9px 12px;}
+  .a-msg.typing{align-self:flex-start; color:var(--dim); font-style:italic;}
+  .assist-input-row{border-top:1px solid var(--border); padding:10px; display:flex; gap:8px;}
+  .assist-input-row input{flex:1; border:1.5px solid var(--border-strong); border-radius:10px; padding:9px 11px; font-size:13px; font-family:inherit; font-weight:400 !important;}
+  .assist-input-row input:focus{border-color:var(--coral);}
+  .assist-send{background:var(--coral); color:#fff; border:none; border-radius:9px; width:36px; flex-shrink:0; font-size:14px; cursor:pointer;}
+
+  /* ---------- floating live preview card ---------- */
+  .float-preview{position:fixed; top:50%; right:32px; transform:translateY(-50%); width:260px; z-index:20;}
+  .float-preview .label{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--dim); margin-bottom:10px; padding-left:4px;}
+  .float-preview-card{background:var(--surface); border-radius:18px; padding:24px 20px; box-shadow:0 20px 50px rgba(0,0,0,.1); text-align:center;}
+  .fp-photo{width:66px; height:66px; border-radius:50%; margin:0 auto 12px; background:linear-gradient(135deg, color-mix(in srgb, var(--coral) 45%, white), var(--coral)); display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-display); font-weight:700; font-size:19px; background-size:cover; background-position:center;}
+  .fp-name{font-family:var(--font-display); font-weight:800; font-size:15.5px; margin-bottom:3px;}
+  .fp-headline{font-size:12px; color:var(--coral); font-weight:700; margin-bottom:12px; min-height:15px;}
+  .fp-bio{font-size:12px; color:var(--ink-soft); line-height:1.55; margin-bottom:14px; min-height:16px;}
+  .fp-accomplishments{text-align:left; border-top:1px dashed var(--border-strong); padding-top:12px; margin-bottom:12px;}
+  .fp-acc-item{display:flex; gap:6px; font-size:11px; color:var(--ink-soft); margin-bottom:6px; line-height:1.4;}
+  .fp-acc-item .dot{color:var(--teal); flex-shrink:0;}
+  .fp-link{font-size:11px; color:var(--teal); font-weight:700; word-break:break-all;}
+  .fp-empty{font-size:11.5px; color:var(--dim); font-style:italic;}
+
+  @media (max-width:1200px){ .float-preview{display:none;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 9 5 9 5 4C10 4 12 9 12 9M12 9C12 9 19 9 19 4C14 4 12 9 12 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Espalier</div>
+</header>
+
+<div class="float-preview">
+  <div class="label">How this looks to others</div>
+  <div class="float-preview-card">
+    <div class="fp-photo" id="fpPhoto">··</div>
+    <div class="fp-name" id="fpName">…</div>
+    <div class="fp-headline" id="fpHeadline"></div>
+    <div class="fp-bio" id="fpBio"><span class="fp-empty">Your bio will show up here.</span></div>
+    <div class="fp-accomplishments" id="fpAccWrap" style="display:none;">
+      <div id="fpAcc"></div>
+    </div>
+    <div class="fp-link" id="fpLink"></div>
+  </div>
+</div>
+
+<p class="save-error" id="saveError" style="margin-top:20px;"></p>
+
+<section class="sec-photo">
+  <div class="inner">
+    <div class="step-num">01 — SO PEOPLE KNOW WHO YOU ARE</div>
+    <h2 id="photoHeading">Put a face to it.</h2>
+    <p class="sub">Optional, but profiles with a real photo tend to get taken more seriously.</p>
+    <div class="photo-row">
+      <div class="photo-preview" id="photoPreview">··</div>
+      <div>
+        <label class="upload-btn" for="photoInput">Upload a photo</label>
+        <input type="file" id="photoInput" accept="image/*">
+        <div class="hint">Square photos work best, under 1MB</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec-headline">
+  <div class="inner">
+    <div class="step-num">02 — YOUR ONE-LINE PITCH</div>
+    <h2>How would you describe yourself?</h2>
+    <p class="sub">One line. It's the first thing anyone reads.</p>
+    <input type="text" id="fHeadline" maxlength="120" placeholder="Idea machine, mediocre finisher">
+  </div>
+</section>
+
+<section class="sec-bio">
+  <div class="inner">
+    <div class="step-num">03 — A LITTLE MORE ABOUT YOU</div>
+    <h2>What should people know?</h2>
+    <p class="sub">A couple sentences is plenty.</p>
+    <textarea id="fBio" rows="4" placeholder="What you're into, what you're good at, why you're here."></textarea>
+  </div>
+</section>
+
+<section class="sec-acc">
+  <div class="inner">
+    <div class="step-num">04 — CREDIBILITY, IF YOU'VE GOT IT</div>
+    <h2>Worth knowing about you?</h2>
+    <p class="sub">Optional — up to five. Things like what you've built, sold, or shipped.</p>
+    <div class="rep-list" id="accomplishmentsList"></div>
+    <button class="add-rep" id="addAccomplishment" type="button">+ Add one</button>
+  </div>
+</section>
+
+<section class="sec-final">
+  <div class="inner">
+    <div class="step-num" style="color:var(--coral);">05 — LAST THING</div>
+    <h2>Anywhere else to find you or coverage of your work?</h2>
+    <p class="sub">Portfolio, press, socials — up to five, totally optional.</p>
+    <div class="rep-list" id="linksList"></div>
+    <button class="add-rep" id="addLink" type="button" style="margin-bottom:24px;">+ Add one</button>
+    <div class="final-actions">
+      <button class="skip-link" id="skipBtn">Skip for now</button>
+      <button class="btn" id="saveBtn">Save &amp; continue</button>
+    </div>
+  </div>
+</section>
+
+<button class="assist-fab" id="assistFab">💬</button>
+<div class="assist-panel" id="assistPanel">
+  <div class="assist-head">
+    <div class="ic">🌿</div>
+    <div>
+      <div class="t">Spaulding</div>
+      <div class="s">Ask for ideas or feedback</div>
+    </div>
+    <button class="assist-close" id="assistClose">✕</button>
+  </div>
+  <div class="assist-thread" id="assistThread">
+    <div class="a-msg bot">Hey, I'm Spaulding! If you're stuck on your headline, bio, or what to list as an accomplishment, ask me — I can help you brainstorm or give feedback on what you've written.</div>
+  </div>
+  <div class="assist-input-row">
+    <input type="text" id="assistInput" placeholder="e.g. help me write a headline...">
+    <button class="assist-send" id="assistSend">↑</button>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'https://baton-backend.jordanhstar.workers.dev';
+const authToken = localStorage.getItem('espalier_token');
+if(!authToken){ window.location.href = 'index.html'; }
+
+function apiFetch(path, opts={}){
+  const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken, ...(opts.headers||{}) };
+  return fetch(API_BASE + path, { ...opts, headers });
+}
+
+function showError(msg){
+  const el = document.getElementById('saveError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function hideError(){ document.getElementById('saveError').style.display = 'none'; }
+
+/* ---------- repeatable list helper (used for both accomplishments and links) ---------- */
+function makeRepeatableList(listElId, addBtnId, arr, placeholder, maxLen, onChange){
+  function render(){
+    const list = document.getElementById(listElId);
+    list.innerHTML = arr.map((val, i) => `
+      <div class="rep-row">
+        <input type="text" maxlength="${maxLen}" value="${(val||'').replace(/"/g,'&quot;')}" data-idx="${i}" placeholder="${placeholder}">
+        <button type="button" class="rep-remove" data-remove="${i}">✕</button>
+      </div>
+    `).join('');
+    list.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', () => { arr[Number(inp.dataset.idx)] = inp.value; onChange?.(); });
+    });
+    list.querySelectorAll('[data-remove]').forEach(btn => {
+      btn.addEventListener('click', () => { arr.splice(Number(btn.dataset.remove), 1); render(); onChange?.(); });
+    });
+  }
+  document.getElementById(addBtnId).addEventListener('click', () => {
+    if(arr.length >= 5) return;
+    arr.push('');
+    render();
+    onChange?.();
+  });
+  render();
+  return render;
+}
+
+let accomplishments = [];
+let links = [];
+let myName = '';
+makeRepeatableList('accomplishmentsList', 'addAccomplishment', accomplishments, 'e.g. Sold a 6-figure brand', 140, updateFloatingPreview);
+makeRepeatableList('linksList', 'addLink', links, 'https://', 300, updateFloatingPreview);
+
+function updateFloatingPreview(){
+  const headline = document.getElementById('fHeadline').value.trim();
+  const bio = document.getElementById('fBio').value.trim();
+  document.getElementById('fpName').textContent = myName || '…';
+  document.getElementById('fpHeadline').textContent = headline;
+  document.getElementById('fpBio').innerHTML = bio ? bio : '<span class="fp-empty">Your bio will show up here.</span>';
+
+  const filledAcc = accomplishments.filter(a => a && a.trim());
+  const accWrap = document.getElementById('fpAccWrap');
+  if(filledAcc.length){
+    accWrap.style.display = 'block';
+    document.getElementById('fpAcc').innerHTML = filledAcc.map(a => `<div class="fp-acc-item"><span class="dot">✦</span>${a}</div>`).join('');
+  } else {
+    accWrap.style.display = 'none';
+  }
+
+  const filledLinks = links.filter(l => l && l.trim());
+  document.getElementById('fpLink').textContent = filledLinks.length ? filledLinks[0].replace(/^https?:\/\//,'') + (filledLinks.length > 1 ? ` +${filledLinks.length-1} more` : '') : '';
+}
+document.getElementById('fHeadline').addEventListener('input', updateFloatingPreview);
+document.getElementById('fBio').addEventListener('input', updateFloatingPreview);
+
+let photoDataUrl = null;
+document.getElementById('photoInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  if(file.size > 1_000_000){ showError('That photo is a bit large — try one under 1MB.'); e.target.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    photoDataUrl = reader.result;
+    document.getElementById('photoPreview').style.backgroundImage = `url(${photoDataUrl})`;
+    document.getElementById('photoPreview').textContent = '';
+    document.getElementById('fpPhoto').style.backgroundImage = `url(${photoDataUrl})`;
+    document.getElementById('fpPhoto').textContent = '';
+  };
+  reader.readAsDataURL(file);
+});
+
+async function loadExisting(){
+  try {
+    const res = await apiFetch('/api/auth/me');
+    if(!res.ok) return;
+    const { user } = await res.json();
+    myName = user.name || '';
+    document.getElementById('photoPreview').textContent = user.initials || '··';
+    document.getElementById('fpPhoto').textContent = user.initials || '··';
+    if(user.photoUrl){
+      document.getElementById('photoPreview').style.backgroundImage = `url(${user.photoUrl})`;
+      document.getElementById('photoPreview').textContent = '';
+      document.getElementById('fpPhoto').style.backgroundImage = `url(${user.photoUrl})`;
+      document.getElementById('fpPhoto').textContent = '';
+    }
+    document.getElementById('fHeadline').value = user.headline || '';
+    document.getElementById('fBio').value = user.bio || '';
+    accomplishments.splice(0, accomplishments.length, ...(user.accomplishments || []));
+    links.splice(0, links.length, ...(user.links || []));
+    makeRepeatableList('accomplishmentsList', 'addAccomplishment', accomplishments, 'e.g. Sold a 6-figure brand', 140, updateFloatingPreview);
+    makeRepeatableList('linksList', 'addLink', links, 'https://', 300, updateFloatingPreview);
+    updateFloatingPreview();
+
+    if(user.onboarded){
+      document.getElementById('photoHeading').textContent = 'Your profile';
+      document.getElementById('skipBtn').textContent = 'Cancel';
+      document.getElementById('saveBtn').textContent = 'Save changes';
+    }
+  } catch(e){ /* fine, just start blank */ }
+}
+
+async function saveProfile(){
+  hideError();
+  const payload = {
+    headline: document.getElementById('fHeadline').value.trim(),
+    bio: document.getElementById('fBio').value.trim(),
+    accomplishments: accomplishments.filter(a => a && a.trim()),
+    links: links.filter(l => l && l.trim()),
+    onboarded: true,
+  };
+  if(photoDataUrl) payload.photoUrl = photoDataUrl;
+
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  try {
+    const res = await apiFetch('/api/auth/me', { method: 'PATCH', body: JSON.stringify(payload) });
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok){ showError(data.message || 'Something went wrong saving that — try again.'); btn.disabled = false; btn.textContent = 'Save & continue'; return; }
+    window.location.href = 'dashboard.html';
+  } catch(e){
+    showError("Couldn't reach the server — check your connection and try again.");
+    btn.disabled = false;
+    btn.textContent = 'Save & continue';
+  }
+}
+
+document.getElementById('saveBtn').addEventListener('click', saveProfile);
+document.getElementById('skipBtn').addEventListener('click', async () => {
+  try { await apiFetch('/api/auth/me', { method: 'PATCH', body: JSON.stringify({ onboarded: true }) }); } catch(e){}
+  window.location.href = 'dashboard.html';
+});
+
+loadExisting();
+
+/* ---------- assistant widget ---------- */
+const assistFab = document.getElementById('assistFab');
+const assistPanel = document.getElementById('assistPanel');
+const assistThread = document.getElementById('assistThread');
+const assistInput = document.getElementById('assistInput');
+let assistOpen = false;
+let assistHistory = [];
+
+assistFab.addEventListener('click', () => {
+  assistOpen = !assistOpen;
+  assistPanel.classList.toggle('show', assistOpen);
+  if(assistOpen) assistInput.focus();
+});
+document.getElementById('assistClose').addEventListener('click', () => {
+  assistOpen = false;
+  assistPanel.classList.remove('show');
+});
+
+function addAssistMsg(role, text){
+  const div = document.createElement('div');
+  div.className = 'a-msg ' + (role === 'user' ? 'user' : 'bot');
+  div.textContent = text;
+  assistThread.appendChild(div);
+  assistThread.scrollTop = assistThread.scrollHeight;
+}
+
+function currentFormContext(){
+  const headline = document.getElementById('fHeadline').value.trim();
+  const bio = document.getElementById('fBio').value.trim();
+  let ctx = '';
+  if(headline) ctx += `Their current headline draft: "${headline}". `;
+  if(bio) ctx += `Their current bio draft: "${bio}". `;
+  return ctx || 'They have not written anything yet.';
+}
+
+async function sendAssistMessage(){
+  const text = assistInput.value.trim();
+  if(!text) return;
+  assistInput.value = '';
+  addAssistMsg('user', text);
+  assistHistory.push({ role:'user', content: text });
+
+  const typing = document.createElement('div');
+  typing.className = 'a-msg bot typing';
+  typing.textContent = 'Thinking…';
+  assistThread.appendChild(typing);
+  assistThread.scrollTop = assistThread.scrollHeight;
+
+  const systemPrompt = `You're Spaulding, a friendly writing assistant helping someone fill out their creator profile on Espalier, a marketplace where people who start ideas hand them off to people who finish them. If asked your name, you're Spaulding. Help them brainstorm or improve their one-line headline, short bio, or notable accomplishments to list. Keep replies short — 1-3 sentences, concrete suggestions they could paste in directly, not a lecture. ${currentFormContext()}`;
+
+  try {
+    const res = await apiFetch('/api/assistant/chat', {
+      method: 'POST',
+      body: JSON.stringify({ messages: assistHistory, system: systemPrompt }),
+    });
+    const data = await res.json().catch(()=>({}));
+    typing.remove();
+    if(!res.ok){
+      addAssistMsg('bot', data.message || "Sorry, I'm having trouble right now — try again in a moment.");
+      return;
+    }
+    const reply = data.text || "Sorry, I didn't catch that — try asking again?";
+    addAssistMsg('bot', reply);
+    assistHistory.push({ role:'assistant', content: reply });
+  } catch(err){
+    typing.remove();
+    addAssistMsg('bot', "Couldn't reach the assistant just now — try again in a moment.");
+  }
+}
+
+document.getElementById('assistSend').addEventListener('click', sendAssistMessage);
+assistInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') sendAssistMessage(); });
+</script>
+</body>
+</html>

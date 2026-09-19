@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espalier — my requests</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F6F1; --surface:#FFFFFF; --ink:#15181D; --ink-soft:#454B52; --dim:#7B828A;
+    --border:#E4E1D6; --border-strong:#D6D2C4; --coral:#FF5A3C; --coral-dim:#FFE4DB;
+    --teal:#1F8A70; --teal-dim:#E1F1EA; --amber:#C97F1E; --amber-dim:#FBEDD8;
+    --blue:#3E6FF0; --pink:#E0517E; --plum:#6E52B5;
+    --font-display:'Sora', system-ui, sans-serif; --font-body:'Manrope', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg); color:var(--ink); font-family:var(--font-body); -webkit-font-smoothing:antialiased;}
+  button{font-family:inherit; cursor:pointer;}
+  a{color:inherit; text-decoration:none;}
+  textarea,input{font-family:inherit;}
+
+  header{display:flex; align-items:center; justify-content:space-between; padding:18px 32px; background:#fff; border-bottom:1px solid var(--border);}
+  .brand{display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:800; font-size:18px;}
+  .brand svg{width:22px; height:22px; color:var(--teal);}
+  .head-actions{display:flex; align-items:center; gap:20px;}
+  .head-link{font-size:14px; font-weight:600; color:var(--ink-soft);}
+
+  .wrap{max-width:800px; margin:0 auto; padding:40px 24px;}
+  h1{font-family:var(--font-display); font-size:24px; font-weight:800; margin:0 0 6px;}
+  .sub{color:var(--dim); font-size:14px; margin:0 0 28px;}
+
+  .tabs{display:flex; gap:8px; margin-bottom:24px;}
+  .tab{font-size:13px; font-weight:700; padding:8px 16px; border-radius:100px; border:1px solid var(--border-strong); background:var(--surface); color:var(--ink-soft);}
+  .tab.active{background:var(--ink); color:#fff; border-color:var(--ink);}
+
+  .req-card{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; margin-bottom:14px;}
+  .req-top{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .req-name{font-weight:700; font-size:14.5px;}
+  .req-sub{font-size:12.5px; color:var(--dim);}
+  .req-tag{font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:100px; margin-left:auto;}
+  .req-tag.pending{background:var(--amber-dim); color:var(--amber);}
+  .req-tag.accepted{background:var(--teal-dim); color:var(--teal);}
+  .req-tag.declined{background:var(--border); color:var(--dim);}
+  .req-tag.replied{background:var(--teal-dim); color:var(--teal);}
+  .empty-note{color:var(--dim); font-size:13.5px; text-align:center; padding:60px 20px;}
+
+  .msg-thread{display:flex; flex-direction:column; gap:12px; max-height:400px; overflow-y:auto; padding:4px 2px; margin-bottom:16px;}
+  .msg-row{display:flex; flex-direction:column; max-width:78%;}
+  .msg-row.mine{align-self:flex-end; align-items:flex-end;}
+  .msg-bubble{background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:10px 14px; font-size:13.5px; color:var(--ink); line-height:1.5;}
+  .msg-row.mine .msg-bubble{background:var(--coral); color:#fff; border-color:var(--coral);}
+  .msg-meta{font-size:11px; color:var(--dim); margin-top:4px;}
+  .msg-proposal{background:var(--bg); border:1.5px dashed var(--border-strong); border-radius:14px; padding:12px 14px;}
+  .msg-proposal .k{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--dim); margin-bottom:8px;}
+  .msg-slot-btn{display:block; width:100%; text-align:left; background:var(--surface); border:1px solid var(--border-strong); border-radius:10px; padding:8px 12px; font-size:13px; color:var(--ink); margin-bottom:6px; cursor:pointer;}
+  .msg-slot-btn:hover{border-color:var(--coral);}
+  .msg-confirmed{background:var(--teal-dim); border:1px solid var(--teal); border-radius:14px; padding:12px 14px; font-size:13.5px; color:var(--ink);}
+  .msg-input-row{display:flex; gap:8px; margin-bottom:10px;}
+  .msg-input-row textarea{flex:1; border:1.5px solid var(--border-strong); border-radius:10px; padding:10px 13px; font-size:13.5px; font-family:inherit; color:var(--ink); background:var(--bg); resize:none;}
+  .msg-propose-form{background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:10px;}
+  .msg-propose-form input[type=datetime-local]{width:100%; margin-bottom:6px; border:1.5px solid var(--border-strong); border-radius:8px; padding:8px 10px; font-size:13px; font-family:inherit; color:var(--ink); background:var(--surface);}
+  .mini-btn{font-size:12px; font-weight:700; padding:9px 18px; border-radius:8px; text-align:center; border:1px solid var(--border-strong); background:var(--bg); color:var(--ink-soft);}
+  .mini-btn.primary{background:var(--coral); color:#fff; border-color:var(--coral);}
+
+  .idea-modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.4); display:none; z-index:50;}
+  .idea-modal-overlay.show{display:block;}
+  .idea-modal{position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:min(520px, 92vw); max-height:86vh; overflow-y:auto; background:var(--surface); border-radius:20px; padding:28px; z-index:51; display:none;}
+  .idea-modal.show{display:block;}
+  .idea-modal-close{position:absolute; top:16px; right:16px; background:none; border:none; font-size:16px; color:var(--dim); cursor:pointer;}
+  .im-title{font-family:var(--font-display); font-weight:800; font-size:18px; margin-bottom:2px;}
+  .im-sub{font-size:12.5px; color:var(--dim); margin-bottom:18px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 9 5 9 5 4C10 4 12 9 12 9M12 9C12 9 19 9 19 4C14 4 12 9 12 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Espalier
+  </div>
+  <div class="head-actions">
+    <a class="head-link" href="marketplace.html">Browse ideas</a>
+    <a class="head-link" href="dashboard.html">My dashboard</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <h1>My requests</h1>
+  <p class="sub">Deals and consulting asks you've sent, and your conversations with creators.</p>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="pending">Pending</button>
+    <button class="tab" data-tab="active">Active conversations</button>
+    <button class="tab" data-tab="closed">Declined</button>
+  </div>
+
+  <div id="requestsList"></div>
+</div>
+
+<div class="idea-modal-overlay" id="ideaModalOverlay"></div>
+<div class="idea-modal" id="ideaModal">
+  <button class="idea-modal-close" id="ideaModalClose">✕</button>
+  <div id="ideaModalBody"></div>
+</div>
+
+<script>
+const API_BASE = 'https://baton-backend.jordanhstar.workers.dev';
+const authToken = localStorage.getItem('espalier_token');
+if(!authToken){ window.location.href = 'index.html'; }
+
+function apiFetch(path, opts={}){
+  const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken, ...(opts.headers||{}) };
+  return fetch(API_BASE + path, { ...opts, headers });
+}
+
+const STATE = { me: null, requests: [], ideas: {}, tab: 'pending' };
+
+async function init(){
+  try {
+    const meRes = await apiFetch('/api/auth/me');
+    const meData = await meRes.json();
+    if(meRes.status === 401){ localStorage.removeItem('espalier_token'); window.location.href = 'index.html'; return; }
+    STATE.me = meData.user;
+
+    const reqRes = await apiFetch('/api/requests?as=buyer');
+    const reqData = await reqRes.json();
+    STATE.requests = reqData.requests || [];
+
+    const ideaIds = [...new Set(STATE.requests.filter(r=>r.ideaId).map(r=>r.ideaId))];
+    await Promise.all(ideaIds.map(async id => {
+      try {
+        const res = await apiFetch(`/api/ideas/${id}`);
+        const data = await res.json();
+        if(res.ok) STATE.ideas[id] = data.idea;
+      } catch(e){ /* idea may have been removed — skip */ }
+    }));
+
+    renderRequestsList();
+  } catch(e){
+    document.getElementById('requestsList').innerHTML = '<div class="empty-note">Couldn\'t load your requests — try refreshing.</div>';
+  }
+}
+
+function renderRequestsList(){
+  const wrap = document.getElementById('requestsList');
+  let list;
+  if(STATE.tab === 'pending') list = STATE.requests.filter(r=>r.status==='pending');
+  else if(STATE.tab === 'active') list = STATE.requests.filter(r=>r.status==='accepted' || r.status==='replied');
+  else list = STATE.requests.filter(r=>r.status==='declined');
+
+  if(!list.length){
+    wrap.innerHTML = `<div class="empty-note">Nothing here yet.</div>`;
+    return;
+  }
+  wrap.innerHTML = list.map(r=>{
+    const idea = r.ideaId ? STATE.ideas[r.ideaId] : null;
+    const tagClass = r.status;
+    const tagLabel = r.status === 'accepted' ? 'SIGNED' : r.status.toUpperCase();
+    const canMessage = r.status !== 'declined';
+    return `
+      <div class="req-card">
+        <div class="req-top">
+          <div><div class="req-name">${idea ? idea.title : 'Consulting request'}</div><div class="req-sub">${r.kind === 'deal' ? 'Deal request' : 'Consulting request'}</div></div>
+          <span class="req-tag ${tagClass}">${tagLabel}</span>
+        </div>
+        ${canMessage ? `<button class="mini-btn primary" data-open-thread="${r.id}">${r.status==='pending' ? 'Message' : 'Open conversation'}</button>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    STATE.tab = tab.dataset.tab;
+    renderRequestsList();
+  });
+});
+
+document.getElementById('ideaModalClose').addEventListener('click', ()=>{
+  document.getElementById('ideaModalOverlay').classList.remove('show');
+  document.getElementById('ideaModal').classList.remove('show');
+});
+document.getElementById('ideaModalOverlay').addEventListener('click', ()=>{
+  document.getElementById('ideaModalOverlay').classList.remove('show');
+  document.getElementById('ideaModal').classList.remove('show');
+});
+
+async function openMessageModal(requestId){
+  const body = document.getElementById('ideaModalBody');
+  body.innerHTML = '<p style="color:var(--dim); font-size:13px;">Loading…</p>';
+  document.getElementById('ideaModalOverlay').classList.add('show');
+  document.getElementById('ideaModal').classList.add('show');
+  await refreshMessageThread(requestId);
+}
+
+async function refreshMessageThread(requestId){
+  const body = document.getElementById('ideaModalBody');
+  try {
+    const res = await apiFetch(`/api/requests/${requestId}/messages`);
+    const data = await res.json();
+    if(!res.ok) throw new Error();
+    const req = STATE.requests.find(r=>r.id===requestId);
+    renderMessageThreadModal(req, data.messages);
+  } catch(e){
+    body.innerHTML = '<p style="color:var(--dim); font-size:13px;">Couldn\'t load this conversation — try again.</p>';
+  }
+}
+
+function renderMessageThreadModal(req, messages){
+  const body = document.getElementById('ideaModalBody');
+  const idea = req.ideaId ? STATE.ideas[req.ideaId] : null;
+  const threadHTML = messages.length
+    ? messages.map(m => messageRowHTML(m, req)).join('')
+    : `<p style="color:var(--dim); font-size:13px; text-align:center; padding:20px 0;">No messages yet — say hello.</p>`;
+
+  body.innerHTML = `
+    <div class="im-title">${idea ? idea.title : 'Consulting request'}</div>
+    <div class="im-sub">${idea ? 'Deal conversation' : 'Consulting conversation'}</div>
+    <div class="msg-thread" id="msgThread">${threadHTML}</div>
+    <div class="msg-input-row">
+      <textarea rows="2" id="msgInput" placeholder="Write a message…"></textarea>
+      <button class="mini-btn primary" style="flex:none;" id="msgSendBtn">Send</button>
+    </div>
+    <button class="mini-btn" style="width:100%; margin-bottom:6px;" id="msgProposeBtn">📅 Propose a time to meet</button>
+    <button class="mini-btn" style="width:100%; margin-bottom:6px; opacity:.65;" id="videoCallPlaceholderBtn">🎥 Video call — coming soon</button>
+    <div class="msg-propose-form" id="msgProposeForm" style="display:none;">
+      <input type="datetime-local" id="msgSlot1">
+      <input type="datetime-local" id="msgSlot2">
+      <input type="datetime-local" id="msgSlot3">
+      <button class="mini-btn primary" style="width:100%;" id="msgProposeSendBtn">Send proposed times</button>
+    </div>
+  `;
+  document.getElementById('msgThread').scrollTop = document.getElementById('msgThread').scrollHeight;
+
+  document.getElementById('msgSendBtn').addEventListener('click', async ()=>{
+    const text = document.getElementById('msgInput').value.trim();
+    if(!text) return;
+    await apiFetch(`/api/requests/${req.id}/messages`, { method:'POST', body: JSON.stringify({ kind:'text', body:text }) });
+    await refreshMessageThread(req.id);
+  });
+  document.getElementById('msgProposeBtn').addEventListener('click', ()=>{
+    const form = document.getElementById('msgProposeForm');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  });
+  document.getElementById('videoCallPlaceholderBtn').addEventListener('click', ()=>{
+    alert("In-platform video calls aren't built yet — for now, propose a time above and share a link once you've confirmed it.");
+  });
+  document.getElementById('msgProposeSendBtn').addEventListener('click', async ()=>{
+    const slots = ['msgSlot1','msgSlot2','msgSlot3'].map(id=>document.getElementById(id).value).filter(Boolean);
+    if(!slots.length) return;
+    await apiFetch(`/api/requests/${req.id}/messages`, { method:'POST', body: JSON.stringify({ kind:'meeting_proposal', meetingSlots: slots }) });
+    await refreshMessageThread(req.id);
+  });
+}
+
+function messageRowHTML(m, req){
+  const mine = m.senderId === STATE.me.id;
+  const when = new Date(m.createdAt).toLocaleString([], { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+
+  if(m.kind === 'meeting_proposal'){
+    const canConfirm = !mine;
+    return `
+      <div class="msg-row ${mine?'mine':''}" style="max-width:90%;">
+        <div class="msg-proposal">
+          <div class="k">${mine ? 'You proposed these times' : m.senderName + ' proposed these times'}</div>
+          ${m.meetingSlots.map(s => `
+            <button class="msg-slot-btn" ${canConfirm?`data-confirm-slot="${req.id}" data-slot-value="${s}"`:'disabled style="opacity:.6; cursor:default;"'}>
+              ${new Date(s).toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })}
+            </button>
+          `).join('')}
+        </div>
+        <div class="msg-meta">${when}</div>
+      </div>
+    `;
+  }
+  if(m.kind === 'meeting_confirmed'){
+    return `
+      <div class="msg-row" style="max-width:90%; align-self:center;">
+        <div class="msg-confirmed">✓ Meeting confirmed: ${new Date(m.confirmedSlot).toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })}${m.meetingLink ? `<br><a href="${m.meetingLink}" target="_blank" style="color:var(--teal); font-weight:700;">${m.meetingLink}</a>` : ''}</div>
+        <div class="msg-meta">${when}</div>
+      </div>
+    `;
+  }
+  return `
+    <div class="msg-row ${mine?'mine':''}">
+      <div class="msg-bubble">${m.body}</div>
+      <div class="msg-meta">${mine ? 'You' : m.senderName} · ${when}</div>
+    </div>
+  `;
+}
+
+document.addEventListener('click', async (e)=>{
+  const openThreadBtn = e.target.closest('[data-open-thread]');
+  if(openThreadBtn) openMessageModal(openThreadBtn.dataset.openThread);
+
+  const confirmBtn = e.target.closest('[data-confirm-slot]');
+  if(confirmBtn){
+    const requestId = confirmBtn.dataset.confirmSlot;
+    const slot = confirmBtn.dataset.slotValue;
+    const link = prompt('Optional — paste a Zoom/meeting link to include (or leave blank):', '');
+    await apiFetch(`/api/requests/${requestId}/messages`, {
+      method:'POST',
+      body: JSON.stringify({ kind:'meeting_confirmed', confirmedSlot: slot, meetingLink: link || undefined }),
+    });
+    await refreshMessageThread(requestId);
+  }
+});
+
+init();
+</script>
+</body>
+</html>
