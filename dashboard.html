@@ -399,7 +399,7 @@ function money(n){
 }
 const OPPORTUNITY_TIER_LABELS = { side_income: 'Side income', solid_income: 'Solid income', big_swing: 'Big swing' };
 const LOCATION_LABELS = { remote: 'Remote', 'in-person': 'In-person' };
-const INVOLVEMENT_LABELS = { 'hands-off': 'Hands-off', occasional: 'Occasional input', 'stay-involved': 'Wants to stay involved' };
+const INVOLVEMENT_LABELS = { 'hands-off': 'Hands-off', occasional: 'Occasional input', 'stay-involved': 'Wants to stay involved', flexible: "I'm open / flexible" };
 const ATTRIBUTION_LABELS = { none: 'No credit needed', 'wants-credit': 'Wants credit' };
 function profitLabel(idea){
   return OPPORTUNITY_TIER_LABELS[idea.opportunityTier] || 'Solid income';
@@ -1096,11 +1096,19 @@ function renderIdeaModal(idea){
         <div class="im-filecheck-row"><span>Your files show</span><b>${fc.aiPct}% done${fc.qualityLabel ? ' · ' + fc.qualityLabel : ''}</b></div>
         ${fc.rationale ? `<p class="im-filecheck-note">${fc.rationale}</p>` : ''}
         ${fc.nextSteps ? `<p class="im-filecheck-note"><b>What's typically next:</b> ${fc.nextSteps}</p>` : ''}
-        ${fc.overclaimPenalty > 0 ? `<p class="im-filecheck-note" style="color:var(--coral);">This gap knocked ${fc.overclaimPenalty} points off your score — updating your steps to match what's really built will fix that.</p>` : ''}
+        ${fc.adjustment < 0 ? `<p class="im-filecheck-note" style="color:var(--coral);">This gap knocked ${Math.abs(fc.adjustment)} points off your score — updating your steps to match what's really built will fix that.</p>` : ''}
+        ${fc.adjustment > 0 ? `<p class="im-filecheck-note" style="color:var(--teal);">Your files show more progress than you'd claimed — that added ${fc.adjustment} points to your score.</p>` : ''}
         ${fc.costEstimate != null ? `<div class="im-filecheck-row"><span>Files suggest cost to finish</span><b>$${fc.costEstimate.toLocaleString()}</b></div>` : ''}
         ${fc.costRationale ? `<p class="im-filecheck-note"><b>Why this cost estimate:</b> ${fc.costRationale} (this is editable in Skills &amp; Money)</p>` : ''}
       </div>`;
   }
+  const originality = f.originality;
+  const originalityHTML = originality ? `
+    <div class="im-filecheck" style="margin-top:10px;">
+      <div class="im-filecheck-head">🔎 Originality check${originality.similarCount===null ? ' (search unavailable last time)' : ''}</div>
+      ${originality.note ? `<p class="im-filecheck-note">${originality.note}</p>` : ''}
+      ${originality.differentiation ? `<p class="im-filecheck-note"><b>How it compares:</b> ${originality.differentiation}</p>` : ''}
+    </div>` : '';
 
   const stepsHTML = idea.steps.map(s => `
     <div class="im-step-row"><span class="im-step-dot ${s.status}"></span>${s.name}<span style="margin-left:auto; color:var(--dim); font-size:11.5px; text-transform:capitalize;">${s.status}</span></div>
@@ -1152,7 +1160,6 @@ function renderIdeaModal(idea){
     </div>
 
     <div class="im-grid" style="margin-top:10px;">
-      <div class="im-box"><div class="lbl">Where it works best</div><div class="val">${LOCATION_LABELS[idea.location] || '—'}</div></div>
       <div class="im-box"><div class="lbl">Your involvement</div><div class="val">${INVOLVEMENT_LABELS[idea.involvement] || '—'}</div></div>
       <div class="im-box"><div class="lbl">Ongoing effort</div><div class="val">${idea.ongoingEffort || '—'}</div></div>
       <div class="im-box"><div class="lbl">Credit</div><div class="val">${ATTRIBUTION_LABELS[idea.attribution] || '—'}</div></div>
@@ -1160,6 +1167,7 @@ function renderIdeaModal(idea){
 
     <div class="im-steps">${stepsHTML}</div>
     ${fileCheckHTML}
+    ${originalityHTML}
     ${idea.blockerNote ? `<p class="im-files-note">Your private note to Espalier: "${idea.blockerNote}"</p>` : ''}
   `;
 }

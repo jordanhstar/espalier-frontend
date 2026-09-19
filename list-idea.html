@@ -175,6 +175,8 @@
   @media (prefers-reduced-motion: reduce){ .scan-ring{animation:none;} }
   .scan-status{font-family:var(--font-display); font-weight:600; font-size:16px; margin-bottom:8px;}
   .scan-sub{color:var(--dim); font-size:13.5px;}
+  .scan-progress-track{width:220px; height:6px; margin:20px auto 0; border-radius:100px; background:var(--border); overflow:hidden;}
+  .scan-progress-fill{height:100%; width:0%; border-radius:100px; background:var(--coral); transition:width .4s ease;}
 
   /* ============ SCREEN B2: clarifying chat ============ */
   .chat-thread{display:flex; flex-direction:column; gap:16px; margin-bottom:20px;}
@@ -275,6 +277,8 @@
   .card-cover{height:84px; position:relative; display:flex; align-items:center; padding:0 16px; overflow:hidden; background:linear-gradient(120deg, var(--blue), color-mix(in srgb, var(--blue) 60%, #8B5CF6));}
   .card-cover .glyph{font-size:30px; position:relative; z-index:2;}
   .card-cover::after{content:""; position:absolute; inset:0; opacity:.14; background-image:radial-gradient(circle, #fff 1.5px, transparent 1.5px); background-size:14px 14px;}
+  .card-cover.has-photo::after{display:none;}
+  .card-cover.has-photo .glyph{display:none;}
   .score-badge{position:absolute; top:10px; right:12px; z-index:3; font-family:var(--font-display); font-weight:800; font-size:14px; color:#fff; background:var(--score-color,#C97F1E); border:2px solid rgba(255,255,255,.6); border-radius:10px; padding:4px 9px;}
   .score-badge .lbl{font-size:8px; font-weight:700; color:rgba(255,255,255,.85); display:block; text-align:center; text-transform:uppercase;}
   .listing-body{padding:18px;}
@@ -417,6 +421,7 @@
     <div class="scan-ring"></div>
     <div class="scan-status" id="scanStatus">Finding what you've already built…</div>
     <p class="scan-sub">Give us a moment — good work takes a second to recognize</p>
+    <div class="scan-progress-track"><div class="scan-progress-fill" id="scanProgressFill"></div></div>
   </div>
 </div>
 
@@ -611,7 +616,7 @@
       <div class="preview-inner">
         <div class="preview-label">Live preview</div>
         <div class="listing-card" id="listingCard">
-          <div class="card-cover">
+          <div class="card-cover" id="pvCover">
             <span class="glyph" id="pvGlyph">📱</span>
             <div class="score-badge" id="pvScoreBadge">62<span class="lbl">forecast</span></div>
           </div>
@@ -716,6 +721,7 @@ function updatePreview(){
 
   const emojiMap = {App:'📱', Website:'🌐', Business:'💼', Event:'🎉', 'Physical product':'📦', 'Digital product':'💾', Other:'✨'};
   document.getElementById('pvGlyph').textContent = emojiMap[document.getElementById('fType').value];
+  updatePreviewCover();
 
   let filled = 1;
   if(stepStatus.some(s=>s!=='open')) filled++;
@@ -737,10 +743,14 @@ function updateCardGlow(pct){
   const card = document.getElementById('listingCard');
   if(!card) return;
   const t = Math.max(0, Math.min(100, pct)) / 100;
-  const blur = Math.round(6 + t * 28);
-  const spread = Math.round(1 + t * 5);
-  const glowOpacity = (0.12 + t * 0.5).toFixed(2);
-  const borderOpacity = (0.25 + t * 0.65).toFixed(2);
+  // Eased (t²) rather than linear — barely visible early on, then ramps up
+  // fast as it nears done. Linear growth read as "already glowing" from the
+  // very first field filled in, which defeated the whole point.
+  const eased = t * t;
+  const blur = Math.round(2 + eased * 34);
+  const spread = Math.round(eased * 6);
+  const glowOpacity = (0.03 + eased * 0.55).toFixed(2);
+  const borderOpacity = (0.10 + eased * 0.75).toFixed(2);
   card.style.borderColor = `rgba(255,90,60,${borderOpacity})`;
   card.style.boxShadow = `0 0 ${blur}px ${spread}px rgba(255,90,60,${glowOpacity})`;
 }
@@ -942,6 +952,7 @@ document.getElementById('analyzeBtn').addEventListener('click', ()=>{
   const questionsPromise = fetchFollowUpQuestions();
 
   goTo('panel-b');
+  startScanProgress();
   const statuses = ['Reading what you wrote…','Listening to your voice memo…','Looking at your wireframes…','Matching skills to what\'s left…'];
   let i = 0;
   const el = document.getElementById('scanStatus');
@@ -951,6 +962,7 @@ document.getElementById('analyzeBtn').addEventListener('click', ()=>{
     else{
       clearInterval(iv);
       questionsPromise.then(result=>{
+        finishScanProgress();
         if(result.questions.length){ renderQuestionFlow(result.questions); goTo('panel-b2'); }
         else {
           goTo('panel-c');
@@ -967,6 +979,30 @@ document.getElementById('analyzeBtn').addEventListener('click', ()=>{
     }
   }, 700);
 });
+
+// A real completion percentage isn't knowable in advance — analysis time
+// varies a lot (more files, web search for originality, etc.) — so this
+// fakes steady progress that slows as it nears the cap, and only ever
+// reaches 100% once the real result actually lands via finishScanProgress().
+// The point is just "still working," not an accurate ETA.
+let scanProgressInterval = null;
+function startScanProgress(){
+  const fill = document.getElementById('scanProgressFill');
+  if(!fill) return;
+  fill.style.width = '0%';
+  let pct = 0;
+  scanProgressInterval = setInterval(()=>{
+    const remaining = 92 - pct;
+    pct += Math.max(0.3, remaining * 0.045);
+    if(pct > 92) pct = 92;
+    fill.style.width = pct + '%';
+  }, 300);
+}
+function finishScanProgress(){
+  if(scanProgressInterval){ clearInterval(scanProgressInterval); scanProgressInterval = null; }
+  const fill = document.getElementById('scanProgressFill');
+  if(fill) fill.style.width = '100%';
+}
 
 async function fetchFollowUpQuestions(){
   try {
@@ -1029,6 +1065,22 @@ document.getElementById('qaInput').addEventListener('keydown', (e)=>{ if(e.key==
 let lastFileAnalysis = null;
 let coverImageDataUrl = null;
 let publishedDeniedIdeaId = null;
+// Keeps the live-preview card's cover in sync with whatever photo is chosen
+// (uploaded or picked from Unsplash) — falls back to the plain gradient once
+// there's nothing set, same as a real listing with no cover photo would.
+function updatePreviewCover(){
+  const cover = document.getElementById('pvCover');
+  if(!cover) return;
+  if(coverImageDataUrl){
+    cover.style.backgroundImage = `url('${coverImageDataUrl}')`;
+    cover.style.backgroundSize = 'cover';
+    cover.style.backgroundPosition = 'center';
+    cover.classList.add('has-photo');
+  } else {
+    cover.style.backgroundImage = '';
+    cover.classList.remove('has-photo');
+  }
+}
 document.getElementById('coverInput').addEventListener('change', (e)=>{
   const file = e.target.files[0];
   if(!file) return;
@@ -1038,6 +1090,7 @@ document.getElementById('coverInput').addEventListener('change', (e)=>{
     coverImageDataUrl = reader.result;
     document.getElementById('coverPreview').style.backgroundImage = `url(${coverImageDataUrl})`;
     document.getElementById('coverPreview').textContent = '';
+    updatePreviewCover();
   };
   reader.readAsDataURL(file);
 });
@@ -1089,6 +1142,7 @@ async function selectUnsplashPhoto(photo){
   document.getElementById('coverPreview').style.backgroundImage = `url(${photo.fullUrl})`;
   document.getElementById('coverPreview').textContent = '';
   document.getElementById('unsplashSearchBox').style.display = 'none';
+  updatePreviewCover();
   // Required by Unsplash's API terms whenever a photo is actually used, not just shown in results
   try {
     await fetch(`${API_BASE}/api/images/unsplash-track`, {
@@ -1414,6 +1468,7 @@ async function loadIdeaForEdit(){
       coverImageDataUrl = idea.coverImageUrl;
       document.getElementById('coverPreview').style.backgroundImage = `url(${idea.coverImageUrl})`;
       document.getElementById('coverPreview').textContent = '';
+      updatePreviewCover();
     }
     ideaLinks = Array.isArray(idea.links)
       ? idea.links.map(l => typeof l === 'string' ? { url: l, note: '' } : { url: l.url || '', note: l.note || '' })
