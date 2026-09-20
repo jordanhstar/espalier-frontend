@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Espalier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E0F11;
+    --lA:#C4875A; --lB:#A66F45; --rA:#565FAE; --rB:#3F4680;
+    --font-display:'Sora', system-ui, sans-serif; --font-body:'Manrope', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:#F5F6F1; color:#15181D; font-family:var(--font-body); -webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+
+  header{display:flex; align-items:center; justify-content:space-between; padding:26px 36px; max-width:1200px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:800; font-size:16px; text-decoration:none; color:#15181D;}
+  .brand svg{width:19px; height:19px;}
+  .back-link{font-size:13px; font-weight:600; color:#454B52; text-decoration:none; display:flex; align-items:center; gap:6px;}
+  .back-link svg{width:13px; height:13px;}
+
+  .page-hero{max-width:760px; margin:20px auto 70px; padding:0 24px; text-align:center;}
+  .kicker{font-size:12.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--rA); margin-bottom:16px;}
+  .page-hero h1{font-family:var(--font-display); font-weight:800; font-size:clamp(26px,4vw,38px); line-height:1.3; margin:0 0 18px;}
+  .page-hero p{font-size:15.5px; line-height:1.75; color:#454B52; margin:0;}
+
+  main{max-width:920px; margin:0 auto; padding:0 24px 100px;}
+
+  .price-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin-bottom:20px;}
+  .price-card{background:#fff; border:1px solid #E4E1D6; border-radius:18px; padding:30px 28px;}
+  .price-card h3{font-family:var(--font-display); font-weight:700; font-size:16px; margin:0 0 6px;}
+  .price-card .price-sub{font-size:12.5px; color:#7B828A; margin-bottom:20px;}
+  .price-card .price-value{font-family:var(--font-display); font-weight:800; font-size:30px; margin-bottom:14px; color:var(--rA);}
+  .price-card .price-value.placeholder{color:#B5B0A2; font-size:20px; font-style:italic; font-weight:600;}
+  .price-card p{font-size:13.5px; line-height:1.65; color:#454B52; margin:0;}
+
+  .note-box{background:#fff; border:1px solid #E4E1D6; border-left:3px solid var(--lA); border-radius:12px; padding:20px 24px; margin:40px 0; font-size:13.5px; line-height:1.7; color:#454B52;}
+  .note-box b{color:#15181D;}
+
+  h2.section-h{font-family:var(--font-display); font-weight:800; font-size:22px; margin:60px 0 20px;}
+
+  footer.site-footer{background:#EFEFE7; border-top:1px solid #E4E1D6; padding:64px 24px 0; text-align:left; margin-top:80px;}
+  .footer-top{max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:48px; padding-bottom:48px;}
+  .footer-brand{flex:1 1 260px; max-width:320px;}
+  .footer-logo{color:var(--lA); margin-bottom:14px; display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:800; font-size:16px;}
+  .footer-logo svg{width:22px; height:22px;}
+  .footer-tagline{font-size:13.5px; line-height:1.6; color:#7B828A; margin:0 0 20px;}
+  .footer-col{flex:1 1 140px; display:flex; flex-direction:column; gap:11px;}
+  .footer-col h5{font-family:var(--font-display); font-size:12px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#15181D; margin:0 0 4px;}
+  .footer-col a{font-size:13.5px; color:#7B828A; text-decoration:none;}
+  .footer-col a:hover{color:var(--lA);}
+  .footer-bottom{max-width:1200px; margin:0 auto; border-top:1px solid #E4E1D6; padding:20px 0 24px; display:flex; flex-wrap:wrap; gap:12px 24px; justify-content:space-between; font-size:12px; color:#9AA0A6;}
+
+  @media (max-width:680px){ .price-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 9 5 9 5 4C10 4 12 9 12 9M12 9C12 9 19 9 19 4C14 4 12 9 12 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Espalier</a>
+  <a class="back-link" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back to home
+  </a>
+</header>
+
+<div class="page-hero">
+  <div class="kicker">Pricing</div>
+  <h1>What it costs to use Espalier</h1>
+  <p>Straightforward, on purpose. Here's exactly what's free and what isn't — for both starters and finishers.</p>
+</div>
+
+<main>
+  <div class="price-grid">
+    <div class="price-card">
+      <h3>Listing an idea</h3>
+      <div class="price-sub">For starters</div>
+      <div class="price-value placeholder">[ FREE — TBD ]</div>
+      <p>Creating an account, listing an idea, and getting it scored costs nothing up front.</p>
+    </div>
+    <div class="price-card">
+      <h3>Browsing &amp; searching</h3>
+      <div class="price-sub">For finishers</div>
+      <div class="price-value placeholder">[ FREE — TBD ]</div>
+      <p>Browsing the marketplace, filtering, and viewing public listing details is free for anyone with an account.</p>
+    </div>
+    <div class="price-card">
+      <h3>Closing a deal</h3>
+      <div class="price-sub">Platform fee</div>
+      <div class="price-value placeholder">[ X% of deal value — TBD ]</div>
+      <p>Espalier takes a percentage when a deal actually closes between a starter and a finisher — not before.</p>
+    </div>
+    <div class="price-card">
+      <h3>Standing membership</h3>
+      <div class="price-sub">Optional</div>
+      <div class="price-value placeholder">[ $X / month — TBD ]</div>
+      <p>[ Placeholder — if Espalier offers a paid membership tier with added benefits, describe what it unlocks here. ]</p>
+    </div>
+  </div>
+
+  <div class="note-box">
+    <b>Note to Jordan:</b> every price on this page is a placeholder — I don't have your actual fee structure, so I didn't invent numbers. Fill in the bracketed values once the model is decided (percentage of deal value, a flat listing fee, a membership tier, or some mix), and I'll update this page and the "how the money works" section on the homepage to match exactly.
+  </div>
+
+  <h2 class="section-h">The split between starter and finisher</h2>
+  <p style="font-size:14.5px; line-height:1.8; color:#454B52;">The upfront-cash-vs-ongoing-share split on any individual deal is negotiated directly between the starter and the finisher — Espalier doesn't set or take a cut of that split itself, only its own platform fee when a deal closes.</p>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 9 5 9 5 4C10 4 12 9 12 9M12 9C12 9 19 9 19 4C14 4 12 9 12 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Espalier</div>
+      <p class="footer-tagline">A place for wild ideas to find someone who'll help them grow into something real.</p>
+    </div>
+    <nav class="footer-col">
+      <h5>Product</h5>
+      <a href="index.html#how-it-works">How it works</a>
+      <a href="marketplace.html">Browse ideas</a>
+      <a href="pricing.html">Pricing</a>
+    </nav>
+    <nav class="footer-col">
+      <h5>Resources</h5>
+      <a href="how-scoring-works.html">How scoring works</a>
+      <a href="faq.html">FAQ</a>
+    </nav>
+    <nav class="footer-col">
+      <h5>Legal</h5>
+      <a href="#">Terms of service</a>
+      <a href="#">Privacy policy</a>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Espalier. All rights reserved.</span>
+  </div>
+</footer>
+
+</body>
+</html>

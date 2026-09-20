@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How the Espalier Score works — Espalier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E0F11;
+    --lA:#C4875A; --lB:#A66F45; --rA:#565FAE; --rB:#3F4680;
+    --font-display:'Sora', system-ui, sans-serif; --font-body:'Manrope', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:#F5F6F1; color:#15181D; font-family:var(--font-body); -webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+
+  header{display:flex; align-items:center; justify-content:space-between; padding:26px 36px; max-width:1200px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:800; font-size:16px; text-decoration:none; color:#15181D;}
+  .brand svg{width:19px; height:19px;}
+  .back-link{font-size:13px; font-weight:600; color:#454B52; text-decoration:none; display:flex; align-items:center; gap:6px;}
+  .back-link svg{width:13px; height:13px;}
+
+  .page-hero{max-width:800px; margin:20px auto 70px; padding:0 24px; text-align:center;}
+  .kicker{font-size:12.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--rA); margin-bottom:16px;}
+  .page-hero h1{font-family:var(--font-display); font-weight:800; font-size:clamp(26px,4vw,38px); line-height:1.3; margin:0 0 18px;}
+  .page-hero p{font-size:15.5px; line-height:1.75; color:#454B52; margin:0;}
+
+  main{max-width:820px; margin:0 auto; padding:0 24px 100px;}
+
+  .factor{display:flex; gap:20px; background:#fff; border:1px solid #E4E1D6; border-radius:18px; padding:28px 26px; margin-bottom:16px;}
+  .factor-num{font-family:var(--font-display); font-weight:800; font-size:22px; color:var(--rA); flex-shrink:0; width:34px;}
+  .factor h3{font-family:var(--font-display); font-weight:700; font-size:17px; margin:0 0 8px;}
+  .factor p{font-size:13.5px; line-height:1.7; color:#454B52; margin:0;}
+
+  .note-box{background:#fff; border:1px solid #E4E1D6; border-left:3px solid var(--lA); border-radius:12px; padding:20px 24px; margin:40px 0; font-size:13.5px; line-height:1.7; color:#454B52;}
+  .note-box b{color:#15181D;}
+
+  h2.section-h{font-family:var(--font-display); font-weight:800; font-size:22px; margin:60px 0 20px;}
+
+  .cta-row{text-align:center; margin-top:60px;}
+  .cta-btn{display:inline-block; font-family:var(--font-display); font-weight:700; font-size:14px; padding:14px 28px; border-radius:100px; text-decoration:none; background:var(--ink); color:#fff;}
+
+  footer.site-footer{background:#EFEFE7; border-top:1px solid #E4E1D6; padding:64px 24px 0; text-align:left; margin-top:80px;}
+  .footer-top{max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:48px; padding-bottom:48px;}
+  .footer-brand{flex:1 1 260px; max-width:320px;}
+  .footer-logo{color:var(--lA); margin-bottom:14px; display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:800; font-size:16px;}
+  .footer-logo svg{width:22px; height:22px;}
+  .footer-tagline{font-size:13.5px; line-height:1.6; color:#7B828A; margin:0 0 20px;}
+  .footer-col{flex:1 1 140px; display:flex; flex-direction:column; gap:11px;}
+  .footer-col h5{font-family:var(--font-display); font-size:12px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#15181D; margin:0 0 4px;}
+  .footer-col a{font-size:13.5px; color:#7B828A; text-decoration:none;}
+  .footer-col a:hover{color:var(--lA);}
+  .footer-bottom{max-width:1200px; margin:0 auto; border-top:1px solid #E4E1D6; padding:20px 0 24px; display:flex; flex-wrap:wrap; gap:12px 24px; justify-content:space-between; font-size:12px; color:#9AA0A6;}
+
+  @media (max-width:680px){ .factor{flex-direction:column; gap:10px;} }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 9 5 9 5 4C10 4 12 9 12 9M12 9C12 9 19 9 19 4C14 4 12 9 12 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Espalier</a>
+  <a class="back-link" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back to home
+  </a>
+</header>
+
+<div class="page-hero">
+  <div class="kicker">How scoring works</div>
+  <h1>The Espalier Score, explained plainly</h1>
+  <p>Every idea gets one number that sums up where it stands. Here's exactly what goes into it — and just as important, what doesn't.</p>
+</div>
+
+<main>
+  <div class="factor">
+    <div class="factor-num">01</div>
+    <div>
+      <h3>Readiness</h3>
+      <p>How far along the idea actually is, based on the steps the creator marked complete for its type — a working core feature, a tested prototype, a first paying customer, whatever milestones matter for that kind of idea.</p>
+    </div>
+  </div>
+  <div class="factor">
+    <div class="factor-num">02</div>
+    <div>
+      <h3>Profit potential</h3>
+      <p>The size of the opportunity the creator described — a side-income project, a solid income stream, or a genuine big swing. This reflects the ceiling, not a guarantee.</p>
+    </div>
+  </div>
+  <div class="factor">
+    <div class="factor-num">03</div>
+    <div>
+      <h3>Cost to finish</h3>
+      <p>A rough estimate of what it would actually take — in money, time, or both — to carry the idea the rest of the way. Lower isn't automatically better; it's just one more thing to weigh.</p>
+    </div>
+  </div>
+  <div class="factor">
+    <div class="factor-num">04</div>
+    <div>
+      <h3>File-check</h3>
+      <p>Espalier looks at the actual files, links, and materials a creator uploads and compares that to what they claimed. If the files show more progress than claimed, the score goes up. If they show less, it goes down — the check runs both directions, so being modest doesn't cost you and overselling doesn't pay off.</p>
+    </div>
+  </div>
+  <div class="factor">
+    <div class="factor-num">05</div>
+    <div>
+      <h3>Category risk</h3>
+      <p>Some categories of idea carry more inherent execution risk than others. This is a small adjustment, not a judgment on whether the idea itself is good.</p>
+    </div>
+  </div>
+  <div class="factor">
+    <div class="factor-num">06</div>
+    <div>
+      <h3>Creator track record</h3>
+      <p>Once a creator has a few completed deals behind them, their track record starts to count in the creator's favor. It never counts against a first-time creator — everyone starts even.</p>
+    </div>
+  </div>
+
+  <div class="note-box">
+    <b>What the score deliberately ignores:</b> how original the idea is, and whether it has a social-impact angle. Both of those are shown separately on every listing — they matter for very different reasons than "how likely is this to work," so they're kept out of the number itself rather than quietly nudging it one way or another.
+  </div>
+
+  <h2 class="section-h">Why show the math at all?</h2>
+  <p style="font-size:14.5px; line-height:1.8; color:#454B52;">Because a black-box number is just a vibe with more decimal places. If you're deciding whether to spend real time and money finishing someone else's idea, you deserve to know exactly what "74" is actually telling you — and exactly what it isn't.</p>
+
+  <div class="cta-row">
+    <a class="cta-btn" href="marketplace.html">Browse scored ideas</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 9 5 9 5 4C10 4 12 9 12 9M12 9C12 9 19 9 19 4C14 4 12 9 12 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Espalier</div>
+      <p class="footer-tagline">A place for wild ideas to find someone who'll help them grow into something real.</p>
+    </div>
+    <nav class="footer-col">
+      <h5>Product</h5>
+      <a href="index.html#how-it-works">How it works</a>
+      <a href="marketplace.html">Browse ideas</a>
+      <a href="pricing.html">Pricing</a>
+    </nav>
+    <nav class="footer-col">
+      <h5>Resources</h5>
+      <a href="how-scoring-works.html">How scoring works</a>
+      <a href="faq.html">FAQ</a>
+    </nav>
+    <nav class="footer-col">
+      <h5>Legal</h5>
+      <a href="#">Terms of service</a>
+      <a href="#">Privacy policy</a>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Espalier. All rights reserved.</span>
+  </div>
+</footer>
+
+</body>
+</html>
