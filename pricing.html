@@ -21,7 +21,8 @@
   header{display:flex; align-items:center; justify-content:space-between; padding:26px 36px; max-width:1200px; margin:0 auto;}
   .brand{display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:800; font-size:16px; text-decoration:none; color:#15181D;}
   .brand svg{width:19px; height:19px;}
-  .back-link{font-size:13px; font-weight:600; color:#454B52; text-decoration:none; display:flex; align-items:center; gap:6px;}
+  .back-link{font-size:13px; font-weight:700; color:#15181D; text-decoration:none; display:flex; align-items:center; gap:7px; background:#fff; border:1px solid #E4E1D6; padding:9px 16px 9px 13px; border-radius:100px; transition:border-color .15s, box-shadow .15s;}
+  .back-link:hover{border-color:var(--lA); box-shadow:0 2px 8px rgba(0,0,0,.06);}
   .back-link svg{width:13px; height:13px;}
 
   .page-hero{max-width:760px; margin:20px auto 70px; padding:0 24px; text-align:center;}
@@ -30,6 +31,8 @@
   .page-hero p{font-size:15.5px; line-height:1.75; color:#454B52; margin:0;}
 
   main{max-width:920px; margin:0 auto; padding:0 24px 100px;}
+
+  h2.group-h{font-family:var(--font-display); font-weight:800; font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:var(--rA); margin:0 0 18px;}
 
   .price-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin-bottom:20px;}
   .price-card{background:#fff; border:1px solid #E4E1D6; border-radius:18px; padding:30px 28px;}
@@ -65,7 +68,7 @@
   <a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 9 5 9 5 4C10 4 12 9 12 9M12 9C12 9 19 9 19 4C14 4 12 9 12 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Espalier</a>
   <a class="back-link" href="index.html">
     <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    Back to home
+    Back Home
   </a>
 </header>
 
@@ -76,28 +79,42 @@
 </div>
 
 <main>
+  <h2 class="group-h" id="starter">For starters</h2>
   <div class="price-grid">
     <div class="price-card">
       <h3>Listing an idea</h3>
-      <div class="price-sub">For starters</div>
+      <div class="price-sub">Includes AI scoring &amp; file-check</div>
       <div class="price-value placeholder">[ FREE — TBD ]</div>
-      <p>Creating an account, listing an idea, and getting it scored costs nothing up front.</p>
+      <p>Creating an account, listing an idea, and getting it scored by Espalier's models costs nothing up front.</p>
     </div>
     <div class="price-card">
+      <h3>Closing a deal</h3>
+      <div class="price-sub">Platform fee, starter side</div>
+      <div class="price-value placeholder">[ X% of deal value — TBD ]</div>
+      <p>Espalier takes a percentage when a deal actually closes with a finisher — not before.</p>
+    </div>
+  </div>
+
+  <h2 class="group-h" id="finisher" style="margin-top:56px;">For finishers</h2>
+  <div class="price-grid">
+    <div class="price-card">
       <h3>Browsing &amp; searching</h3>
-      <div class="price-sub">For finishers</div>
+      <div class="price-sub">Full marketplace access</div>
       <div class="price-value placeholder">[ FREE — TBD ]</div>
       <p>Browsing the marketplace, filtering, and viewing public listing details is free for anyone with an account.</p>
     </div>
     <div class="price-card">
       <h3>Closing a deal</h3>
-      <div class="price-sub">Platform fee</div>
+      <div class="price-sub">Platform fee, finisher side</div>
       <div class="price-value placeholder">[ X% of deal value — TBD ]</div>
-      <p>Espalier takes a percentage when a deal actually closes between a starter and a finisher — not before.</p>
+      <p>Espalier takes a percentage when a deal actually closes with a starter — not before.</p>
     </div>
+  </div>
+
+  <div class="price-grid" style="margin-top:18px;">
     <div class="price-card">
       <h3>Standing membership</h3>
-      <div class="price-sub">Optional</div>
+      <div class="price-sub">Optional, either role</div>
       <div class="price-value placeholder">[ $X / month — TBD ]</div>
       <p>[ Placeholder — if Espalier offers a paid membership tier with added benefits, describe what it unlocks here. ]</p>
     </div>
