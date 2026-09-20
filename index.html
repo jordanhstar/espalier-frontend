@@ -191,6 +191,7 @@
 
   /* ---------- shared section chrome for new light sections ---------- */
   .light-section{background:#F5F6F1; padding:0 24px 90px; text-align:center;}
+  .light-section.alt{background:#EFEFE7;}
   .section-link{display:inline-flex; align-items:center; gap:6px; margin-top:44px; font-size:13.5px; font-weight:700; color:var(--rA); text-decoration:none;}
   .section-link svg{width:13px; height:13px;}
 
@@ -247,6 +248,12 @@
     .persona-grid{grid-template-columns:1fr;}
     .money-grid{flex-direction:column;}
   }
+  /* ---------- dark variant of mission-wrap, for the safety section break ---------- */
+  .dark-section{background:var(--ink); color:#fff; padding:80px 24px; text-align:center; position:relative; z-index:10;}
+  .dark-section .kicker{color:var(--fruit,#FFC98A);}
+  .dark-section .statement{color:#fff;}
+  .dark-section .statement .accent{color:var(--lA);}
+  .dark-section .lead{color:rgba(255,255,255,.68);}
 </style>
 </head>
 <body>
@@ -368,7 +375,7 @@
       <p class="side-lead">You've got no shortage of ideas — the hard part is ever finishing one. Here's exactly what happens when you list one here.</p>
       <div class="stepper">
         <div class="card"><span class="num">01</span><h4>Tell it like it is</h4><p>Describe it in your own words. Attach files, drop in a voice memo, add links — whatever shows the real thinking you've already put in.</p></div>
-        <div class="card"><span class="num">02</span><h4>Get scored, not judged</h4><p>Espalier checks for one thing: a genuine, thought-out attempt. Not polish, not perfection — real effort.</p></div>
+        <div class="card"><span class="num">02</span><h4>Get scored, not judged</h4><p>Espalier's own AI models check for one thing: a genuine, thought-out attempt. Not polish, not perfection — real effort.</p></div>
         <div class="card"><span class="num">03</span><h4>Approved — or a second look</h4><p>Most genuine ideas go live right away. If one's flagged, you'll see exactly why.</p></div>
         <div class="card"><span class="num">04</span><h4>Live in the marketplace</h4><p>Finishers looking for exactly this kind of thing can find it and reach out.</p></div>
         <div class="card"><span class="num">05</span><h4>Sign a deal, keep a stake</h4><p>Cash now, an ongoing share, or both — you're locked in for whatever it becomes.</p></div>
@@ -402,18 +409,18 @@
   <div class="mission-wrap">
     <div class="kicker">Why it's worth trusting</div>
     <h2 class="statement">A stranger's half-built idea is a leap of faith.<br><span class="accent">We built the platform to make that leap smaller.</span></h2>
-    <p class="lead">This is the part most "post your idea" forums skip entirely — and it's the actual product.</p>
+    <p class="lead">This is the part most "post your idea" forums skip entirely — and it's the actual product. Every listing is assessed by Espalier's own proprietary AI models, built specifically for this, not a generic off-the-shelf tool.</p>
   </div>
   <div class="trust-grid">
     <div class="trust-card">
       <svg class="trust-icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 3 4 7v6c0 5 3.5 7.5 8 8 4.5-.5 8-3 8-8V7l-8-4Z" stroke="currentColor" stroke-width="1.6"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <h4>The Espalier Score</h4>
-      <p>Every idea gets scored on real signals — readiness, cost to finish, profit potential — not on how good the pitch sounds.</p>
+      <p>Custom-built AI models score every idea on real signals — readiness, cost to finish, profit potential — not on how good the pitch sounds.</p>
     </div>
     <div class="trust-card">
       <svg class="trust-icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M21 12c0 4.5-3.5 8-8 8s-8-3.5-8-8 3.5-8 8-8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <h4>Claims get checked</h4>
-      <p>What a creator says is built gets checked against the actual files and links — so "80% done" means something.</p>
+      <p>What a creator says is built gets checked by our own AI against the actual files and links — so "80% done" means something.</p>
     </div>
     <div class="trust-card">
       <svg class="trust-icon" width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.6"/></svg>
@@ -431,7 +438,7 @@
   </a>
 </section>
 
-<section class="light-section" id="preview">
+<section class="light-section alt" id="preview">
   <div class="mission-wrap">
     <div class="kicker">See it in action</div>
     <h2 class="statement">Not just ideas. <span class="accent">Real progress, laid out plainly.</span></h2>
@@ -493,7 +500,7 @@
   </a>
 </section>
 
-<section class="light-section" id="safety">
+<section class="dark-section" id="safety">
   <div class="mission-wrap">
     <div class="kicker">Platform safety</div>
     <h2 class="statement">Strangers doing deals needs <span class="accent">real guardrails, not just good vibes.</span></h2>
@@ -501,7 +508,7 @@
   </div>
 </section>
 
-<section class="light-section" id="for">
+<section class="light-section alt" id="for">
   <div class="mission-wrap">
     <div class="kicker">Who this is for</div>
     <h2 class="statement">You've probably already pictured <span class="accent">which one you are.</span></h2>
@@ -561,8 +568,8 @@
 <section class="final-cta">
   <h2>Got an idea sitting somewhere it shouldn't be?</h2>
   <div class="final-cta-actions">
-    <a class="final-cta-btn primary" href="list-idea.html">List an idea</a>
-    <a class="final-cta-btn secondary" href="marketplace.html">Browse ideas</a>
+    <a class="final-cta-btn primary" href="pricing.html#starter">List an idea</a>
+    <a class="final-cta-btn secondary" href="pricing.html#finisher">Browse ideas</a>
   </div>
 </section>
 
