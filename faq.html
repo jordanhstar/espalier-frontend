@@ -46,6 +46,16 @@
   .footer-logo{color:var(--lA); margin-bottom:14px; display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:800; font-size:16px;}
   .footer-logo svg{width:22px; height:22px;}
   .footer-tagline{font-size:13.5px; line-height:1.6; color:#7B828A; margin:0 0 20px;}
+  .footer-newsletter{margin-bottom:4px; max-width:280px;}
+  .footer-newsletter-label{display:block; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#15181D; margin-bottom:9px;}
+  .footer-newsletter-row{display:flex; gap:6px;}
+  .footer-newsletter-row input{flex:1; border:1px solid #E4E1D6; border-radius:100px; padding:9px 14px; font-size:12.5px; font-family:inherit; outline:none; background:#fff; min-width:0; color:#15181D;}
+  .footer-newsletter-row input:focus{border-color:var(--rA);}
+  .footer-newsletter-row button{width:33px; height:33px; border-radius:50%; background:var(--rA); border:none; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .15s ease;}
+  .footer-newsletter-row button:hover{background:var(--rB);}
+  .footer-newsletter-row button svg{width:14px; height:14px;}
+  .footer-newsletter-success{display:none; font-size:12px; font-weight:700; color:var(--rA); margin:8px 0 0;}
+  .footer-newsletter-success.show{display:block;}
   .footer-col{flex:1 1 140px; display:flex; flex-direction:column; gap:11px;}
   .footer-col h5{font-family:var(--font-display); font-size:12px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#15181D; margin:0 0 4px;}
   .footer-col a{font-size:13.5px; color:#7B828A; text-decoration:none;}
@@ -136,6 +146,16 @@
     <div class="footer-brand">
       <div class="footer-logo"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 9 5 9 5 4C10 4 12 9 12 9M12 9C12 9 19 9 19 4C14 4 12 9 12 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Espalier</div>
       <p class="footer-tagline">A place for wild ideas to find someone who'll help them grow into something real.</p>
+      <form class="footer-newsletter" id="footerNewsletterForm">
+        <label class="footer-newsletter-label" for="footerNewsletterEmail">Join our email list</label>
+        <div class="footer-newsletter-row">
+          <input type="email" id="footerNewsletterEmail" placeholder="you@email.com" required>
+          <button type="submit" aria-label="Subscribe">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <p class="footer-newsletter-success" id="footerNewsletterSuccess">You're in — check your inbox to confirm.</p>
+      </form>
     </div>
     <nav class="footer-col">
       <h5>Product</h5>
@@ -157,12 +177,27 @@
     <span>© 2026 Espalier. All rights reserved.</span>
   </div>
 </footer>
+<script>
+  var footerNewsletterForm = document.getElementById('footerNewsletterForm');
+  if (footerNewsletterForm) {
+    footerNewsletterForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      var email = document.getElementById('footerNewsletterEmail').value;
+      if (!email) return;
+      // TODO(Jordan): wire this up to a real email list/backend.
+      footerNewsletterForm.querySelector('.footer-newsletter-row').style.display = 'none';
+      document.getElementById('footerNewsletterSuccess').classList.add('show');
+    });
+  }
+</script>
+
 
 <style>
   #spauldingWidget{position:fixed; bottom:22px; right:22px; z-index:999; font-family:var(--font-body,'Manrope',system-ui,sans-serif);}
   #spauldingBubble{width:58px; height:58px; border-radius:50%; background:linear-gradient(135deg, var(--lA,#C4875A), var(--rA,#565FAE)); border:none; box-shadow:0 8px 24px rgba(0,0,0,.25); cursor:pointer; display:flex; align-items:center; justify-content:center; color:#fff; transition:transform .2s ease;}
   #spauldingBubble:hover{transform:scale(1.06);}
   #spauldingBubble svg{width:25px; height:25px;}
+  #spauldingBubble .sb-chat-emoji{font-size:27px; line-height:1;}
   #spauldingBubble .sb-close-icon{display:none;}
   #spauldingWidget.open #spauldingBubble .sb-chat-icon{display:none;}
   #spauldingWidget.open #spauldingBubble .sb-close-icon{display:block;}
@@ -225,7 +260,7 @@
     </form>
   </div>
   <button id="spauldingBubble" aria-label="Chat with Spaulding">
-    <svg class="sb-chat-icon" viewBox="0 0 24 24" fill="none"><path d="M4 18.5V6.5C4 5.4 4.9 4.5 6 4.5H18C19.1 4.5 20 5.4 20 6.5V15C20 16.1 19.1 17 18 17H8L4 20.5V18.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+    <span class="sb-chat-icon sb-chat-emoji">🌱</span>
     <svg class="sb-close-icon" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
   </button>
 </div>
