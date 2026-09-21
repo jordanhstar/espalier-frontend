@@ -322,12 +322,12 @@
   /* ---------- functional filter demo (asymmetric layout) ---------- */
   @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap');
   .filterdemo-dark{max-width:1020px; margin:0 auto; background:#17181B; border:1px solid rgba(255,255,255,.1); border-radius:22px; padding:10px; text-align:left; box-shadow:0 20px 50px rgba(0,0,0,.35);}
-  .filterdemo-toolbar{display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:8px;}
+  .filterdemo-toolbar{display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; padding:8px;}
   .filterdemo-dd{font-family:var(--font-body); font-size:13px; font-weight:700; color:#fff; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); border-radius:100px; padding:10px 18px; cursor:pointer; display:flex; align-items:center; gap:7px; transition:all .12s;}
   .filterdemo-dd:hover{border-color:var(--lA);}
   .filterdemo-dd.open{background:var(--rA); border-color:var(--rA);}
   .filterdemo-dd .car{font-size:9px; opacity:.7;}
-  .filterdemo-count-pill{margin-left:auto; font-size:13px; font-weight:800; color:#0E0F11; background:#fff; border-radius:100px; padding:10px 18px; white-space:nowrap;}
+  .filterdemo-count-pill{margin-left:16px; font-size:13px; font-weight:800; color:#0E0F11; background:#fff; border-radius:100px; padding:10px 18px; white-space:nowrap;}
   .filterdemo-count-pill span{color:var(--lA);}
   .filterdemo-panel-group{display:none; flex-wrap:wrap; gap:8px; padding:18px 12px 20px; border-top:1px solid rgba(255,255,255,.1); margin-top:4px;}
   .filterdemo-panel-group.open{display:flex;}
@@ -339,6 +339,8 @@
   .filterdemo-dark .filterdemo-chip.active{background:var(--lA); border-color:var(--lA); color:#0E0F11;}
   .money-heading{max-width:960px; white-space:nowrap; font-size:clamp(16px,2.1vw,26px);}
   @media (max-width:900px){ .money-heading{white-space:normal;} }
+  .filterdemo-lead{max-width:none; white-space:nowrap; font-size:clamp(13px,1.5vw,16px);}
+  @media (max-width:900px){ .filterdemo-lead{white-space:normal;} }
   @media (max-width:680px){
     .filterdemo-toolbar{gap:6px;}
     .filterdemo-count-pill{margin-left:0; order:10; width:100%; text-align:center;}
@@ -635,7 +637,7 @@
   <div class="mission-wrap">
     <div class="kicker">Filter it your way</div>
     <h2 class="statement">Every idea is tagged with <span class="accent">a lot more than a title.</span></h2>
-    <p class="lead" style="margin-bottom:32px;">This is just 4 of the ways to filter — the real platform also sorts by time to finish, social impact, and more.</p>
+    <p class="lead filterdemo-lead" style="margin-bottom:32px;">This is just 4 of the ways to filter — the real platform also sorts by time to finish, social impact, and over a dozen more dimensions.</p>
   </div>
   <div class="filterdemo-dark">
     <div class="filterdemo-toolbar">
