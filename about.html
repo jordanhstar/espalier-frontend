@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About — Espalier</title>
+<title>Our Story — Espalier</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -61,8 +61,35 @@
   .footer-col a{font-size:13.5px; color:#7B828A; text-decoration:none;}
   .footer-col a:hover{color:var(--lA);}
   .footer-bottom{max-width:1200px; margin:0 auto; border-top:1px solid #E4E1D6; padding:20px 0 24px; display:flex; flex-wrap:wrap; gap:12px 24px; justify-content:space-between; font-size:12px; color:#9AA0A6;}
-  .coming-soon{background:#fff; border:1px solid #E4E1D6; border-radius:14px; padding:44px 26px; text-align:center;}
-  .coming-soon p{font-size:14px; line-height:1.7; color:#454B52; margin:0;}
+
+  :root{ --lA:#C4875A; --rA:#565FAE; --ink:#0E0F11; }
+  .story-cover{
+    position:relative; height:360px; margin:0; overflow:hidden;
+    background:linear-gradient(120deg, var(--rB,#3F4680) 0%, var(--rA) 45%, var(--lA) 100%);
+    display:flex; align-items:flex-end; justify-content:center; text-align:center;
+  }
+  .story-cover-placeholder-label{position:absolute; top:16px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,.35); color:#fff; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:6px 14px; border-radius:100px;}
+  .story-cover-inner{position:relative; z-index:2; padding:0 24px 40px; max-width:680px;}
+  .story-cover .kicker{color:#fff; opacity:.85;}
+  .story-cover h1{font-family:var(--font-display); font-weight:800; font-size:clamp(28px,4.4vw,44px); color:#fff; margin:14px 0 0; line-height:1.15;}
+  .story-cover::after{content:""; position:absolute; inset:0; background:linear-gradient(0deg, rgba(14,15,17,.45), transparent 60%); z-index:1;}
+
+  .c-band{padding:64px 24px; text-align:center;}
+  .c-band-inner{max-width:620px; margin:0 auto; text-align:left;}
+  .c-chapter-label{font-family:var(--font-display); font-weight:800; font-size:12px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:20px; display:flex; align-items:center; gap:12px;}
+  .c-chapter-label::before{content:""; width:24px; height:1px; background:currentColor; display:inline-block;}
+  .c-band.cream{background:#F5F6F1;}
+  .c-band.clay{background:color-mix(in srgb, var(--lA) 10%, #F5F6F1);}
+  .c-band.indigo{background:color-mix(in srgb, var(--rA) 8%, #F5F6F1);}
+  .c-band p{font-size:16.5px; line-height:1.85; color:#333; margin:0 0 22px;}
+  .c-band p:last-child{margin-bottom:0;}
+  .c-band.clay .c-chapter-label{color:var(--lA);}
+  .c-band.indigo .c-chapter-label{color:var(--rA);}
+  .c-band.cream .c-chapter-label{color:#7B828A;}
+  .c-pullquote-band{background:var(--ink); color:#fff; padding:80px 24px; text-align:center;}
+  .c-pullquote-band p{font-family:var(--font-display); font-weight:800; font-size:clamp(26px,4vw,40px); max-width:640px; margin:0 auto; line-height:1.3; color:#fff;}
+  .story-mark{background:rgba(196,135,90,.22); padding:1px 6px; border-radius:4px; font-weight:700; color:#15181D;}
+  .story-close-line{font-family:var(--font-display); font-weight:800; color:var(--rA);}
 </style>
 
 <body>
@@ -75,17 +102,65 @@
   </a>
 </header>
 
-<div class="page-hero">
-  <div class="kicker">Company</div>
-  <h1>About Espalier</h1>
-  <p>The story behind Espalier, and why we built it this way.</p>
+
+<div class="story-cover">
+  <div class="story-cover-placeholder-label">Cover photo placeholder — swap with generated image</div>
+  <div class="story-cover-inner">
+    <div class="kicker">Our Story</div>
+    <h1>Why I built Espalier</h1>
+  </div>
 </div>
 
-<main>
-  <div class="coming-soon">
-    <p>This page is still being written — check back soon.</p>
+<div class="c-band cream">
+  <div class="c-band-inner">
+    <div class="c-chapter-label">The Spark</div>
+    <p>Today, I'm inspired. Ideas are flowing to me; I have the physical and mental energy to build out the weird and unique ideas that come to my mind, Claude and I are on a roll, and I'm feeling pretty good.</p>
   </div>
-</main>
+</div>
+
+<div class="c-band clay">
+  <div class="c-band-inner">
+    <div class="c-chapter-label">The Crash</div>
+    <p>But for me, this creativity and momentum isn't always sustainable — and truthfully — it can be very overwhelming, which often causes me to drop the projects I start. And if not because of that, I often have to drop many of them because I just don't have the time, energy, or resources to get them to where they need to go in order to be as successful as possible.</p>
+    <p>So all that creativity and work goes unfinished — sitting idly on my computer or in my notes app — even if it's genuinely a viable or interesting idea.</p>
+  </div>
+</div>
+
+<div class="c-band cream">
+  <div class="c-band-inner">
+    <div class="c-chapter-label">The Realization</div>
+    <p>So during this creative streak, I decided I wanted to create something to address exactly this. To do something that's inspired by me and how I work, and how I know many others work, too. To find out a way to bring more ideas to life, because the world needs new and fresh ideas all the time. And sometimes, the people who have those new and fresh ideas are the ones who are unable to finish them. A bitter truth.</p>
+  </div>
+</div>
+
+<div class="c-band indigo">
+  <div class="c-band-inner">
+    <div class="c-chapter-label">The Balance</div>
+    <p>But thankfully, there's this thing called balance that life tends to find a way to provide. For every person like me who loves a blank page, there's another person who hates it. For every person like me who loves to start ideas, there's another who loves to finish them. For every person like me who doesn't have the resources to complete everything I start, there's another person who does.</p>
+    <p>Neither one is better or worse, right or wrong — they're just different. Again, balance.</p>
+  </div>
+</div>
+
+<div class="c-pullquote-band"><p>Espalier bridges this divide.</p></div>
+
+<div class="c-band cream">
+  <div class="c-band-inner">
+    <div class="c-chapter-label">The Platform</div>
+    <p>We connect starters and finishers, ensuring each is uniquely compensated for their time, work, and creativity. We help bring ideas to life, reward creativity, and support those who dare to think differently — allowing them to monetize what they're great at, while simultaneously allowing people who are great at finishing things the same opportunity.</p>
+    <p>To do this, we've created a platform for starters and finishers, driven by custom AI models, algorithms, and real-world data — built to see an idea clearly: exactly what's been done, what it would take to finish, and what it's actually worth. Not a pitch. Not a guess. The real thing.</p>
+  </div>
+</div>
+
+<div class="c-band clay">
+  <div class="c-band-inner">
+    <div class="c-chapter-label">Today</div>
+    <p>Today, I'm still inspired. But tomorrow, if the energy runs out before the idea is finished, I don't have to watch it go quiet in a notes app. I can hand it to <span class="story-mark">someone who believes in what I've worked on so far</span> — and watch them build something I never could have on my own.</p>
+    <p>That's the whole idea, really. <span class="story-mark">The idea was never the hard part. Finishing it was.</span> So why keep asking one person to do both?</p>
+    <p><strong>If you're a starter, your finisher is out there. If you're a finisher, so is your next idea.</strong></p>
+    <p class="story-close-line">Let's go find each other.</p>
+  </div>
+</div>
+
 
 <footer class="site-footer">
   <div class="footer-top">
