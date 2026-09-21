@@ -721,8 +721,8 @@
     </div>
   </div>
 
-  <svg class="score-connector-svg" viewBox="0 0 1020 340" preserveAspectRatio="none">
-    <path d="M 164 198 L 164 255 Q 164 265 174 265 L 500 265 Q 510 265 510 275 L 510 292" fill="none" stroke="#565FAE" stroke-width="1.6" stroke-dasharray="4 5" stroke-linecap="round"/>
+  <svg class="score-connector-svg" id="scoreConnectorSvg">
+    <path id="scoreConnectorPath" fill="none" stroke="#565FAE" stroke-width="1.6" stroke-dasharray="4 5" stroke-linecap="round"/>
   </svg>
 
   <a class="trust-cta" href="how-scoring-works.html">How the Espalier Score actually works
@@ -1219,6 +1219,36 @@ if (activityInlineText) {
     }, 300);
   }, 4000);
 }
+
+/* ---------- score connector line (drawn dynamically so it's always exact, regardless
+   of card height / font rendering / viewport width — a hardcoded SVG path here was fragile) ---------- */
+function drawScoreConnector(){
+  const wrap = document.querySelector('.score-connector-wrap');
+  const svg = document.getElementById('scoreConnectorSvg');
+  const path = document.getElementById('scoreConnectorPath');
+  if (!wrap || !svg || !path) return;
+  if (window.innerWidth <= 820) { svg.style.display = 'none'; return; }
+  svg.style.display = 'block';
+
+  const wrapBox = wrap.getBoundingClientRect();
+  const card = wrap.querySelectorAll('.trust-card')[0];
+  const cta = wrap.querySelector('.trust-cta');
+  const cardBox = card.getBoundingClientRect();
+  const ctaBox = cta.getBoundingClientRect();
+
+  const gap = 12;
+  const startX = cardBox.left + cardBox.width / 2 - wrapBox.left;
+  const startY = cardBox.bottom - wrapBox.top + gap;
+  const endX = ctaBox.left + ctaBox.width / 2 - wrapBox.left;
+  const endY = ctaBox.top - wrapBox.top - gap;
+  const midY = startY + (endY - startY) * 0.55;
+
+  svg.style.width = wrapBox.width + 'px';
+  svg.style.height = wrapBox.height + 'px';
+  path.setAttribute('d', `M ${startX} ${startY} L ${startX} ${midY - 10} Q ${startX} ${midY} ${startX + 10} ${midY} L ${endX - 10} ${midY} Q ${endX} ${midY} ${endX} ${midY + 10} L ${endX} ${endY}`);
+}
+window.addEventListener('load', drawScoreConnector);
+window.addEventListener('resize', () => { clearTimeout(window._scoreConnectorResize); window._scoreConnectorResize = setTimeout(drawScoreConnector, 100); });
 
 /* ---------- newsletter signup ---------- */
 const newsletterForm = document.getElementById('newsletterForm');
