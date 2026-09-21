@@ -132,9 +132,12 @@
   .chart-control-group{display:flex; flex-direction:column; gap:6px;}
   .chart-control-group label{font-size:11px; font-weight:700; color:var(--dim); text-transform:uppercase; letter-spacing:.03em;}
   .chart-control-group select{font-family:var(--font-body); font-size:13.5px; color:var(--ink); background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:9px 12px; min-width:200px;}
-  .chart-control-group select[multiple]{min-width:280px; padding:6px;}
-  .chart-control-group select[multiple] option{padding:5px 8px; border-radius:6px;}
-  .chart-control-group select[multiple] optgroup{font-weight:700; font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:.03em;}
+  .metric-picker{max-height:190px; overflow-y:auto; border:1px solid var(--border); border-radius:10px; background:var(--bg); padding:8px 10px;}
+  .metric-picker-group{font-size:10.5px; font-weight:700; color:var(--dim); text-transform:uppercase; letter-spacing:.03em; margin:10px 0 3px; padding-top:6px; border-top:1px solid var(--border);}
+  .metric-picker-group:first-child{margin-top:0; padding-top:0; border-top:none;}
+  .metric-picker-item{display:flex; align-items:center; gap:8px; padding:5px 4px; border-radius:6px; font-size:13px; cursor:pointer; color:var(--ink);}
+  .metric-picker-item:hover{background:var(--surface);}
+  .metric-picker-item input{margin:0; flex-shrink:0;}
   .chart-generate-btn{font-family:var(--font-display); font-weight:700; font-size:13.5px; color:#fff; background:var(--coral); border:none; border-radius:10px; padding:10px 20px; cursor:pointer;}
   .chart-generate-btn:hover{background:color-mix(in srgb, var(--coral) 85%, black);}
   .chart-report-btn{display:inline-flex; align-items:center; gap:7px; font-family:var(--font-display); font-weight:700; font-size:12.5px; color:var(--ink-soft); background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:9px 16px; cursor:pointer; margin-top:16px;}
@@ -406,8 +409,8 @@
       <div class="chart-card" style="margin-bottom:24px;">
         <div class="chart-controls">
           <div class="chart-control-group" style="flex:1; min-width:260px;">
-            <label for="chartMetricSelect">Metric(s) — hold Cmd/Ctrl to pick several, overlaid</label>
-            <select id="chartMetricSelect" multiple size="6"></select>
+            <label>Metric(s) — check as many as you want to overlay</label>
+            <div class="metric-picker" id="chartMetricSelect"></div>
           </div>
           <div class="chart-control-group">
             <label for="chartMonthsSelect">Timeline</label>
@@ -1216,16 +1219,18 @@ async function setupConfigurableChart(){
       const res = await apiFetch('/api/admin/timeseries/metrics');
       if(res.ok){
         const { metrics } = await res.json();
-        const select = document.getElementById('chartMetricSelect');
+        const picker = document.getElementById('chartMetricSelect');
         const groups = {};
         metrics.forEach(m => { (groups[m.group] = groups[m.group] || []).push(m); });
-        select.innerHTML = Object.entries(groups).map(([group, items]) => `
-          <optgroup label="${group}">
-            ${items.map(m => `<option value="${m.key}">${m.label}${m.isApproximate ? ' (approx.)' : ''}</option>`).join('')}
-          </optgroup>
+        picker.innerHTML = Object.entries(groups).map(([group, items]) => `
+          <div class="metric-picker-group">${group}</div>
+          ${items.map(m => `
+            <label class="metric-picker-item">
+              <input type="checkbox" value="${m.key}" ${m.key === 'ideas_total' ? 'checked' : ''}>
+              ${m.label}${m.isApproximate ? ' (approx.)' : ''}
+            </label>
+          `).join('')}
         `).join('');
-        const defaultOpt = select.querySelector('option[value="ideas_total"]');
-        if(defaultOpt) defaultOpt.selected = true;
         chartMetricsLoaded = true;
       }
     } catch(e){ /* quiet — chart still works with whatever's selected once metrics load */ }
@@ -1244,8 +1249,8 @@ function monthLabel(m){
 }
 
 async function renderConfigurableChart(){
-  const select = document.getElementById('chartMetricSelect');
-  const selected = Array.from(select.selectedOptions).map(o => o.value);
+  const picker = document.getElementById('chartMetricSelect');
+  const selected = Array.from(picker.querySelectorAll('input:checked')).map(el => el.value);
   const monthsParam = document.getElementById('chartMonthsSelect').value;
   const monthsLabel = document.getElementById('chartMonthsSelect').selectedOptions[0].textContent.toLowerCase();
   const chartEl = document.getElementById('configurableChart');
