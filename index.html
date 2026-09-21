@@ -670,31 +670,31 @@
     <p class="lead">A few examples of what a listing looks like. Click a card for more info.</p>
   </div>
   <div class="preview-grid">
-    <div class="preview-card" data-idea="viridian">
-      <div class="preview-cover cover-viridian"><span class="preview-score">74</span></div>
+    <div class="preview-card" data-idea="amberhour">
+      <div class="preview-cover cover-amberhour"><span class="preview-score">68</span></div>
       <div class="preview-body">
-        <div class="preview-tags"><span class="preview-tag">App</span></div>
-        <h4>Viridian</h4>
-        <p>A plant-care app that reads your camera roll and tells you what's actually wrong with your fiddle-leaf fig.</p>
-        <div class="preview-meta"><span>60% built</span><span>Solid income</span></div>
+        <div class="preview-tags"><span class="preview-tag">Physical product</span></div>
+        <h4>Amber Hour</h4>
+        <p>A tabletop lamp that only turns on during real golden hour, wherever you are — timed off live sunset data, not a clock.</p>
+        <div class="preview-meta"><span>45% built</span><span>Side income</span></div>
       </div>
     </div>
-    <div class="preview-card" data-idea="plate">
-      <div class="preview-cover cover-plate"><span class="preview-score">58</span></div>
+    <div class="preview-card" data-idea="understudies">
+      <div class="preview-cover cover-understudies"><span class="preview-score">79</span></div>
       <div class="preview-body">
-        <div class="preview-tags"><span class="preview-tag">App</span><span class="preview-tag">Community</span></div>
-        <h4>Plate</h4>
-        <p>Snap a photo of your plate, get a short animated story of where each ingredient actually came from.</p>
-        <div class="preview-meta"><span>35% built</span><span>Side income</span></div>
-      </div>
-    </div>
-    <div class="preview-card" data-idea="wanderlist">
-      <div class="preview-cover cover-wanderlist"><span class="preview-score">81</span></div>
-      <div class="preview-body">
-        <div class="preview-tags"><span class="preview-tag">Website</span></div>
-        <h4>Wanderlist</h4>
-        <p>A shared, collaborative travel bucket-list — built for friend groups who keep saying "we should go there."</p>
+        <div class="preview-tags"><span class="preview-tag">Event</span><span class="preview-tag">Community</span></div>
+        <h4>The Understudies</h4>
+        <p>A live show where understudies — the actors who rehearse every part and never go on — finally get their one night as the lead.</p>
         <div class="preview-meta"><span>70% built</span><span>Big swing</span></div>
+      </div>
+    </div>
+    <div class="preview-card" data-idea="secondhandscore">
+      <div class="preview-cover cover-secondhandscore"><span class="preview-score">61</span></div>
+      <div class="preview-body">
+        <div class="preview-tags"><span class="preview-tag">Business</span></div>
+        <h4>Secondhand Score</h4>
+        <p>A service that researches the real history of a secondhand furniture piece — who owned it, where it's been — from a few photos and a maker's mark.</p>
+        <div class="preview-meta"><span>30% built</span><span>Solid income</span></div>
       </div>
     </div>
   </div>
@@ -1026,29 +1026,29 @@ filterDDs.forEach(dd=>{
 const fileIcon = '<svg viewBox="0 0 24 24" fill="none"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9l-5-6Z" stroke="currentColor" stroke-width="1.6"/><path d="M14 3v5h5" stroke="currentColor" stroke-width="1.6"/></svg>';
 
 const SAMPLE_IDEAS = {
-  viridian: {
-    title: 'Viridian', score: 74, type: 'App', attribution: 'Wants credit', cover: 'cover-viridian',
-    hook: 'A plant-care app that reads your camera roll and tells you what\'s actually wrong with your fiddle-leaf fig.',
-    desc: 'Started after watching my grandmother\'s garden decline once she could no longer keep up with it — I wanted something that could do what she used to do by instinct: look at a plant and just know what it needed. Viridian scans photos already on your phone, cross-references them against a growing disease and deficiency model, and tells you exactly what\'s wrong and what to do about it. No new habit required — it works with photos you\'d take anyway.',
-    progress: '60% built', time: 'A few months to finish', profit: 'Solid income', originality: '3 similar plant-ID apps found — none combine passive camera-roll scanning with a trained deficiency model the way this does.',
-    whyScored: 'Readiness and file-check both came in strong: the working iOS build and the partially-trained detection model matched what the creator described almost exactly, with no gap between claimed and actual progress. Cost to finish is moderate, which is what\'s holding the score under 80 rather than anything about the idea itself.',
-    files: ['Figma prototype — 14 screens', 'Working iOS build (TestFlight)', 'Plant-deficiency detection model — partially trained, 68% accuracy', '23 user interview notes', 'Grandmother\'s garden journal (scanned, used as reference)']
+  amberhour: {
+    title: 'Amber Hour', score: 68, type: 'Physical product', attribution: 'Wants credit', cover: 'cover-amberhour',
+    hook: 'A tabletop lamp that only turns on during real golden hour, wherever you are — timed off live sunset data, not a clock.',
+    desc: 'Grew up chasing golden hour with my dad\'s camera and always felt cheated on cloudy days when it just never came. Amber Hour is a tabletop lamp that pulls your location\'s real sunset data and glows through that exact light for twenty minutes, rain or shine. It\'s not a mood light on a timer — the color and intensity actually track where the sun really is that day.',
+    progress: '45% built', time: 'A few months to finish', profit: 'Side income', originality: 'A handful of "sunset lamps" exist, but all run on a fixed daily timer — none pull live geolocated solar data the way this does.',
+    whyScored: 'The file check matched the claim closely — a working prototype video and a real firmware repo back up the 45% figure almost exactly. Cost to finish (tooling for a production enclosure) is the main thing keeping this out of the 70s.',
+    files: ['Arduino firmware repository', 'CAD files for the lamp enclosure', 'Prototype demo video (synced to real sunset)', 'LED diffusion panel supplier quotes', 'Patent search notes']
   },
-  plate: {
-    title: 'Plate', score: 58, type: 'App', attribution: 'No attribution needed', cover: 'cover-plate',
-    hook: 'Snap a photo of your plate, get a short animated story of where each ingredient actually came from.',
-    desc: 'My family emigrated when I was young, and food was always the thing that kept us connected to where we came from. Plate is built around that same feeling — point your camera at a meal and get a short, lyrical animated story tracing where each ingredient actually originated, grown from real sourcing data rather than a generic AI guess. The goal was never nutrition tracking — it\'s making people feel something about what\'s in front of them.',
-    progress: '35% built', time: 'A few months to finish', profit: 'Side income', originality: 'No directly comparable apps found — this angle (origin storytelling rather than nutrition tracking) appears to be genuinely uncommon.',
-    whyScored: 'The file-check came back a little under what was initially claimed — the app shell and sourcing research are real, but less of the actual product was built than the creator first described, which is what\'s holding this score in the high-50s rather than higher. That\'s exactly what this check exists to catch, in either direction.',
-    files: ['React Native app shell (unfinished)', '3 demo videos of the animated-story concept', 'Ingredient-sourcing research doc', 'Outreach list — 12 local farms contacted', 'Sample origin-story scripts, written manually before automating']
+  understudies: {
+    title: 'The Understudies', score: 79, type: 'Event', attribution: 'Wants credit + a producer credit on future runs', cover: 'cover-understudies',
+    hook: 'A live show where understudies — the actors who rehearse every part and never go on — finally get their one night as the lead.',
+    desc: 'I ran the book backstage at a community theater for six years and watched understudies nail every rehearsal knowing they\'d probably never perform. The Understudies is a one-night ticketed show built entirely around them — same scripts, same sets, but the understudy takes the lead while the audience is told exactly who they usually stand in for. The first pilot sold out.',
+    progress: '70% built', time: 'A weekend to a few weeks to finish', profit: 'Big swing', originality: 'Nothing comparable found — existing "understudy" content is documentary-style, not a ticketed performance built around them.',
+    whyScored: 'The files showed more traction than the pitch let on — a genuinely sold-out 140-seat pilot and signed venue contracts are further along than most listings at this stage, which is what pushed the score into the high 70s.',
+    files: ['Pilot show recap deck with photos', 'Venue contract from the sold-out pilot run', 'Ticket sales data (140/140 sold)', 'Rough multi-city licensing outline', 'Interview clips with pilot understudies']
   },
-  wanderlist: {
-    title: 'Wanderlist', score: 81, type: 'Website', attribution: 'Wants credit + an ongoing advisor role', cover: 'cover-wanderlist',
-    hook: 'A shared, collaborative travel bucket-list — built for friend groups who keep saying "we should go there."',
-    desc: 'Every friend group has that running list of places they keep promising to go and never do. Wanderlist turns that into something real — a shared board any group can add to, vote on, and actually plan around, with the social pressure of everyone seeing the list built in on purpose. It\'s close to launch: a live beta is already running with a genuine waitlist.',
-    progress: '70% built', time: 'A weekend to a few weeks to finish', profit: 'Big swing', originality: 'Several travel-planning apps exist in this space — Wanderlist\'s differentiation is the friend-group social mechanic, which none of the comparable products lean into directly.',
-    whyScored: 'This is the rare case where the files showed more progress than the creator claimed — the live MVP and the 127-signup waitlist are further along than the listing initially described, which is what pushed the score up rather than down. Combined with genuine profit potential, this is currently one of the strongest listings on the platform.',
-    files: ['Full Figma design system', 'Working live web MVP (public beta link)', 'Beta waitlist export — 127 signups', 'Investor pitch deck (never sent)', 'Competitive research on similar travel-planning products']
+  secondhandscore: {
+    title: 'Secondhand Score', score: 61, type: 'Business', attribution: 'No attribution needed', cover: 'cover-secondhandscore',
+    hook: 'A service that researches the real history of a secondhand furniture piece — who owned it, where it\'s been — from a few photos and a maker\'s mark.',
+    desc: 'I bought a mid-century dresser at an estate sale and spent three weeks obsessively tracing its maker\'s mark and prior owners just because I wanted to know. Secondhand Score turns that obsession into a product: send a few photos and any markings, and get back a short written provenance report — not an appraisal, just the story most people would love to have but won\'t dig for themselves.',
+    progress: '30% built', time: 'A few months to finish', profit: 'Solid income', originality: 'No directly comparable service found — appraisers value furniture, but nobody\'s selling its researched history as a standalone keepsake.',
+    whyScored: 'Readiness is genuinely early — the research pipeline is manual and the reports are hand-written, matching what was claimed. The score reflects real signal in the six sample reports and pricing tests, not an inflated pitch.',
+    files: ['Six sample provenance reports', 'Maker\'s-mark reference spreadsheet', 'Customer interview notes', 'Initial pricing test results', 'Mockup of the printed report design']
   }
 };
 
