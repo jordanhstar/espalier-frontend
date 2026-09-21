@@ -158,5 +158,187 @@
   </div>
 </footer>
 
+<style>
+  #spauldingWidget{position:fixed; bottom:22px; right:22px; z-index:999; font-family:var(--font-body,'Manrope',system-ui,sans-serif);}
+  #spauldingBubble{width:58px; height:58px; border-radius:50%; background:linear-gradient(135deg, var(--lA,#C4875A), var(--rA,#565FAE)); border:none; box-shadow:0 8px 24px rgba(0,0,0,.25); cursor:pointer; display:flex; align-items:center; justify-content:center; color:#fff; transition:transform .2s ease;}
+  #spauldingBubble:hover{transform:scale(1.06);}
+  #spauldingBubble svg{width:25px; height:25px;}
+  #spauldingBubble .sb-close-icon{display:none;}
+  #spauldingWidget.open #spauldingBubble .sb-chat-icon{display:none;}
+  #spauldingWidget.open #spauldingBubble .sb-close-icon{display:block;}
+  .spaulding-panel{position:absolute; bottom:72px; right:0; width:360px; max-width:calc(100vw - 28px); height:500px; max-height:70vh; background:#fff; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,.28); display:flex; flex-direction:column; overflow:hidden; opacity:0; pointer-events:none; transform:translateY(12px) scale(.98); transition:opacity .18s ease, transform .18s ease;}
+  #spauldingWidget.open .spaulding-panel{opacity:1; pointer-events:auto; transform:translateY(0) scale(1);}
+  .spaulding-header{display:flex; align-items:center; gap:11px; padding:16px 18px; background:linear-gradient(135deg, var(--lA,#C4875A), var(--rA,#565FAE)); color:#fff; flex-shrink:0;}
+  .spaulding-avatar{width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,.22); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0;}
+  .spaulding-header-text{flex:1; min-width:0;}
+  .spaulding-name{font-family:var(--font-display,'Sora',system-ui,sans-serif); font-weight:800; font-size:14.5px; line-height:1.3;}
+  .spaulding-status{font-size:11px; opacity:.85; display:flex; align-items:center; gap:5px;}
+  .spaulding-status::before{content:""; width:6px; height:6px; border-radius:50%; background:#6FE08A; display:inline-block;}
+  #spauldingCloseBtn{background:none; border:none; color:#fff; opacity:.85; cursor:pointer; padding:4px; line-height:1; flex-shrink:0;}
+  #spauldingCloseBtn:hover{opacity:1;}
+  #spauldingCloseBtn svg{width:16px; height:16px;}
+  .spaulding-messages{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:9px; background:#F9F9F6;}
+  .spaulding-msg{max-width:84%; font-size:13.5px; line-height:1.55; padding:10px 14px; border-radius:14px; white-space:pre-wrap;}
+  .spaulding-msg.bot{align-self:flex-start; background:#fff; border:1px solid #E4E1D6; color:#15181D; border-bottom-left-radius:4px;}
+  .spaulding-msg.user{align-self:flex-end; background:var(--rA,#565FAE); color:#fff; border-bottom-right-radius:4px;}
+  .spaulding-typing{align-self:flex-start; display:flex; gap:4px; padding:12px 14px; background:#fff; border:1px solid #E4E1D6; border-radius:14px; border-bottom-left-radius:4px;}
+  .spaulding-typing span{width:6px; height:6px; border-radius:50%; background:#9AA0A6; animation:spauldingBlink 1.2s infinite ease-in-out;}
+  .spaulding-typing span:nth-child(2){animation-delay:.2s;}
+  .spaulding-typing span:nth-child(3){animation-delay:.4s;}
+  @keyframes spauldingBlink{0%,80%,100%{opacity:.3;} 40%{opacity:1;}}
+  .spaulding-suggestions{display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 12px; background:#F9F9F6;}
+  .spaulding-suggestion{font-size:11.5px; font-weight:600; color:var(--rA,#565FAE); background:#fff; border:1px solid #E4E1D6; border-radius:100px; padding:6px 12px; cursor:pointer;}
+  .spaulding-suggestion:hover{border-color:var(--rA,#565FAE);}
+  .spaulding-input-row{display:flex; gap:8px; padding:12px; border-top:1px solid #E4E1D6; background:#fff; flex-shrink:0;}
+  .spaulding-input-row input{flex:1; border:1px solid #E4E1D6; border-radius:100px; padding:10px 16px; font-size:13.5px; font-family:inherit; outline:none; min-width:0;}
+  .spaulding-input-row input:focus{border-color:var(--rA,#565FAE);}
+  .spaulding-input-row button{width:37px; height:37px; border-radius:50%; background:var(--rA,#565FAE); border:none; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .spaulding-input-row button svg{width:15px; height:15px;}
+  @media (max-width:480px){ .spaulding-panel{width:calc(100vw - 28px); height:64vh;} }
+</style>
+
+<div id="spauldingWidget">
+  <div class="spaulding-panel" id="spauldingPanel">
+    <div class="spaulding-header">
+      <div class="spaulding-avatar">🌱</div>
+      <div class="spaulding-header-text">
+        <div class="spaulding-name">Spaulding</div>
+        <div class="spaulding-status">Ask me about Espalier</div>
+      </div>
+      <button id="spauldingCloseBtn" aria-label="Close chat">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="spaulding-messages" id="spauldingMessages">
+      <div class="spaulding-msg bot">Hey, I'm Spaulding 👋 Ask me anything about how Espalier works, pricing, trust &amp; safety, or getting started.</div>
+    </div>
+    <div class="spaulding-suggestions" id="spauldingSuggestions">
+      <button type="button" class="spaulding-suggestion">How does it work?</button>
+      <button type="button" class="spaulding-suggestion">Is it free?</button>
+      <button type="button" class="spaulding-suggestion">Is my idea safe?</button>
+    </div>
+    <form class="spaulding-input-row" id="spauldingForm">
+      <input type="text" id="spauldingInput" placeholder="Ask a question…" autocomplete="off" maxlength="300">
+      <button type="submit" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </form>
+  </div>
+  <button id="spauldingBubble" aria-label="Chat with Spaulding">
+    <svg class="sb-chat-icon" viewBox="0 0 24 24" fill="none"><path d="M4 18.5V6.5C4 5.4 4.9 4.5 6 4.5H18C19.1 4.5 20 5.4 20 6.5V15C20 16.1 19.1 17 18 17H8L4 20.5V18.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+    <svg class="sb-close-icon" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+</div>
+
+<script>
+(function(){
+  var widget = document.getElementById('spauldingWidget');
+  var bubble = document.getElementById('spauldingBubble');
+  var closeBtn = document.getElementById('spauldingCloseBtn');
+  var form = document.getElementById('spauldingForm');
+  var input = document.getElementById('spauldingInput');
+  var messages = document.getElementById('spauldingMessages');
+  var suggestions = document.getElementById('spauldingSuggestions');
+  var opened = false;
+
+  function toggle(){
+    opened = !opened;
+    widget.classList.toggle('open', opened);
+    if(opened) setTimeout(function(){ input.focus(); }, 150);
+  }
+  bubble.addEventListener('click', toggle);
+  closeBtn.addEventListener('click', toggle);
+
+  function addMessage(text, who){
+    var div = document.createElement('div');
+    div.className = 'spaulding-msg ' + who;
+    div.textContent = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  /* ---------------------------------------------------------------------
+     Spaulding is a fixed-response assistant, not a live generative model:
+     every possible reply is one of the strings below, chosen by keyword
+     match. That's deliberate — it guarantees he can never go off-script,
+     say anything negative about Espalier, or leak anything we haven't
+     explicitly written here, no matter what someone types at him.
+     TODO(Jordan): if you want him to handle truly open-ended questions,
+     that needs a real backend LLM call with a locked-down system prompt —
+     happy to build that next when you're ready.
+  --------------------------------------------------------------------- */
+  var RESPONSES = {
+    greeting: "Hey there! I'm Spaulding \uD83D\uDC4B Ask me anything about how Espalier works, pricing, or getting started.",
+    thanks: "Anytime! Let me know if anything else comes up.",
+    bye: "Good luck out there \u2014 hope you find (or finish) something great. \uD83C\uDF31",
+    about: "Espalier is a marketplace where people who start creative or entrepreneurial ideas \u2014 but don't finish them \u2014 hand them off to someone who will. Starters list unfinished work; finishers browse, claim, and bring it to life.",
+    how: "Starters describe their idea and share what they've built so far. Our AI scores it on readiness, cost to finish, and profit potential. Finishers browse listings, message starters they're interested in, and agree on terms together \u2014 cash, a revenue share, or both. The How It Works section on the homepage has the full breakdown.",
+    pricing: "Browsing and listing are both free. Espalier only takes a share once a deal actually closes \u2014 see the pricing page for exact numbers.",
+    trust: "Every idea is timestamped the moment it's listed, and the real files stay private until a finisher is serious enough to commit to a conversation. Both starters and finishers also build a visible track record over time. The \u201cYou can trust us\u201d section on the homepage has the full list.",
+    score: "The Espalier Score comes from our own AI models, checking real signals like readiness, cost to finish, and profit potential \u2014 not just how good the pitch sounds. It also checks that what's claimed matches what's actually been built.",
+    signup: "Just hit \u201cSign up\u201d in the top right! You can join as a starter, a finisher, or both \u2014 your account isn't locked to one role.",
+    contact: "I can answer quick questions right here, but the FAQ page has a lot more detail, and you can reach out directly once you're signed in.",
+    deflect: "That's not something I can really speak to \u2014 but I'm happy to walk you through how Espalier works, what it costs, or how to get started if any of that's helpful!",
+    fallback: "I don't have a great answer for that one yet \u2014 but the FAQ page covers a lot of ground, or feel free to ask me something else!"
+  };
+
+  function esc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  function hasExact(m){
+    var words = Array.prototype.slice.call(arguments, 1);
+    return words.some(function(w){ return new RegExp('\\b' + esc(w) + '\\b').test(m); });
+  }
+  function hasPrefix(m){
+    var words = Array.prototype.slice.call(arguments, 1);
+    return words.some(function(w){ return new RegExp('\\b' + esc(w)).test(m); });
+  }
+
+  function getResponse(raw){
+    var m = raw.toLowerCase();
+    if (hasPrefix(m,'fuck','shit','scam','stupid','worst','hate','suck','terribl','fraud','illegal','fund','invest','profit margin','valuat','salar','confidential','api key','password','source code','employee','who owns','ceo make','how much money') || hasExact(m,'sue','sued','suing','lawsuit','revenue')) return RESPONSES.deflect;
+    if (hasExact(m,'hi','hey','hello','yo','sup','howdy')) return RESPONSES.greeting;
+    if (hasPrefix(m,'thank') || hasExact(m,'thx')) return RESPONSES.thanks;
+    if (hasExact(m,'bye','goodbye','later') || hasPrefix(m,'see ya')) return RESPONSES.bye;
+    if (hasPrefix(m,'what is espalier','what does espalier','what is this platform','what is this site','explain espalier') || hasExact(m,'what is this')) return RESPONSES.about;
+    if (hasPrefix(m,'how does it work','how it works','how do i list','how do i start','how do i finish','how does espalier work')) return RESPONSES.how;
+    if (hasPrefix(m,'pricing','charg') || hasExact(m,'free','fee','price','cost','costs')) return RESPONSES.pricing;
+    if (hasPrefix(m,'safe','secur','protect','legit','verif') || hasExact(m,'trust')) return RESPONSES.trust;
+    if (hasPrefix(m,'score')) return RESPONSES.score;
+    if (hasPrefix(m,'signup','sign up','get started','join') || hasExact(m,'login','log in')) return RESPONSES.signup;
+    if (hasPrefix(m,'contact','support','human') || hasExact(m,'help','email')) return RESPONSES.contact;
+    return RESPONSES.fallback;
+  }
+
+  function respondTo(val){
+    addMessage(val, 'user');
+    if(suggestions) suggestions.style.display = 'none';
+    var typing = document.createElement('div');
+    typing.className = 'spaulding-typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    messages.appendChild(typing);
+    messages.scrollTop = messages.scrollHeight;
+    setTimeout(function(){
+      typing.remove();
+      addMessage(getResponse(val), 'bot');
+    }, 500 + Math.random() * 400);
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var val = input.value.trim();
+    if(!val) return;
+    input.value = '';
+    respondTo(val);
+  });
+
+  if (suggestions) {
+    suggestions.querySelectorAll('.spaulding-suggestion').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        respondTo(btn.textContent);
+      });
+    });
+  }
+})();
+</script>
+
 </body>
 </html>
