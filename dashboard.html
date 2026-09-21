@@ -109,6 +109,25 @@
   .im-modnote-body > div{margin-bottom:4px;}
 
   .admin-review-card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin-bottom:14px;}
+  .admin-section-h{font-family:var(--font-display); font-weight:700; font-size:15px; margin:32px 0 2px;}
+  .admin-two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:8px;}
+  @media (max-width:700px){ .admin-two-col{grid-template-columns:1fr;} }
+  .admin-panel{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px;}
+  .admin-panel-h{font-family:var(--font-display); font-weight:700; font-size:13.5px; margin:0 0 14px; color:var(--ink-soft);}
+  .admin-type-row{display:flex; align-items:center; justify-content:space-between; font-size:13px; padding:7px 0; border-bottom:1px solid var(--border); }
+  .admin-type-row:last-child{border-bottom:none;}
+  .admin-type-row .count{font-weight:700; color:var(--ink);}
+  .admin-money-row{display:flex; align-items:baseline; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px;}
+  .admin-money-row:last-child{border-bottom:none;}
+  .admin-money-row .amt{font-family:var(--font-display); font-weight:800; font-size:17px; color:var(--ink);}
+  .admin-money-note{font-size:11px; color:var(--dim); margin-top:10px; line-height:1.5;}
+  .admin-list-card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 20px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;}
+  .admin-list-main{font-size:13.5px;}
+  .admin-list-main .t{font-weight:700; color:var(--ink);}
+  .admin-list-main .s{color:var(--dim); font-size:12.5px; margin-top:2px;}
+  .admin-list-side{font-size:12px; color:var(--dim); text-align:right; white-space:nowrap;}
+  .admin-list-side .fee{font-family:var(--font-display); font-weight:800; color:var(--teal); font-size:13.5px; display:block; margin-bottom:2px;}
+  .admin-empty{color:var(--dim); font-size:13px; padding:4px 0 8px;}
   .arc-title{font-family:var(--font-display); font-weight:700; font-size:15px;}
   .arc-sub{font-size:11.5px; color:var(--dim); margin-top:2px;}
   .arc-hook{font-size:13px; font-weight:600; margin:12px 0 6px;}
@@ -265,7 +284,7 @@
     <button class="nav-item" data-view="promote"><span class="ic">🚀</span> Promote</button>
     <button class="nav-item" data-view="earnings"><span class="ic">💰</span> Earnings</button>
     <button class="nav-item" data-view="followers"><span class="ic">👥</span> Followers</button>
-    <button class="nav-item" data-view="admin" id="navAdminItem" style="display:none;"><span class="ic">🛡️</span> Review queue <span class="nav-badge" id="navAdminBadge"></span></button>
+    <button class="nav-item" data-view="admin" id="navAdminItem" style="display:none;"><span class="ic">🛡️</span> Admin <span class="nav-badge" id="navAdminBadge"></span></button>
 
     <div class="sidebar-footer">
       <div class="sync-note" style="margin-bottom:10px;"><span class="sync-dot" id="syncDot"></span><span id="syncText">Connecting…</span></div>
@@ -344,8 +363,33 @@
     </div>
 
     <div class="view" id="view-admin">
-      <h2 class="section-h">Review queue</h2>
-      <p class="section-sub">Ideas that were denied and appealed for a second look — only you can see this.</p>
+      <div class="stat-grid" id="adminStatsGrid"></div>
+
+      <div class="admin-two-col" id="adminTwoCol">
+        <div class="admin-panel">
+          <h3 class="admin-panel-h">Ideas by type</h3>
+          <div id="adminTypesList"></div>
+        </div>
+        <div class="admin-panel">
+          <h3 class="admin-panel-h">Deal money (estimated)</h3>
+          <div id="adminMoneyPanel"></div>
+        </div>
+      </div>
+
+      <h3 class="admin-section-h">Conversations in progress</h3>
+      <p class="section-sub">Pending deal and consulting requests, across everyone.</p>
+      <div id="adminConversationsList"></div>
+
+      <h3 class="admin-section-h">Deals in progress</h3>
+      <p class="section-sub">Accepted deals whose idea hasn't been marked complete yet.</p>
+      <div id="adminDealsList"></div>
+
+      <h3 class="admin-section-h">Not published</h3>
+      <p class="section-sub">Ideas that were submitted but denied at moderation — never went live.</p>
+      <div id="adminNotPublishedList"></div>
+
+      <h3 class="admin-section-h">Waiting on your review</h3>
+      <p class="section-sub">Ideas that were denied and appealed for a second look.</p>
       <div id="adminReviewList"></div>
     </div>
   </div>
@@ -1021,7 +1065,92 @@ async function loadAdminQueueIfAdmin(){
     document.getElementById('navAdminItem').style.display = 'flex';
     document.getElementById('navAdminBadge').textContent = data.ideas.length || '';
     renderAdminQueue(data.ideas);
+    loadAdminOverview();
   } catch(e){ /* quiet — admin queue is a bonus view, never blocks the rest of the dashboard */ }
+}
+
+async function loadAdminOverview(){
+  try {
+    const res = await apiFetch('/api/admin/overview');
+    if(!res.ok) return;
+    const data = await res.json();
+    renderAdminStats(data);
+    renderAdminTypes(data.ideas.byType);
+    renderAdminMoney(data.deals);
+    renderAdminConversations(data.conversations.pending);
+    renderAdminDeals(data.deals.inProgress);
+    renderAdminNotPublished(data.ideas.notPublished);
+  } catch(e){ /* quiet — same as the review queue above */ }
+}
+
+function renderAdminStats(data){
+  const el = document.getElementById('adminStatsGrid');
+  const i = data.ideas, p = data.people, d = data.deals;
+  el.innerHTML = `
+    <div class="stat-card"><div class="label">Total ideas</div><div class="value">${i.total}</div><div class="delta flat">${i.byStatus.active||0} active · ${i.byStatus.claimed||0} claimed · ${i.byStatus.completed||0} completed</div></div>
+    <div class="stat-card"><div class="label">Needing review</div><div class="value">${i.reviewQueueCount}</div><div class="delta flat">appealed after a denial</div></div>
+    <div class="stat-card"><div class="label">Not published</div><div class="value">${i.notPublishedCount}</div><div class="delta flat">denied at moderation</div></div>
+    <div class="stat-card"><div class="label">Active starters</div><div class="value">${p.activeStarters}</div><div class="delta flat">have a live idea listed</div></div>
+    <div class="stat-card"><div class="label">Active finishers</div><div class="value">${p.activeFinishers}</div><div class="delta flat">sent a deal or claimed an idea</div></div>
+    <div class="stat-card"><div class="label">Deals in progress</div><div class="value">${d.inProgressCount}</div><div class="delta flat">accepted, not yet completed</div></div>
+  `;
+}
+
+function renderAdminTypes(byType){
+  const el = document.getElementById('adminTypesList');
+  const entries = Object.entries(byType).sort((a,b) => b[1]-a[1]);
+  if(!entries.length){ el.innerHTML = '<p class="admin-empty">No ideas yet.</p>'; return; }
+  el.innerHTML = entries.map(([type,count]) => `<div class="admin-type-row"><span>${type}</span><span class="count">${count}</span></div>`).join('');
+}
+
+function renderAdminMoney(d){
+  const el = document.getElementById('adminMoneyPanel');
+  el.innerHTML = `
+    <div class="admin-money-row"><span>Potential fee — deals in progress</span><span class="amt">$${d.potentialFeeInProgress.toLocaleString()}</span></div>
+    <div class="admin-money-row"><span>Completed deals</span><span class="amt">${d.completedCount}</span></div>
+    <div class="admin-money-row"><span>Total paid out to starters</span><span class="amt">$${d.totalPaidOut.toLocaleString()}</span></div>
+    <div class="admin-money-row"><span>Realized fee estimate</span><span class="amt">$${d.realizedFeeEstimate.toLocaleString()}</span></div>
+    <p class="admin-money-note">All fee figures assume a placeholder ${Math.round(d.assumedFeePct*100)}% platform fee — swap this once real pricing is set. In-progress figures use each idea's self-reported profit range since deals don't carry a locked dollar amount until they're completed.</p>
+  `;
+}
+
+function renderAdminConversations(list){
+  const el = document.getElementById('adminConversationsList');
+  if(!list.length){ el.innerHTML = '<p class="admin-empty">Nothing pending right now.</p>'; return; }
+  el.innerHTML = list.map(r => `
+    <div class="admin-list-card">
+      <div class="admin-list-main">
+        <div class="t">${r.kind === 'deal' ? '💼' : '💬'} ${r.ideaTitle || 'Consulting request'}</div>
+        <div class="s">${r.fromName} (${r.fromEmail}) → ${r.toName} (${r.toEmail})</div>
+      </div>
+      <div class="admin-list-side">${timeAgo(r.createdAt)}</div>
+    </div>
+  `).join('');
+}
+
+function renderAdminDeals(list){
+  const el = document.getElementById('adminDealsList');
+  if(!list.length){ el.innerHTML = '<p class="admin-empty">No deals in progress right now.</p>'; return; }
+  el.innerHTML = list.map(d => `
+    <div class="admin-list-card">
+      <div class="admin-list-main">
+        <div class="t">${d.ideaTitle}</div>
+        <div class="s">${d.starterName} → ${d.finisherName} · $${d.profitMin.toLocaleString()}–$${d.profitMax.toLocaleString()} range</div>
+      </div>
+      <div class="admin-list-side"><span class="fee">~$${d.estimatedFee.toLocaleString()}</span>${timeAgo(d.createdAt)}</div>
+    </div>
+  `).join('');
+}
+
+function renderAdminNotPublished(list){
+  const el = document.getElementById('adminNotPublishedList');
+  if(!list.length){ el.innerHTML = '<p class="admin-empty">Nothing denied recently.</p>'; return; }
+  el.innerHTML = list.map(i => `
+    <div class="admin-list-card">
+      <div class="admin-list-main"><div class="t">${i.title}</div><div class="s">${i.type}</div></div>
+      <div class="admin-list-side">${timeAgo(i.createdAt)}</div>
+    </div>
+  `).join('');
 }
 
 function renderAdminQueue(list){
@@ -1235,7 +1364,7 @@ document.querySelectorAll('.nav-item[data-view]').forEach(item=>{
       promote: ['Promote', 'Put your ideas in front of more buyers'],
       earnings: ['Earnings', "What you've made, and what's still possible"],
       followers: ['Followers', 'People notified when you list something new'],
-      admin: ['Review queue', 'Ideas waiting on a second look'],
+      admin: ['Admin', 'Everything going on at Espalier — only you can see this'],
     };
     const t = titles[item.dataset.view];
     document.getElementById('topTitle').textContent = t[0];
