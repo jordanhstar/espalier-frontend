@@ -132,6 +132,9 @@
   .chart-control-group{display:flex; flex-direction:column; gap:6px;}
   .chart-control-group label{font-size:11px; font-weight:700; color:var(--dim); text-transform:uppercase; letter-spacing:.03em;}
   .chart-control-group select{font-family:var(--font-body); font-size:13.5px; color:var(--ink); background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:9px 12px; min-width:200px;}
+  .chart-control-group select[multiple]{min-width:280px; padding:6px;}
+  .chart-control-group select[multiple] option{padding:5px 8px; border-radius:6px;}
+  .chart-control-group select[multiple] optgroup{font-weight:700; font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:.03em;}
   .chart-generate-btn{font-family:var(--font-display); font-weight:700; font-size:13.5px; color:#fff; background:var(--coral); border:none; border-radius:10px; padding:10px 20px; cursor:pointer;}
   .chart-generate-btn:hover{background:color-mix(in srgb, var(--coral) 85%, black);}
   .chart-report-btn{display:inline-flex; align-items:center; gap:7px; font-family:var(--font-display); font-weight:700; font-size:12.5px; color:var(--ink-soft); background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:9px 16px; cursor:pointer; margin-top:16px;}
@@ -402,22 +405,9 @@
 
       <div class="chart-card" style="margin-bottom:24px;">
         <div class="chart-controls">
-          <div class="chart-control-group">
-            <label for="chartMetricSelect">Metric</label>
-            <select id="chartMetricSelect">
-              <option value="members">New members</option>
-              <option value="ideas_total" selected>Ideas listed — all types</option>
-              <option value="ideas_App">Ideas listed — App</option>
-              <option value="ideas_Website">Ideas listed — Website</option>
-              <option value="ideas_Business">Ideas listed — Business</option>
-              <option value="ideas_Event">Ideas listed — Event</option>
-              <option value="ideas_Written">Ideas listed — Written</option>
-              <option value="ideas_Other">Ideas listed — Other</option>
-              <option value="deals_proposed">Deals proposed</option>
-              <option value="deals_accepted">Deals accepted</option>
-              <option value="deals_declined">Deals declined</option>
-              <option value="deals_completed">Deals completed (approximate)</option>
-            </select>
+          <div class="chart-control-group" style="flex:1; min-width:260px;">
+            <label for="chartMetricSelect">Metric(s) — hold Cmd/Ctrl to pick several, overlaid</label>
+            <select id="chartMetricSelect" multiple size="6"></select>
           </div>
           <div class="chart-control-group">
             <label for="chartMonthsSelect">Timeline</label>
@@ -430,9 +420,9 @@
           </div>
           <button type="button" class="chart-generate-btn" id="chartGenerateBtn">Generate</button>
         </div>
-        <h3 id="chartTitle" style="font-family:var(--font-display); font-size:14.5px; margin:18px 0 0;">Ideas listed — all types, last 6 months</h3>
-        <div class="bars" id="configurableChart" style="height:160px;"></div>
-        <p class="admin-money-note" id="chartApproxNote" style="display:none;">This metric is approximate — see the note on the timeline endpoint.</p>
+        <h3 id="chartTitle" style="font-family:var(--font-display); font-size:14.5px; margin:18px 0 0;">Ideas listed, all types — last 6 months</h3>
+        <div id="configurableChart" style="margin-top:12px;"></div>
+        <div id="chartLegend" style="display:flex; flex-wrap:wrap; gap:14px; margin-top:6px; font-size:11.5px; color:var(--dim);"></div>
         <button type="button" class="chart-report-btn" id="chartReportBtn">⬇ Generate report (CSV)</button>
       </div>
 
@@ -1216,47 +1206,114 @@ function renderLeaderboard(elId, list, statsFn){
 }
 
 let currentChartData = null;
+const CHART_COLORS = ['#FF5A3C', '#1F8A70', '#C97F1E', '#3E6FF0', '#E0517E', '#6E52B5', '#0EA5A5', '#B45309'];
+let chartMetricsLoaded = false;
 
-function setupConfigurableChart(){
+async function setupConfigurableChart(){
   const btn = document.getElementById('chartGenerateBtn');
-  const reportBtn = document.getElementById('chartReportBtn');
-  if(btn.dataset.wired) { renderConfigurableChart(); return; }
-  btn.dataset.wired = '1';
-  btn.addEventListener('click', renderConfigurableChart);
-  reportBtn.addEventListener('click', downloadChartCSV);
+  if(!chartMetricsLoaded){
+    try {
+      const res = await apiFetch('/api/admin/timeseries/metrics');
+      if(res.ok){
+        const { metrics } = await res.json();
+        const select = document.getElementById('chartMetricSelect');
+        const groups = {};
+        metrics.forEach(m => { (groups[m.group] = groups[m.group] || []).push(m); });
+        select.innerHTML = Object.entries(groups).map(([group, items]) => `
+          <optgroup label="${group}">
+            ${items.map(m => `<option value="${m.key}">${m.label}${m.isApproximate ? ' (approx.)' : ''}</option>`).join('')}
+          </optgroup>
+        `).join('');
+        const defaultOpt = select.querySelector('option[value="ideas_total"]');
+        if(defaultOpt) defaultOpt.selected = true;
+        chartMetricsLoaded = true;
+      }
+    } catch(e){ /* quiet — chart still works with whatever's selected once metrics load */ }
+  }
+  if(!btn.dataset.wired){
+    btn.dataset.wired = '1';
+    btn.addEventListener('click', renderConfigurableChart);
+    document.getElementById('chartReportBtn').addEventListener('click', downloadChartCSV);
+  }
   renderConfigurableChart();
 }
 
+function monthLabel(m){
+  const [y, mo] = m.split('-');
+  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(mo,10)-1];
+}
+
 async function renderConfigurableChart(){
-  const metric = document.getElementById('chartMetricSelect').value;
-  const months = document.getElementById('chartMonthsSelect').value;
-  const metricLabel = document.getElementById('chartMetricSelect').selectedOptions[0].textContent;
+  const select = document.getElementById('chartMetricSelect');
+  const selected = Array.from(select.selectedOptions).map(o => o.value);
+  const monthsParam = document.getElementById('chartMonthsSelect').value;
   const monthsLabel = document.getElementById('chartMonthsSelect').selectedOptions[0].textContent.toLowerCase();
-  document.getElementById('chartTitle').textContent = `${metricLabel}, ${monthsLabel}`;
-  try {
-    const res = await apiFetch(`/api/admin/timeseries?metric=${encodeURIComponent(metric)}&months=${months}`);
-    if(!res.ok){ document.getElementById('configurableChart').innerHTML = '<p class="admin-empty">Could not load that metric.</p>'; return; }
-    const data = await res.json();
-    currentChartData = { ...data, metricLabel };
-    const max = Math.max(...data.values, 1);
-    document.getElementById('configurableChart').innerHTML = data.months.map((m,i) => `
-      <div class="bar-col"><div class="bar" style="height:${(data.values[i]/max*100)}%;"></div><div class="bar-label">${monthLabel(m)}</div></div>
-    `).join('');
-    document.getElementById('chartApproxNote').style.display = data.isApproximate ? 'block' : 'none';
-  } catch(e){
-    document.getElementById('configurableChart').innerHTML = '<p class="admin-empty">Could not load that metric.</p>';
+  const chartEl = document.getElementById('configurableChart');
+  const legendEl = document.getElementById('chartLegend');
+
+  if(!selected.length){
+    chartEl.innerHTML = '<p class="admin-empty">Pick at least one metric above.</p>';
+    legendEl.innerHTML = '';
+    return;
   }
+
+  try {
+    const res = await apiFetch(`/api/admin/timeseries/multi?metrics=${selected.map(encodeURIComponent).join(',')}&months=${monthsParam}`);
+    if(!res.ok){ chartEl.innerHTML = '<p class="admin-empty">Could not load that combination.</p>'; return; }
+    const data = await res.json();
+    currentChartData = { months: data.months, series: data.series, monthsLabel };
+
+    const titleText = data.series.length === 1
+      ? `${data.series[0].label}, ${monthsLabel}`
+      : `${data.series.length} metrics overlaid, ${monthsLabel}`;
+    document.getElementById('chartTitle').textContent = titleText;
+
+    drawLineChart(chartEl, data.months, data.series);
+
+    legendEl.innerHTML = data.series.map((s, i) => `
+      <span><span style="display:inline-block; width:9px; height:9px; border-radius:2px; background:${CHART_COLORS[i % CHART_COLORS.length]}; margin-right:6px;"></span>${s.label}${s.isApproximate ? ' (approx.)' : ''}</span>
+    `).join('');
+  } catch(e){
+    chartEl.innerHTML = '<p class="admin-empty">Could not load that combination.</p>';
+    legendEl.innerHTML = '';
+  }
+}
+
+function drawLineChart(container, months, series){
+  const W = 700, H = 220, padL = 34, padR = 14, padT = 14, padB = 26;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  const maxVal = Math.max(1, ...series.flatMap(s => s.values));
+  const xFor = i => padL + (months.length === 1 ? innerW/2 : (i / (months.length - 1)) * innerW);
+  const yFor = v => padT + innerH - (v / maxVal) * innerH;
+
+  const gridLines = [0, 0.25, 0.5, 0.75, 1].map(f => {
+    const y = padT + innerH - f * innerH;
+    return `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="var(--border)" stroke-width="1"/>
+            <text x="${padL-8}" y="${y+3}" font-size="9.5" fill="var(--dim)" text-anchor="end">${Math.round(f*maxVal)}</text>`;
+  }).join('');
+
+  const xLabels = months.map((m,i) => `<text x="${xFor(i)}" y="${H-6}" font-size="10" fill="var(--dim)" text-anchor="middle">${monthLabel(m)}</text>`).join('');
+
+  const lines = series.map((s, si) => {
+    const color = CHART_COLORS[si % CHART_COLORS.length];
+    const points = s.values.map((v,i) => `${xFor(i)},${yFor(v)}`).join(' ');
+    const dots = s.values.map((v,i) => `<circle cx="${xFor(i)}" cy="${yFor(v)}" r="3" fill="${color}"/>`).join('');
+    return `<polyline points="${points}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>${dots}`;
+  }).join('');
+
+  container.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%; height:220px;">${gridLines}${lines}${xLabels}</svg>`;
 }
 
 function downloadChartCSV(){
   if(!currentChartData) return;
-  const rows = [['Month', currentChartData.metricLabel], ...currentChartData.months.map((m,i) => [m, currentChartData.values[i]])];
-  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const header = ['Month', ...currentChartData.series.map(s => s.label)];
+  const rows = currentChartData.months.map((m, i) => [m, ...currentChartData.series.map(s => s.values[i])]);
+  const csv = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `espalier-${currentChartData.metric}-${currentChartData.months[0]}-to-${currentChartData.months[currentChartData.months.length-1]}.csv`;
+  a.download = `espalier-report-${currentChartData.months[0]}-to-${currentChartData.months[currentChartData.months.length-1]}.csv`;
   document.body.appendChild(a);
   a.click();
   a.remove();
