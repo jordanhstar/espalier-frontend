@@ -377,6 +377,10 @@
   .idea-modal-files li{font-size:12.5px; color:#454B52; padding:9px 0; border-bottom:1px solid #EFEFE7; display:flex; align-items:center; gap:9px;}
   .idea-modal-files li:last-child{border-bottom:none;}
   .idea-modal-files svg{width:14px; height:14px; color:#7B828A; flex-shrink:0;}
+  .idea-modal-terms-box{background:#fff; border:1px solid #E4E1D6; border-left:3px solid var(--lA); border-radius:12px; padding:16px 20px; margin-top:16px;}
+  .idea-modal-terms-box h5{font-family:var(--font-display); font-weight:700; font-size:13px; margin:0 0 10px;}
+  .idea-modal-terms-label{font-family:var(--font-display); font-weight:800; font-size:15px; color:#15181D; margin-bottom:6px;}
+  .idea-modal-terms-box p{font-size:12.5px; line-height:1.65; color:#454B52; margin:0;}
 </style>
 </head>
 <body>
@@ -1043,7 +1047,8 @@ const SAMPLE_IDEAS = {
     desc: 'Grew up chasing golden hour with my dad\'s camera and always felt cheated on cloudy days when it just never came. Amber Hour is a tabletop lamp that pulls your location\'s real sunset data and glows through that exact light for twenty minutes, rain or shine. It\'s not a mood light on a timer — the color and intensity actually track where the sun really is that day.',
     progress: '45% built', time: 'A few months to finish', profit: 'Side income', originality: 'A handful of "sunset lamps" exist, but all run on a fixed daily timer — none pull live geolocated solar data the way this does.',
     whyScored: 'The file check matched the claim closely — a working prototype video and a real firmware repo back up the 45% figure almost exactly. Cost to finish (tooling for a production enclosure) is the main thing keeping this out of the 70s.',
-    files: ['Arduino firmware repository', 'CAD files for the lamp enclosure', 'Prototype demo video (synced to real sunset)', 'LED diffusion panel supplier quotes', 'Patent search notes']
+    files: ['Arduino firmware repository', 'CAD files for the lamp enclosure', 'Prototype demo video (synced to real sunset)', 'LED diffusion panel supplier quotes', 'Patent search notes'],
+    termsLabel: 'Cash on signing — $3,200 flat', terms: 'A one-time payout, no ongoing share. The creator wants out cleanly and would rather see it made than keep a stake in it.'
   },
   understudies: {
     title: 'The Understudies', score: 79, type: 'Event', attribution: 'Wants credit + a producer credit on future runs', cover: 'cover-understudies',
@@ -1051,7 +1056,8 @@ const SAMPLE_IDEAS = {
     desc: 'I ran the book backstage at a community theater for six years and watched understudies nail every rehearsal knowing they\'d probably never perform. The Understudies is a one-night ticketed show built entirely around them — same scripts, same sets, but the understudy takes the lead while the audience is told exactly who they usually stand in for. The first pilot sold out.',
     progress: '70% built', time: 'A weekend to a few weeks to finish', profit: 'Big swing', originality: 'Nothing comparable found — existing "understudy" content is documentary-style, not a ticketed performance built around them.',
     whyScored: 'The files showed more traction than the pitch let on — a genuinely sold-out 140-seat pilot and signed venue contracts are further along than most listings at this stage, which is what pushed the score into the high 70s.',
-    files: ['Pilot show recap deck with photos', 'Venue contract from the sold-out pilot run', 'Ticket sales data (140/140 sold)', 'Rough multi-city licensing outline', 'Interview clips with pilot understudies']
+    files: ['Pilot show recap deck with photos', 'Venue contract from the sold-out pilot run', 'Ticket sales data (140/140 sold)', 'Rough multi-city licensing outline', 'Interview clips with pilot understudies'],
+    termsLabel: 'Advisory role + 12% share', terms: 'The creator stays on as a producer for future runs — casting input and creative sign-off — in exchange for 12% of net ticket revenue from every city it plays.'
   },
   secondhandscore: {
     title: 'Secondhand Score', score: 61, type: 'Business', attribution: 'No attribution needed', cover: 'cover-secondhandscore',
@@ -1059,7 +1065,8 @@ const SAMPLE_IDEAS = {
     desc: 'I bought a mid-century dresser at an estate sale and spent three weeks obsessively tracing its maker\'s mark and prior owners just because I wanted to know. Secondhand Score turns that obsession into a product: send a few photos and any markings, and get back a short written provenance report — not an appraisal, just the story most people would love to have but won\'t dig for themselves.',
     progress: '30% built', time: 'A few months to finish', profit: 'Solid income', originality: 'No directly comparable service found — appraisers value furniture, but nobody\'s selling its researched history as a standalone keepsake.',
     whyScored: 'Readiness is genuinely early — the research pipeline is manual and the reports are hand-written, matching what was claimed. The score reflects real signal in the six sample reports and pricing tests, not an inflated pitch.',
-    files: ['Six sample provenance reports', 'Maker\'s-mark reference spreadsheet', 'Customer interview notes', 'Initial pricing test results', 'Mockup of the printed report design']
+    files: ['Six sample provenance reports', 'Maker\'s-mark reference spreadsheet', 'Customer interview notes', 'Initial pricing test results', 'Mockup of the printed report design'],
+    termsLabel: 'Cash + 8% ongoing share', terms: '$600 upfront to cover the handoff, plus 8% of report revenue for the first 12 months — after that, the finisher owns it outright.'
   }
 };
 
@@ -1088,6 +1095,11 @@ function openIdeaModal(id){
     <div class="idea-modal-files">
       <h5>What was actually uploaded</h5>
       <ul>${idea.files.map(f => `<li>${fileIcon}${f}</li>`).join('')}</ul>
+    </div>
+    <div class="idea-modal-terms-box">
+      <h5>The starter's suggested terms</h5>
+      <div class="idea-modal-terms-label">${idea.termsLabel}</div>
+      <p>${idea.terms}</p>
     </div>
   `;
   ideaModalOverlay.classList.add('show');
