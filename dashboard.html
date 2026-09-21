@@ -128,6 +128,25 @@
   .admin-list-side{font-size:12px; color:var(--dim); text-align:right; white-space:nowrap;}
   .admin-list-side .fee{font-family:var(--font-display); font-weight:800; color:var(--teal); font-size:13.5px; display:block; margin-bottom:2px;}
   .admin-empty{color:var(--dim); font-size:13px; padding:4px 0 8px;}
+  .chart-controls{display:flex; align-items:flex-end; gap:14px; flex-wrap:wrap;}
+  .chart-control-group{display:flex; flex-direction:column; gap:6px;}
+  .chart-control-group label{font-size:11px; font-weight:700; color:var(--dim); text-transform:uppercase; letter-spacing:.03em;}
+  .chart-control-group select{font-family:var(--font-body); font-size:13.5px; color:var(--ink); background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:9px 12px; min-width:200px;}
+  .chart-generate-btn{font-family:var(--font-display); font-weight:700; font-size:13.5px; color:#fff; background:var(--coral); border:none; border-radius:10px; padding:10px 20px; cursor:pointer;}
+  .chart-generate-btn:hover{background:color-mix(in srgb, var(--coral) 85%, black);}
+  .chart-report-btn{display:inline-flex; align-items:center; gap:7px; font-family:var(--font-display); font-weight:700; font-size:12.5px; color:var(--ink-soft); background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:9px 16px; cursor:pointer; margin-top:16px;}
+  .chart-report-btn:hover{border-color:var(--border-strong);}
+  .leaderboard-row{display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border);}
+  .leaderboard-row:last-child{border-bottom:none;}
+  .leaderboard-rank{width:22px; height:22px; border-radius:50%; background:var(--bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:var(--dim); flex-shrink:0;}
+  .leaderboard-row:nth-child(1) .leaderboard-rank{background:#FFE4DB; color:var(--coral); border-color:transparent;}
+  .leaderboard-row:nth-child(2) .leaderboard-rank{background:#EFEFE7; color:var(--ink-soft); border-color:transparent;}
+  .leaderboard-row:nth-child(3) .leaderboard-rank{background:#FBEDD8; color:var(--amber); border-color:transparent;}
+  .leaderboard-main{flex:1; min-width:0;}
+  .leaderboard-main .n{font-size:13.5px; font-weight:700; color:var(--ink);}
+  .leaderboard-main .e{font-size:11.5px; color:var(--dim);}
+  .leaderboard-stat{text-align:right; font-size:12px; color:var(--dim); white-space:nowrap;}
+  .leaderboard-stat b{display:block; font-family:var(--font-display); font-size:14.5px; color:var(--ink); font-weight:800;}
   .arc-title{font-family:var(--font-display); font-weight:700; font-size:15px;}
   .arc-sub{font-size:11.5px; color:var(--dim); margin-top:2px;}
   .arc-hook{font-size:13px; font-weight:600; margin:12px 0 6px;}
@@ -378,23 +397,55 @@
       </div>
 
       <h3 class="admin-section-h">Growth</h3>
-      <p class="section-sub">Last 6 months, across everyone on the platform.</p>
-      <div class="admin-two-col" id="adminGrowthRow1">
-        <div class="chart-card">
-          <h3 style="font-family:var(--font-display); font-size:14.5px; margin:0;">New members</h3>
-          <div class="bars" id="growthMembersChart"></div>
-        </div>
-        <div class="chart-card">
-          <h3 style="font-family:var(--font-display); font-size:14.5px; margin:0;">Ideas listed</h3>
-          <div class="bars" id="growthIdeasChart"></div>
-        </div>
-      </div>
+      <p class="section-sub">Key trends, and a graph you can point at anything.</p>
+      <div class="stat-grid" id="adminGrowthInsights" style="margin-bottom:24px;"></div>
+
       <div class="chart-card" style="margin-bottom:24px;">
-        <h3 style="font-family:var(--font-display); font-size:14.5px; margin:0;">Deals — proposed vs. accepted</h3>
-        <div class="bars" id="growthDealsChart" style="height:140px;"></div>
-        <div style="display:flex; gap:16px; margin-top:10px; font-size:11.5px; color:var(--dim);">
-          <span><span style="display:inline-block; width:9px; height:9px; border-radius:2px; background:var(--coral); margin-right:5px;"></span>Proposed</span>
-          <span><span style="display:inline-block; width:9px; height:9px; border-radius:2px; background:var(--teal); margin-right:5px;"></span>Accepted</span>
+        <div class="chart-controls">
+          <div class="chart-control-group">
+            <label for="chartMetricSelect">Metric</label>
+            <select id="chartMetricSelect">
+              <option value="members">New members</option>
+              <option value="ideas_total" selected>Ideas listed — all types</option>
+              <option value="ideas_App">Ideas listed — App</option>
+              <option value="ideas_Website">Ideas listed — Website</option>
+              <option value="ideas_Business">Ideas listed — Business</option>
+              <option value="ideas_Event">Ideas listed — Event</option>
+              <option value="ideas_Written">Ideas listed — Written</option>
+              <option value="ideas_Other">Ideas listed — Other</option>
+              <option value="deals_proposed">Deals proposed</option>
+              <option value="deals_accepted">Deals accepted</option>
+              <option value="deals_declined">Deals declined</option>
+              <option value="deals_completed">Deals completed (approximate)</option>
+            </select>
+          </div>
+          <div class="chart-control-group">
+            <label for="chartMonthsSelect">Timeline</label>
+            <select id="chartMonthsSelect">
+              <option value="3">Last 3 months</option>
+              <option value="6" selected>Last 6 months</option>
+              <option value="12">Last 12 months</option>
+              <option value="24">Last 24 months</option>
+            </select>
+          </div>
+          <button type="button" class="chart-generate-btn" id="chartGenerateBtn">Generate</button>
+        </div>
+        <h3 id="chartTitle" style="font-family:var(--font-display); font-size:14.5px; margin:18px 0 0;">Ideas listed — all types, last 6 months</h3>
+        <div class="bars" id="configurableChart" style="height:160px;"></div>
+        <p class="admin-money-note" id="chartApproxNote" style="display:none;">This metric is approximate — see the note on the timeline endpoint.</p>
+        <button type="button" class="chart-report-btn" id="chartReportBtn">⬇ Generate report (CSV)</button>
+      </div>
+
+      <h3 class="admin-section-h">Top starters &amp; finishers</h3>
+      <p class="section-sub">Who's actually using the platform the most.</p>
+      <div class="admin-two-col" id="adminLeaderboardRow" style="margin-bottom:24px;">
+        <div class="admin-panel">
+          <h3 class="admin-panel-h">Top starters</h3>
+          <div id="topStartersList"></div>
+        </div>
+        <div class="admin-panel">
+          <h3 class="admin-panel-h">Top finishers</h3>
+          <div id="topFinishersList"></div>
         </div>
       </div>
 
@@ -1105,9 +1156,23 @@ async function loadAdminOverview(){
   } catch(e){ /* quiet — same as the review queue above */ }
   try {
     const gRes = await apiFetch('/api/admin/growth');
-    if(!gRes.ok) return;
-    renderAdminGrowth(await gRes.json());
-  } catch(e){ /* quiet — growth charts are a bonus view */ }
+    if(gRes.ok) renderGrowthInsights((await gRes.json()).insights);
+  } catch(e){ /* quiet — growth insights are a bonus view */ }
+  try {
+    const lRes = await apiFetch('/api/admin/leaderboard');
+    if(lRes.ok) {
+      const lb = await lRes.json();
+      renderLeaderboard('topStartersList', lb.topStarters, s => [
+        { big: s.ideasListed, label: 'ideas' },
+        { small: `${s.dealsCompleted} completed · $${(s.totalEarned||0).toLocaleString()} earned` },
+      ]);
+      renderLeaderboard('topFinishersList', lb.topFinishers, f => [
+        { big: f.dealsAccepted, label: 'accepted' },
+        { small: `${f.dealsProposed} proposed` },
+      ]);
+    }
+  } catch(e){ /* quiet — leaderboard is a bonus view */ }
+  setupConfigurableChart();
 }
 
 function monthLabel(m){
@@ -1115,36 +1180,96 @@ function monthLabel(m){
   return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(mo,10)-1];
 }
 
-function renderAdminGrowth(g){
-  const labels = g.months.map(monthLabel);
+function pctBadge(pct){
+  if(pct === null || pct === undefined) return '<span class="delta flat">new this period</span>';
+  if(pct > 0) return `<span class="delta up">▲ ${pct}% vs. last month</span>`;
+  if(pct < 0) return `<span class="delta" style="color:var(--coral); font-weight:700;">▼ ${Math.abs(pct)}% vs. last month</span>`;
+  return '<span class="delta flat">flat vs. last month</span>';
+}
 
-  const maxMembers = Math.max(...g.members, 1);
-  document.getElementById('growthMembersChart').innerHTML = g.members.map((v,i) => `
-    <div class="bar-col"><div class="bar" style="height:${(v/maxMembers*100)}%;"></div><div class="bar-label">${labels[i]}</div></div>
-  `).join('');
+function renderGrowthInsights(insights){
+  const el = document.getElementById('adminGrowthInsights');
+  if(!insights){ el.innerHTML = '<p class="admin-empty">No data yet.</p>'; return; }
+  el.innerHTML = `
+    <div class="stat-card"><div class="label">New members this month</div><div class="value">${insights.newMembersThisMonth}</div>${pctBadge(insights.newMembersPctChange)}</div>
+    <div class="stat-card"><div class="label">Ideas listed this month</div><div class="value">${insights.ideasListedThisMonth}</div>${pctBadge(insights.ideasListedPctChange)}</div>
+    <div class="stat-card"><div class="label">Deals accepted this month</div><div class="value">${insights.dealsAcceptedThisMonth}</div>${pctBadge(insights.dealsAcceptedPctChange)}</div>
+    <div class="stat-card"><div class="label">Deal conversion rate</div><div class="value">${insights.conversionRate6mo === null ? '—' : insights.conversionRate6mo + '%'}</div><div class="delta flat">accepted ÷ proposed, last 6mo</div></div>
+  `;
+}
 
-  const maxIdeas = Math.max(...g.ideas.total, 1);
-  document.getElementById('growthIdeasChart').innerHTML = g.ideas.total.map((v,i) => `
-    <div class="bar-col"><div class="bar" style="height:${(v/maxIdeas*100)}%;"></div><div class="bar-label">${labels[i]}</div></div>
-  `).join('');
-
-  const maxDeals = Math.max(...g.deals.proposed, ...g.deals.accepted, 1);
-  document.getElementById('growthDealsChart').innerHTML = g.deals.proposed.map((v,i) => `
-    <div class="bar-col">
-      <div style="display:flex; align-items:flex-end; gap:3px; width:100%; height:100%; justify-content:center;">
-        <div class="bar" style="width:40%; height:${(v/maxDeals*100)}%; background:var(--coral);"></div>
-        <div class="bar" style="width:40%; height:${(g.deals.accepted[i]/maxDeals*100)}%; background:var(--teal);"></div>
+function renderLeaderboard(elId, list, statsFn){
+  const el = document.getElementById(elId);
+  if(!list || !list.length){ el.innerHTML = '<p class="admin-empty">No members yet — this will populate once people start using the platform.</p>'; return; }
+  el.innerHTML = list.map((person, i) => {
+    const stats = statsFn(person);
+    const big = stats.find(s => s.big !== undefined);
+    const small = stats.find(s => s.small !== undefined);
+    return `
+      <div class="leaderboard-row">
+        <div class="leaderboard-rank">${i+1}</div>
+        <div class="leaderboard-main"><div class="n">${person.name}</div><div class="e">${person.email}</div></div>
+        <div class="leaderboard-stat"><b>${big ? big.big : ''}</b>${big ? big.label : ''}<br>${small ? small.small : ''}</div>
       </div>
-      <div class="bar-label">${labels[i]}</div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
+}
+
+let currentChartData = null;
+
+function setupConfigurableChart(){
+  const btn = document.getElementById('chartGenerateBtn');
+  const reportBtn = document.getElementById('chartReportBtn');
+  if(btn.dataset.wired) { renderConfigurableChart(); return; }
+  btn.dataset.wired = '1';
+  btn.addEventListener('click', renderConfigurableChart);
+  reportBtn.addEventListener('click', downloadChartCSV);
+  renderConfigurableChart();
+}
+
+async function renderConfigurableChart(){
+  const metric = document.getElementById('chartMetricSelect').value;
+  const months = document.getElementById('chartMonthsSelect').value;
+  const metricLabel = document.getElementById('chartMetricSelect').selectedOptions[0].textContent;
+  const monthsLabel = document.getElementById('chartMonthsSelect').selectedOptions[0].textContent.toLowerCase();
+  document.getElementById('chartTitle').textContent = `${metricLabel}, ${monthsLabel}`;
+  try {
+    const res = await apiFetch(`/api/admin/timeseries?metric=${encodeURIComponent(metric)}&months=${months}`);
+    if(!res.ok){ document.getElementById('configurableChart').innerHTML = '<p class="admin-empty">Could not load that metric.</p>'; return; }
+    const data = await res.json();
+    currentChartData = { ...data, metricLabel };
+    const max = Math.max(...data.values, 1);
+    document.getElementById('configurableChart').innerHTML = data.months.map((m,i) => `
+      <div class="bar-col"><div class="bar" style="height:${(data.values[i]/max*100)}%;"></div><div class="bar-label">${monthLabel(m)}</div></div>
+    `).join('');
+    document.getElementById('chartApproxNote').style.display = data.isApproximate ? 'block' : 'none';
+  } catch(e){
+    document.getElementById('configurableChart').innerHTML = '<p class="admin-empty">Could not load that metric.</p>';
+  }
+}
+
+function downloadChartCSV(){
+  if(!currentChartData) return;
+  const rows = [['Month', currentChartData.metricLabel], ...currentChartData.months.map((m,i) => [m, currentChartData.values[i]])];
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `espalier-${currentChartData.metric}-${currentChartData.months[0]}-to-${currentChartData.months[currentChartData.months.length-1]}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 function renderAdminStats(data){
   const el = document.getElementById('adminStatsGrid');
   const i = data.ideas, p = data.people, d = data.deals;
   el.innerHTML = `
-    <div class="stat-card"><div class="label">Total members</div><div class="value">${p.totalMembers}</div><div class="delta flat">${p.activeStarters} active starters · ${p.activeFinishers} active finishers</div></div>
+    <div class="stat-card"><div class="label">Total members</div><div class="value">${p.totalMembers}</div><div class="delta flat">Everyone with an account</div></div>
+    <div class="stat-card"><div class="label">Active starters</div><div class="value">${p.activeStarters}</div><div class="delta flat">Have a live idea listed</div></div>
+    <div class="stat-card"><div class="label">Active finishers</div><div class="value">${p.activeFinishers}</div><div class="delta flat">Sent a deal or claimed an idea</div></div>
     <div class="stat-card"><div class="label">Total ideas</div><div class="value">${i.total}</div><div class="delta flat">${i.byStatus.active||0} active · ${i.byStatus.claimed||0} claimed · ${i.byStatus.completed||0} completed</div></div>
     <div class="stat-card"><div class="label">Needing review</div><div class="value">${i.reviewQueueCount}</div><div class="delta flat">appealed after a denial</div></div>
     <div class="stat-card"><div class="label">Not published</div><div class="value">${i.notPublishedCount}</div><div class="delta flat">denied at moderation</div></div>
