@@ -284,6 +284,7 @@
     <button class="nav-item" data-view="promote"><span class="ic">🚀</span> Promote</button>
     <button class="nav-item" data-view="earnings"><span class="ic">💰</span> Earnings</button>
     <button class="nav-item" data-view="followers"><span class="ic">👥</span> Followers</button>
+    <a class="nav-item" href="marketplace.html" style="text-decoration:none; display:flex;"><span class="ic">🧭</span> Browse marketplace</a>
     <button class="nav-item" data-view="admin" id="navAdminItem" style="display:none;"><span class="ic">🛡️</span> Admin <span class="nav-badge" id="navAdminBadge"></span></button>
 
     <div class="sidebar-footer">
@@ -1406,22 +1407,22 @@ document.addEventListener('click', (e)=>{
 });
 
 /* ================= NAV ================= */
+const TITLES = {
+  overview: ['Welcome back', "Here's how your ideas are doing"],
+  ideas: ['My ideas', 'Every idea you have listed, active or past'],
+  requests: ['Requests & deals', 'Respond to buyers and consulting asks'],
+  promote: ['Promote', 'Put your ideas in front of more buyers'],
+  earnings: ['Earnings', "What you've made, and what's still possible"],
+  followers: ['Followers', 'People notified when you list something new'],
+  admin: ['Admin', 'Everything going on at Espalier — only you can see this'],
+};
 document.querySelectorAll('.nav-item[data-view]').forEach(item=>{
   item.addEventListener('click', ()=>{
     document.querySelectorAll('.nav-item[data-view]').forEach(i=>i.classList.remove('active'));
     item.classList.add('active');
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
     document.getElementById('view-' + item.dataset.view).classList.add('active');
-    const titles = {
-      overview: ['Welcome back', "Here's how your ideas are doing"],
-      ideas: ['My ideas', 'Every idea you have listed, active or past'],
-      requests: ['Requests & deals', 'Respond to buyers and consulting asks'],
-      promote: ['Promote', 'Put your ideas in front of more buyers'],
-      earnings: ['Earnings', "What you've made, and what's still possible"],
-      followers: ['Followers', 'People notified when you list something new'],
-      admin: ['Admin', 'Everything going on at Espalier — only you can see this'],
-    };
-    const t = titles[item.dataset.view];
+    const t = TITLES[item.dataset.view];
     document.getElementById('topTitle').textContent = t[0];
     document.getElementById('topSub').textContent = t[1];
     window.scrollTo({top:0, behavior:'smooth'});
@@ -1477,6 +1478,13 @@ async function loadDashboard(){
       document.getElementById('meAvatar').textContent = '';
     }
     document.getElementById('meName').textContent = meData.user.name;
+    const firstName = (meData.user.name || '').trim().split(/\s+/)[0];
+    if (firstName) {
+      TITLES.overview[0] = `Welcome back, ${firstName}!`;
+      if (document.getElementById('view-overview').classList.contains('active')) {
+        document.getElementById('topTitle').textContent = TITLES.overview[0];
+      }
+    }
 
     const [activeRes, claimedRes, completedRes, draftRes, reqRes, activityRes, followRes, summaryRes] = await Promise.all([
       apiFetch(`/api/ideas?creatorId=${meData.user.id}&status=active`),
