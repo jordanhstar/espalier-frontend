@@ -205,15 +205,34 @@
   </div>
 </footer>
 <script>
+  var FOOTER_API_BASE = 'https://baton-backend.jordanhstar.workers.dev';
   var footerNewsletterForm = document.getElementById('footerNewsletterForm');
   if (footerNewsletterForm) {
     footerNewsletterForm.addEventListener('submit', function(e){
       e.preventDefault();
-      var email = document.getElementById('footerNewsletterEmail').value;
+      var email = document.getElementById('footerNewsletterEmail').value.trim();
       if (!email) return;
-      // TODO(Jordan): wire this up to a real email list/backend.
-      footerNewsletterForm.querySelector('.footer-newsletter-row').style.display = 'none';
-      document.getElementById('footerNewsletterSuccess').classList.add('show');
+      var btn = footerNewsletterForm.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      fetch(FOOTER_API_BASE + '/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, source: 'footer' }),
+      }).then(function(res){
+        if (!res.ok) throw new Error('subscribe_failed');
+        footerNewsletterForm.querySelector('.footer-newsletter-row').style.display = 'none';
+        document.getElementById('footerNewsletterSuccess').classList.add('show');
+      }).catch(function(){
+        btn.disabled = false;
+        var note = footerNewsletterForm.querySelector('.footer-newsletter-error');
+        if (!note) {
+          note = document.createElement('p');
+          note.className = 'footer-newsletter-error';
+          note.style.cssText = 'color:#B3452C; font-size:11.5px; margin:8px 0 0;';
+          footerNewsletterForm.appendChild(note);
+        }
+        note.textContent = "Something went wrong — mind trying again?";
+      });
     });
   }
 </script>
