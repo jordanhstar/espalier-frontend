@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invite — Espalier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E0F11;
+    --lA:#C4875A; --lB:#A66F45; --rA:#565FAE; --rB:#3F4680;
+    --font-display:'Sora', system-ui, sans-serif; --font-body:'Manrope', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:#F5F6F1; color:#15181D; font-family:var(--font-body); -webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+
+  header{display:flex; align-items:center; justify-content:space-between; padding:26px 36px; max-width:1200px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:800; font-size:16px; text-decoration:none; color:#15181D;}
+  .brand svg{width:19px; height:19px;}
+  .back-link{font-size:13px; font-weight:700; color:#15181D; text-decoration:none; display:flex; align-items:center; gap:7px; background:#fff; border:1px solid #E4E1D6; padding:9px 16px 9px 13px; border-radius:100px; transition:border-color .15s, box-shadow .15s;}
+  .back-link:hover{border-color:var(--lA); box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  .back-link svg{width:13px; height:13px;}
+
+  .page-hero{max-width:760px; margin:20px auto 60px; padding:0 24px; text-align:center;}
+  .kicker{font-size:12.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--rA); margin-bottom:16px;}
+  .page-hero h1{font-family:var(--font-display); font-weight:800; font-size:clamp(26px,4vw,38px); line-height:1.3; margin:0 0 18px;}
+  .page-hero p{font-size:15.5px; line-height:1.75; color:#454B52; margin:0;}
+
+  main{max-width:760px; margin:0 auto; padding:0 24px 100px;}
+
+  h2.group-h{font-family:var(--font-display); font-weight:800; font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:var(--rA); margin:48px 0 18px;}
+  h2.group-h:first-child{margin-top:0;}
+
+  .faq-item{background:#fff; border:1px solid #E4E1D6; border-radius:14px; padding:22px 26px; margin-bottom:12px;}
+  .faq-item h3{font-family:var(--font-display); font-weight:700; font-size:15px; margin:0 0 8px;}
+  .faq-item p{font-size:13.5px; line-height:1.7; color:#454B52; margin:0;}
+  .faq-item a{color:var(--rA); font-weight:600; text-decoration:none;}
+
+  footer.site-footer{background:#EFEFE7; border-top:1px solid #E4E1D6; padding:64px 24px 0; text-align:left; margin-top:80px;}
+  .footer-top{max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; gap:48px; padding-bottom:48px;}
+  .footer-brand{flex:1 1 260px; max-width:320px;}
+  .footer-logo{color:var(--lA); margin-bottom:14px; display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:800; font-size:16px;}
+  .footer-logo svg{width:22px; height:22px;}
+  .footer-tagline{font-size:13.5px; line-height:1.6; color:#7B828A; margin:0 0 20px;}
+  .footer-newsletter{margin-bottom:4px; max-width:280px;}
+  .footer-newsletter-label{display:block; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#15181D; margin-bottom:9px;}
+  .footer-newsletter-row{display:flex; gap:6px;}
+  .footer-newsletter-row input{flex:1; border:1px solid #E4E1D6; border-radius:100px; padding:9px 14px; font-size:12.5px; font-family:inherit; outline:none; background:#fff; min-width:0; color:#15181D;}
+  .footer-newsletter-row input:focus{border-color:var(--rA);}
+  .footer-newsletter-row button{width:33px; height:33px; border-radius:50%; background:var(--rA); border:none; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .15s ease;}
+  .footer-newsletter-row button:hover{background:var(--rB);}
+  .footer-newsletter-row button svg{width:14px; height:14px;}
+  .footer-newsletter-success{display:none; font-size:12px; font-weight:700; color:var(--rA); margin:8px 0 0;}
+  .footer-newsletter-success.show{display:block;}
+  .footer-col{flex:1 1 140px; display:flex; flex-direction:column; gap:11px;}
+  .footer-col h5{font-family:var(--font-display); font-size:12px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#15181D; margin:0 0 4px;}
+  .footer-col a{font-size:13.5px; color:#7B828A; text-decoration:none;}
+  .footer-col a:hover{color:var(--lA);}
+  .footer-bottom{max-width:1200px; margin:0 auto; border-top:1px solid #E4E1D6; padding:20px 0 24px; display:flex; flex-wrap:wrap; gap:12px 24px; justify-content:space-between; font-size:12px; color:#9AA0A6;}
+
+  .invite-tabs{display:flex; gap:10px; justify-content:center; margin:0 auto 36px; max-width:520px;}
+  .invite-tab{flex:1; font-family:var(--font-display); font-weight:700; font-size:13.5px; color:#7B828A; background:#fff; border:1px solid #E4E1D6; border-radius:100px; padding:12px 18px; cursor:pointer; transition:all .15s;}
+  .invite-tab.active{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .invite-panel{display:none;}
+  .invite-panel.active{display:block;}
+  .invite-card{background:#fff; border:1px solid #E4E1D6; border-radius:20px; padding:36px 32px; text-align:center;}
+  .invite-card h3{font-family:var(--font-display); font-weight:800; font-size:19px; margin:0 0 10px; color:#15181D;}
+  .invite-card p{font-size:14px; line-height:1.7; color:#454B52; margin:0 0 26px;}
+  .invite-link-row{display:flex; gap:8px; background:#F5F6F1; border:1px solid #E4E1D6; border-radius:100px; padding:6px 6px 6px 20px; align-items:center; margin-bottom:18px;}
+  .invite-link-row input{flex:1; border:none; background:transparent; outline:none; font-size:13px; color:#454B52; font-family:monospace; min-width:0;}
+  .invite-copy-btn{font-family:var(--font-display); font-weight:700; font-size:13px; color:#fff; background:var(--rA); border:none; border-radius:100px; padding:11px 20px; cursor:pointer; white-space:nowrap; transition:background .15s;}
+  .invite-copy-btn:hover{background:var(--rB);}
+  .invite-copy-btn.copied{background:#4CAF6D;}
+  .invite-share-row{display:flex; gap:10px; justify-content:center; margin-bottom:22px;}
+  .invite-share-btn{display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:#454B52; background:#F5F6F1; border:1px solid #E4E1D6; border-radius:100px; padding:9px 16px; text-decoration:none; cursor:pointer;}
+  .invite-share-btn:hover{border-color:var(--rA); color:var(--rA);}
+  .invite-share-btn svg{width:14px; height:14px;}
+  .invite-incentive{font-size:12.5px; color:#9AA0A6; border-top:1px solid #EFEFE7; padding-top:18px; margin-top:4px;}
+  .invite-incentive b{color:#7B828A;}
+  .invite-stats{display:flex; justify-content:center; gap:36px; margin:36px 0 0;}
+  .invite-stat{text-align:center;}
+  .invite-stat .num{font-family:var(--font-display); font-weight:800; font-size:26px; color:#15181D;}
+  .invite-stat .lbl{font-size:11.5px; color:#9AA0A6; text-transform:uppercase; letter-spacing:.04em; margin-top:4px;}
+</style>
+
+<body>
+
+<header>
+  <a class="brand" href="index.html"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 9 5 9 5 4C10 4 12 9 12 9M12 9C12 9 19 9 19 4C14 4 12 9 12 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Espalier</a>
+  <a class="back-link" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back Home
+  </a>
+</header>
+
+
+<div class="page-hero">
+  <div class="kicker">Invite</div>
+  <h1>Bring someone in</h1>
+  <p>Invite the right finisher for your idea, or bring in a starter you know has something worth building. Every invite carries your link, so we know who to thank.</p>
+</div>
+
+<main>
+  <div class="invite-tabs">
+    <button type="button" class="invite-tab active" id="tabFinisher">Invite a finisher</button>
+    <button type="button" class="invite-tab" id="tabStarter">Invite a starter</button>
+  </div>
+
+  <div class="invite-panel active" id="panelFinisher">
+    <div class="invite-card">
+      <h3>Know someone who'd actually finish this?</h3>
+      <p>If you've got an idea listed and know exactly the kind of person who'd do it justice, send them straight to it — no cold browsing required.</p>
+      <div class="invite-link-row">
+        <input type="text" id="linkFinisher" readonly>
+        <button type="button" class="invite-copy-btn" data-target="linkFinisher">Copy</button>
+      </div>
+      <div class="invite-share-row">
+        <a class="invite-share-btn" id="emailFinisher" href="#">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4z" stroke="currentColor" stroke-width="1.6"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Email
+        </a>
+        <a class="invite-share-btn" id="smsFinisher" href="#">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 18.5V6.5C4 5.4 4.9 4.5 6 4.5H18C19.1 4.5 20 5.4 20 6.5V15C20 16.1 19.1 17 18 17H8L4 20.5V18.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          Text
+        </a>
+      </div>
+      <p class="invite-incentive"><b>[Referral reward TBD]</b> — e.g. a reduced platform fee on this deal if they claim it through your link.</p>
+    </div>
+  </div>
+
+  <div class="invite-panel" id="panelStarter">
+    <div class="invite-card">
+      <h3>Know someone with a great idea stuck in their Notes app?</h3>
+      <p>Send them straight to listing it — they don't need an account to see what it looks like first.</p>
+      <div class="invite-link-row">
+        <input type="text" id="linkStarter" readonly>
+        <button type="button" class="invite-copy-btn" data-target="linkStarter">Copy</button>
+      </div>
+      <div class="invite-share-row">
+        <a class="invite-share-btn" id="emailStarter" href="#">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4z" stroke="currentColor" stroke-width="1.6"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Email
+        </a>
+        <a class="invite-share-btn" id="smsStarter" href="#">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 18.5V6.5C4 5.4 4.9 4.5 6 4.5H18C19.1 4.5 20 5.4 20 6.5V15C20 16.1 19.1 17 18 17H8L4 20.5V18.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          Text
+        </a>
+      </div>
+      <p class="invite-incentive"><b>[Referral reward TBD]</b> — e.g. priority review on your own next listing once they sign up.</p>
+    </div>
+  </div>
+
+  <div class="invite-stats">
+    <div class="invite-stat"><div class="num">0</div><div class="lbl">Invited</div></div>
+    <div class="invite-stat"><div class="num">0</div><div class="lbl">Joined</div></div>
+  </div>
+</main>
+
+<!--
+  TODO(Jordan): everything on this page is a working front-end demo, not a real referral system yet.
+  Before this goes live:
+  1. The referral code below is generated client-side with Math.random() — it needs to come from
+     your backend instead, tied to the logged-in user's actual account, so it's stable and traceable.
+  2. The "Invited" / "Joined" counts are hardcoded at 0 — they need to read real data for this user.
+  3. The [Referral reward TBD] lines are placeholders — decide the actual incentive (if any) and swap
+     the copy in both panels.
+  4. This page should probably live inside the logged-in app (linked from the dashboard) rather than
+     being publicly reachable, since it only makes sense once someone has an idea listed or an account.
+-->
+<script>
+  function randomCode(){
+    return 'ESP-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+  }
+  var refCode = randomCode();
+  var baseUrl = 'https://espalier.dev/signup?ref=' + refCode;
+  document.getElementById('linkFinisher').value = baseUrl + '&type=finisher';
+  document.getElementById('linkStarter').value = baseUrl + '&type=starter';
+
+  document.getElementById('emailFinisher').href = 'mailto:?subject=' + encodeURIComponent('Take a look at my idea on Espalier') + '&body=' + encodeURIComponent('I listed something on Espalier and thought of you — take a look: ' + baseUrl + '&type=finisher');
+  document.getElementById('smsFinisher').href = 'sms:?body=' + encodeURIComponent('I listed something on Espalier and thought of you: ' + baseUrl + '&type=finisher');
+  document.getElementById('emailStarter').href = 'mailto:?subject=' + encodeURIComponent('You should list your idea on Espalier') + '&body=' + encodeURIComponent('This made me think of that idea you never finished: ' + baseUrl + '&type=starter');
+  document.getElementById('smsStarter').href = 'sms:?body=' + encodeURIComponent('You should list that idea on Espalier: ' + baseUrl + '&type=starter');
+
+  document.getElementById('tabFinisher').addEventListener('click', function(){
+    document.getElementById('tabFinisher').classList.add('active');
+    document.getElementById('tabStarter').classList.remove('active');
+    document.getElementById('panelFinisher').classList.add('active');
+    document.getElementById('panelStarter').classList.remove('active');
+  });
+  document.getElementById('tabStarter').addEventListener('click', function(){
+    document.getElementById('tabStarter').classList.add('active');
+    document.getElementById('tabFinisher').classList.remove('active');
+    document.getElementById('panelStarter').classList.add('active');
+    document.getElementById('panelFinisher').classList.remove('active');
+  });
+
+  document.querySelectorAll('.invite-copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var input = document.getElementById(btn.dataset.target);
+      input.select();
+      navigator.clipboard.writeText(input.value).then(function(){
+        var original = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = original; btn.classList.remove('copied'); }, 1800);
+      });
+    });
+  });
+</script>
+
+
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 9 5 9 5 4C10 4 12 9 12 9M12 9C12 9 19 9 19 4C14 4 12 9 12 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Espalier</div>
+      <p class="footer-tagline">A place for wild ideas to find someone who'll help them grow into something real.</p>
+      <form class="footer-newsletter" id="footerNewsletterForm">
+        <label class="footer-newsletter-label" for="footerNewsletterEmail">Join our email list</label>
+        <div class="footer-newsletter-row">
+          <input type="email" id="footerNewsletterEmail" placeholder="you@email.com" required>
+          <button type="submit" aria-label="Subscribe">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <p class="footer-newsletter-success" id="footerNewsletterSuccess">You're in — check your inbox to confirm.</p>
+      </form>
+    </div>
+    <nav class="footer-col">
+      <h5>Product</h5>
+      <a href="index.html#how-it-works">How it works</a>
+      <a href="pricing.html">Pricing</a>
+    </nav>
+    <nav class="footer-col">
+      <h5>Resources</h5>
+      <a href="how-scoring-works.html">How scoring works</a>
+      <a href="faq.html">FAQ</a>
+    </nav>
+    <nav class="footer-col">
+      <h5>Legal</h5>
+      <a href="#">Terms of service</a>
+      <a href="#">Privacy policy</a>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Espalier. All rights reserved.</span>
+  </div>
+</footer>
+<script>
+  var footerNewsletterForm = document.getElementById('footerNewsletterForm');
+  if (footerNewsletterForm) {
+    footerNewsletterForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      var email = document.getElementById('footerNewsletterEmail').value;
+      if (!email) return;
+      // TODO(Jordan): wire this up to a real email list/backend.
+      footerNewsletterForm.querySelector('.footer-newsletter-row').style.display = 'none';
+      document.getElementById('footerNewsletterSuccess').classList.add('show');
+    });
+  }
+</script>
+
+
+<style>
+  #spauldingWidget{position:fixed; bottom:22px; right:22px; z-index:999; font-family:var(--font-body,'Manrope',system-ui,sans-serif);}
+  #spauldingBubble{width:58px; height:58px; border-radius:50%; background:linear-gradient(135deg, var(--lA,#C4875A), var(--rA,#565FAE)); border:none; box-shadow:0 8px 24px rgba(0,0,0,.25); cursor:pointer; display:flex; align-items:center; justify-content:center; color:#fff; transition:transform .2s ease;}
+  #spauldingBubble:hover{transform:scale(1.06);}
+  #spauldingBubble svg{width:25px; height:25px;}
+  #spauldingBubble .sb-chat-emoji{font-size:27px; line-height:1;}
+  #spauldingBubble .sb-close-icon{display:none;}
+  #spauldingWidget.open #spauldingBubble .sb-chat-icon{display:none;}
+  #spauldingWidget.open #spauldingBubble .sb-close-icon{display:block;}
+  .spaulding-panel{position:absolute; bottom:72px; right:0; width:360px; max-width:calc(100vw - 28px); height:500px; max-height:70vh; background:#fff; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,.28); display:flex; flex-direction:column; overflow:hidden; opacity:0; pointer-events:none; transform:translateY(12px) scale(.98); transition:opacity .18s ease, transform .18s ease;}
+  #spauldingWidget.open .spaulding-panel{opacity:1; pointer-events:auto; transform:translateY(0) scale(1);}
+  .spaulding-header{display:flex; align-items:center; gap:11px; padding:16px 18px; background:linear-gradient(135deg, var(--lA,#C4875A), var(--rA,#565FAE)); color:#fff; flex-shrink:0;}
+  .spaulding-avatar{width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,.22); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0;}
+  .spaulding-header-text{flex:1; min-width:0;}
+  .spaulding-name{font-family:var(--font-display,'Sora',system-ui,sans-serif); font-weight:800; font-size:14.5px; line-height:1.3;}
+  .spaulding-status{font-size:11px; opacity:.85; display:flex; align-items:center; gap:5px;}
+  .spaulding-status::before{content:""; width:6px; height:6px; border-radius:50%; background:#6FE08A; display:inline-block;}
+  #spauldingCloseBtn{background:none; border:none; color:#fff; opacity:.85; cursor:pointer; padding:4px; line-height:1; flex-shrink:0;}
+  #spauldingCloseBtn:hover{opacity:1;}
+  #spauldingCloseBtn svg{width:16px; height:16px;}
+  .spaulding-messages{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:9px; background:#F9F9F6;}
+  .spaulding-msg{max-width:84%; font-size:13.5px; line-height:1.55; padding:10px 14px; border-radius:14px; white-space:pre-wrap;}
+  .spaulding-msg.bot{align-self:flex-start; background:#fff; border:1px solid #E4E1D6; color:#15181D; border-bottom-left-radius:4px;}
+  .spaulding-msg.user{align-self:flex-end; background:var(--rA,#565FAE); color:#fff; border-bottom-right-radius:4px;}
+  .spaulding-typing{align-self:flex-start; display:flex; gap:4px; padding:12px 14px; background:#fff; border:1px solid #E4E1D6; border-radius:14px; border-bottom-left-radius:4px;}
+  .spaulding-typing span{width:6px; height:6px; border-radius:50%; background:#9AA0A6; animation:spauldingBlink 1.2s infinite ease-in-out;}
+  .spaulding-typing span:nth-child(2){animation-delay:.2s;}
+  .spaulding-typing span:nth-child(3){animation-delay:.4s;}
+  @keyframes spauldingBlink{0%,80%,100%{opacity:.3;} 40%{opacity:1;}}
+  .spaulding-suggestions{display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 12px; background:#F9F9F6;}
+  .spaulding-suggestion{font-size:11.5px; font-weight:600; color:var(--rA,#565FAE); background:#fff; border:1px solid #E4E1D6; border-radius:100px; padding:6px 12px; cursor:pointer;}
+  .spaulding-suggestion:hover{border-color:var(--rA,#565FAE);}
+  .spaulding-input-row{display:flex; gap:8px; padding:12px; border-top:1px solid #E4E1D6; background:#fff; flex-shrink:0;}
+  .spaulding-input-row input{flex:1; border:1px solid #E4E1D6; border-radius:100px; padding:10px 16px; font-size:13.5px; font-family:inherit; outline:none; min-width:0;}
+  .spaulding-input-row input:focus{border-color:var(--rA,#565FAE);}
+  .spaulding-input-row button{width:37px; height:37px; border-radius:50%; background:var(--rA,#565FAE); border:none; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .spaulding-input-row button svg{width:15px; height:15px;}
+  @media (max-width:480px){ .spaulding-panel{width:calc(100vw - 28px); height:64vh;} }
+</style>
+
+<div id="spauldingWidget">
+  <div class="spaulding-panel" id="spauldingPanel">
+    <div class="spaulding-header">
+      <div class="spaulding-avatar">🌱</div>
+      <div class="spaulding-header-text">
+        <div class="spaulding-name">Spaulding</div>
+        <div class="spaulding-status">Ask me about Espalier</div>
+      </div>
+      <button id="spauldingCloseBtn" aria-label="Close chat">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="spaulding-messages" id="spauldingMessages">
+      <div class="spaulding-msg bot">Hey, I'm Spaulding 👋 Ask me anything about how Espalier works, pricing, trust &amp; safety, or getting started.</div>
+    </div>
+    <div class="spaulding-suggestions" id="spauldingSuggestions">
+      <button type="button" class="spaulding-suggestion">How does it work?</button>
+      <button type="button" class="spaulding-suggestion">Is it free?</button>
+      <button type="button" class="spaulding-suggestion">Is my idea safe?</button>
+    </div>
+    <form class="spaulding-input-row" id="spauldingForm">
+      <input type="text" id="spauldingInput" placeholder="Ask a question…" autocomplete="off" maxlength="300">
+      <button type="submit" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </form>
+  </div>
+  <button id="spauldingBubble" aria-label="Chat with Spaulding">
+    <span class="sb-chat-icon sb-chat-emoji">🌱</span>
+    <svg class="sb-close-icon" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+</div>
+
+<script>
+(function(){
+  var widget = document.getElementById('spauldingWidget');
+  var bubble = document.getElementById('spauldingBubble');
+  var closeBtn = document.getElementById('spauldingCloseBtn');
+  var form = document.getElementById('spauldingForm');
+  var input = document.getElementById('spauldingInput');
+  var messages = document.getElementById('spauldingMessages');
+  var suggestions = document.getElementById('spauldingSuggestions');
+  var opened = false;
+
+  function toggle(){
+    opened = !opened;
+    widget.classList.toggle('open', opened);
+    if(opened) setTimeout(function(){ input.focus(); }, 150);
+  }
+  bubble.addEventListener('click', toggle);
+  closeBtn.addEventListener('click', toggle);
+
+  function addMessage(text, who){
+    var div = document.createElement('div');
+    div.className = 'spaulding-msg ' + who;
+    div.textContent = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  /* ---------------------------------------------------------------------
+     Spaulding is a fixed-response assistant, not a live generative model:
+     every possible reply is one of the strings below, chosen by keyword
+     match. That's deliberate — it guarantees he can never go off-script,
+     say anything negative about Espalier, or leak anything we haven't
+     explicitly written here, no matter what someone types at him.
+     TODO(Jordan): if you want him to handle truly open-ended questions,
+     that needs a real backend LLM call with a locked-down system prompt —
+     happy to build that next when you're ready.
+  --------------------------------------------------------------------- */
+  var RESPONSES = {
+    greeting: "Hey there! I'm Spaulding \uD83D\uDC4B Ask me anything about how Espalier works, pricing, or getting started.",
+    thanks: "Anytime! Let me know if anything else comes up.",
+    bye: "Good luck out there \u2014 hope you find (or finish) something great. \uD83C\uDF31",
+    about: "Espalier is a marketplace where people who start creative or entrepreneurial ideas \u2014 but don't finish them \u2014 hand them off to someone who will. Starters list unfinished work; finishers browse, claim, and bring it to life.",
+    how: "Starters describe their idea and share what they've built so far. Our AI scores it on readiness, cost to finish, and profit potential. Finishers browse listings, message starters they're interested in, and agree on terms together \u2014 cash, a revenue share, or both. The How It Works section on the homepage has the full breakdown.",
+    pricing: "Browsing and listing are both free. Espalier only takes a share once a deal actually closes \u2014 see the pricing page for exact numbers.",
+    trust: "Every idea is timestamped the moment it's listed, and the real files stay private until a finisher is serious enough to commit to a conversation. Both starters and finishers also build a visible track record over time. The \u201cYou can trust us\u201d section on the homepage has the full list.",
+    score: "The Espalier Score comes from our own AI models, checking real signals like readiness, cost to finish, and profit potential \u2014 not just how good the pitch sounds. It also checks that what's claimed matches what's actually been built.",
+    signup: "Just hit \u201cSign up\u201d in the top right! You can join as a starter, a finisher, or both \u2014 your account isn't locked to one role.",
+    contact: "I can answer quick questions right here, but the FAQ page has a lot more detail, and you can reach out directly once you're signed in.",
+    deflect: "That's not something I can really speak to \u2014 but I'm happy to walk you through how Espalier works, what it costs, or how to get started if any of that's helpful!",
+    fallback: "I don't have a great answer for that one yet \u2014 but the FAQ page covers a lot of ground, or feel free to ask me something else!"
+  };
+
+  function esc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  function hasExact(m){
+    var words = Array.prototype.slice.call(arguments, 1);
+    return words.some(function(w){ return new RegExp('\\b' + esc(w) + '\\b').test(m); });
+  }
+  function hasPrefix(m){
+    var words = Array.prototype.slice.call(arguments, 1);
+    return words.some(function(w){ return new RegExp('\\b' + esc(w)).test(m); });
+  }
+
+  function getResponse(raw){
+    var m = raw.toLowerCase();
+    if (hasPrefix(m,'fuck','shit','scam','stupid','worst','hate','suck','terribl','fraud','illegal','fund','invest','profit margin','valuat','salar','confidential','api key','password','source code','employee','who owns','ceo make','how much money') || hasExact(m,'sue','sued','suing','lawsuit','revenue')) return RESPONSES.deflect;
+    if (hasExact(m,'hi','hey','hello','yo','sup','howdy')) return RESPONSES.greeting;
+    if (hasPrefix(m,'thank') || hasExact(m,'thx')) return RESPONSES.thanks;
+    if (hasExact(m,'bye','goodbye','later') || hasPrefix(m,'see ya')) return RESPONSES.bye;
+    if (hasPrefix(m,'what is espalier','what does espalier','what is this platform','what is this site','explain espalier') || hasExact(m,'what is this')) return RESPONSES.about;
+    if (hasPrefix(m,'how does it work','how it works','how do i list','how do i start','how do i finish','how does espalier work')) return RESPONSES.how;
+    if (hasPrefix(m,'pricing','charg') || hasExact(m,'free','fee','price','cost','costs')) return RESPONSES.pricing;
+    if (hasPrefix(m,'safe','secur','protect','legit','verif') || hasExact(m,'trust')) return RESPONSES.trust;
+    if (hasPrefix(m,'score')) return RESPONSES.score;
+    if (hasPrefix(m,'signup','sign up','get started','join') || hasExact(m,'login','log in')) return RESPONSES.signup;
+    if (hasPrefix(m,'contact','support','human') || hasExact(m,'help','email')) return RESPONSES.contact;
+    return RESPONSES.fallback;
+  }
+
+  function respondTo(val){
+    addMessage(val, 'user');
+    if(suggestions) suggestions.style.display = 'none';
+    var typing = document.createElement('div');
+    typing.className = 'spaulding-typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    messages.appendChild(typing);
+    messages.scrollTop = messages.scrollHeight;
+    setTimeout(function(){
+      typing.remove();
+      addMessage(getResponse(val), 'bot');
+    }, 500 + Math.random() * 400);
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var val = input.value.trim();
+    if(!val) return;
+    input.value = '';
+    respondTo(val);
+  });
+
+  if (suggestions) {
+    suggestions.querySelectorAll('.spaulding-suggestion').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        respondTo(btn.textContent);
+      });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
