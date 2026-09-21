@@ -206,6 +206,12 @@
   }
 
   /* ---------- problem section (dark, bridges hero to the mechanics) ---------- */
+  .activity-ticker{background:#F5F6F1; border-bottom:1px solid #E4E1D6; padding:12px 24px; text-align:center; position:relative; z-index:10; overflow:hidden;}
+  .activity-ticker-inner{display:inline-flex; align-items:center; gap:9px; font-size:13px; font-weight:600; color:#454B52; max-width:100%;}
+  .activity-dot{width:7px; height:7px; border-radius:50%; background:#6FE08A; flex-shrink:0; box-shadow:0 0 0 3px rgba(111,224,138,.25); animation:activityPulse 2s ease-in-out infinite;}
+  @keyframes activityPulse{0%,100%{opacity:1;} 50%{opacity:.5;}}
+  .activity-ticker-text{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:1; transition:opacity .3s ease;}
+  .activity-ticker-text.fading{opacity:0;}
   .problem-section{background:radial-gradient(ellipse 900px 500px at 50% 30%, rgba(86,95,174,.35), transparent 70%), var(--ink); color:#fff; padding:70px 24px 90px; text-align:center; position:relative; z-index:10;}
   .problem-wrap{max-width:1040px; margin:0 auto;}
   .problem-wrap h2{font-family:var(--font-display); font-weight:800; font-size:clamp(14px,2.3vw,28px); line-height:1.45; margin:0 0 22px; white-space:nowrap;}
@@ -531,6 +537,20 @@
       <div class="post right"></div>
       <div class="bud-center"></div>
     </div>
+  </div>
+</div>
+
+<!--
+  TODO(Jordan): this ticker currently rotates through hardcoded demo messages (see ACTIVITY_MESSAGES
+  in the script below). Before this goes live to real visitors, wire it to a real backend feed of
+  actual anonymized events (new listing posted, idea claimed, deal proposed, etc.) — shipping fabricated
+  "live activity" as if it were real would be misleading once people are actually looking at this site.
+  Until then, keep the messages generic/aggregate rather than implying specific fake events.
+-->
+<div class="activity-ticker" id="activityTicker">
+  <div class="activity-ticker-inner">
+    <span class="activity-dot"></span>
+    <span class="activity-ticker-text" id="activityTickerText">14 ideas listed this week</span>
   </div>
 </div>
 
@@ -1171,6 +1191,30 @@ document.querySelectorAll('.preview-card').forEach(card=>{
 });
 document.getElementById('ideaModalClose').addEventListener('click', closeIdeaModal);
 ideaModalOverlay.addEventListener('click', closeIdeaModal);
+
+/* ---------- activity ticker ---------- */
+/* TODO(Jordan): replace ACTIVITY_MESSAGES with a real feed from the backend before launch. */
+const ACTIVITY_MESSAGES = [
+  "14 ideas listed this week",
+  "A new physical product idea was just listed",
+  "A finisher just claimed an idea in Event",
+  "3 new starters joined today",
+  "A deal was proposed on a Business idea",
+  "Someone just signed up as a finisher",
+  "A Website idea just crossed 70% built"
+];
+const activityTickerText = document.getElementById('activityTickerText');
+if (activityTickerText) {
+  let activityIndex = 0;
+  setInterval(() => {
+    activityTickerText.classList.add('fading');
+    setTimeout(() => {
+      activityIndex = (activityIndex + 1) % ACTIVITY_MESSAGES.length;
+      activityTickerText.textContent = ACTIVITY_MESSAGES[activityIndex];
+      activityTickerText.classList.remove('fading');
+    }, 300);
+  }, 4000);
+}
 
 /* ---------- newsletter signup ---------- */
 const newsletterForm = document.getElementById('newsletterForm');
