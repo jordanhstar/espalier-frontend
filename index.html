@@ -311,6 +311,14 @@
   .dark-section .statement{color:#fff;}
   .dark-section .statement .accent{color:var(--lA);}
   .dark-section .lead{color:rgba(255,255,255,.68);}
+  .safety-underline{text-decoration:underline wavy var(--rA); text-underline-offset:4px; text-decoration-thickness:1.5px; font-weight:700; color:#fff;}
+  .safety-mark{background:rgba(196,135,90,.24); color:#fff; padding:1px 7px; border-radius:5px; font-weight:700;}
+  .safety-badge{display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); border-radius:100px; padding:2px 11px 2px 8px; font-weight:700; color:#fff; white-space:nowrap; vertical-align:-3px; line-height:1.8;}
+  .safety-badge svg{width:13px; height:13px; flex-shrink:0;}
+  .safety-badge.clay svg{color:var(--lA);}
+  .safety-badge.indigo svg{color:var(--rA);}
+  .safety-pill{border:1px solid rgba(255,255,255,.4); border-radius:100px; padding:2px 11px; font-weight:700; color:#fff;}
+  .safety-glow{color:var(--lA); font-weight:800; text-shadow:0 0 12px rgba(196,135,90,.5);}
   .trust-group-label{display:inline-flex; align-items:center; gap:8px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:5px 14px; border-radius:100px; margin-bottom:24px;}
   .trust-group-label.starter{background:color-mix(in srgb, var(--lA) 16%, white); color:var(--lA);}
   .trust-group-label.finisher{background:color-mix(in srgb, var(--rA) 16%, white); color:var(--rA);}
@@ -766,7 +774,7 @@
   <div class="mission-wrap">
     <div class="kicker">Platform safety</div>
     <h2 class="statement">We assume good intent on every user's end.<br><span class="accent">That doesn't mean we skip the guardrails.</span></h2>
-    <p class="lead">Every idea is reviewed before it goes live, and listings that don't meet our criteria aren't accepted until they do. Every account carries a visible track record. Timestamps are generated for every posted idea, protecting a creator's claim to it. Proprietary details are only shared once both sides are genuinely committed to a deal. And every finisher has to agree to a set of platform terms before they can even browse — including explicitly committing to never use the platform to study and then build someone else's idea without them. That's the baseline, not the whole list.</p>
+    <p class="lead">Every idea is <span class="safety-underline">reviewed before it goes live</span>, and listings that don't meet our criteria aren't accepted until they do. Every account carries a visible <span class="safety-badge clay"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 4 7v6c0 5 3.5 7.5 8 8 4.5-.5 8-3 8-8V7l-8-4Z" stroke="currentColor" stroke-width="1.6"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>track record</span>. <span class="safety-badge indigo"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Timestamps</span> are generated for every posted idea, protecting a creator's claim to it. Proprietary details are <span class="safety-mark">only shared</span> once both sides are genuinely committed to a deal. And every finisher has to agree to a set of <span class="safety-pill">platform terms</span> before they can even browse — including explicitly committing to <span class="safety-glow">never use the platform to study and then build someone else's idea without them</span>. That's the baseline, not the whole list.</p>
   </div>
 </section>
 
