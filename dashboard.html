@@ -376,6 +376,27 @@
         </div>
       </div>
 
+      <h3 class="admin-section-h">Growth</h3>
+      <p class="section-sub">Last 6 months, across everyone on the platform.</p>
+      <div class="admin-two-col" id="adminGrowthRow1">
+        <div class="chart-card">
+          <h3 style="font-family:var(--font-display); font-size:14.5px; margin:0;">New members</h3>
+          <div class="bars" id="growthMembersChart"></div>
+        </div>
+        <div class="chart-card">
+          <h3 style="font-family:var(--font-display); font-size:14.5px; margin:0;">Ideas listed</h3>
+          <div class="bars" id="growthIdeasChart"></div>
+        </div>
+      </div>
+      <div class="chart-card" style="margin-bottom:24px;">
+        <h3 style="font-family:var(--font-display); font-size:14.5px; margin:0;">Deals — proposed vs. accepted</h3>
+        <div class="bars" id="growthDealsChart" style="height:140px;"></div>
+        <div style="display:flex; gap:16px; margin-top:10px; font-size:11.5px; color:var(--dim);">
+          <span><span style="display:inline-block; width:9px; height:9px; border-radius:2px; background:var(--coral); margin-right:5px;"></span>Proposed</span>
+          <span><span style="display:inline-block; width:9px; height:9px; border-radius:2px; background:var(--teal); margin-right:5px;"></span>Accepted</span>
+        </div>
+      </div>
+
       <h3 class="admin-section-h">Conversations in progress</h3>
       <p class="section-sub">Pending deal and consulting requests, across everyone.</p>
       <div id="adminConversationsList"></div>
@@ -1081,17 +1102,51 @@ async function loadAdminOverview(){
     renderAdminDeals(data.deals.inProgress);
     renderAdminNotPublished(data.ideas.notPublished);
   } catch(e){ /* quiet — same as the review queue above */ }
+  try {
+    const gRes = await apiFetch('/api/admin/growth');
+    if(!gRes.ok) return;
+    renderAdminGrowth(await gRes.json());
+  } catch(e){ /* quiet — growth charts are a bonus view */ }
+}
+
+function monthLabel(m){
+  const [y, mo] = m.split('-');
+  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(mo,10)-1];
+}
+
+function renderAdminGrowth(g){
+  const labels = g.months.map(monthLabel);
+
+  const maxMembers = Math.max(...g.members, 1);
+  document.getElementById('growthMembersChart').innerHTML = g.members.map((v,i) => `
+    <div class="bar-col"><div class="bar" style="height:${(v/maxMembers*100)}%;"></div><div class="bar-label">${labels[i]}</div></div>
+  `).join('');
+
+  const maxIdeas = Math.max(...g.ideas.total, 1);
+  document.getElementById('growthIdeasChart').innerHTML = g.ideas.total.map((v,i) => `
+    <div class="bar-col"><div class="bar" style="height:${(v/maxIdeas*100)}%;"></div><div class="bar-label">${labels[i]}</div></div>
+  `).join('');
+
+  const maxDeals = Math.max(...g.deals.proposed, ...g.deals.accepted, 1);
+  document.getElementById('growthDealsChart').innerHTML = g.deals.proposed.map((v,i) => `
+    <div class="bar-col">
+      <div style="display:flex; align-items:flex-end; gap:3px; width:100%; height:100%; justify-content:center;">
+        <div class="bar" style="width:40%; height:${(v/maxDeals*100)}%; background:var(--coral);"></div>
+        <div class="bar" style="width:40%; height:${(g.deals.accepted[i]/maxDeals*100)}%; background:var(--teal);"></div>
+      </div>
+      <div class="bar-label">${labels[i]}</div>
+    </div>
+  `).join('');
 }
 
 function renderAdminStats(data){
   const el = document.getElementById('adminStatsGrid');
   const i = data.ideas, p = data.people, d = data.deals;
   el.innerHTML = `
+    <div class="stat-card"><div class="label">Total members</div><div class="value">${p.totalMembers}</div><div class="delta flat">${p.activeStarters} active starters · ${p.activeFinishers} active finishers</div></div>
     <div class="stat-card"><div class="label">Total ideas</div><div class="value">${i.total}</div><div class="delta flat">${i.byStatus.active||0} active · ${i.byStatus.claimed||0} claimed · ${i.byStatus.completed||0} completed</div></div>
     <div class="stat-card"><div class="label">Needing review</div><div class="value">${i.reviewQueueCount}</div><div class="delta flat">appealed after a denial</div></div>
     <div class="stat-card"><div class="label">Not published</div><div class="value">${i.notPublishedCount}</div><div class="delta flat">denied at moderation</div></div>
-    <div class="stat-card"><div class="label">Active starters</div><div class="value">${p.activeStarters}</div><div class="delta flat">have a live idea listed</div></div>
-    <div class="stat-card"><div class="label">Active finishers</div><div class="value">${p.activeFinishers}</div><div class="delta flat">sent a deal or claimed an idea</div></div>
     <div class="stat-card"><div class="label">Deals in progress</div><div class="value">${d.inProgressCount}</div><div class="delta flat">accepted, not yet completed</div></div>
   `;
 }
