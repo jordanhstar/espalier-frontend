@@ -79,7 +79,8 @@
 
   .content{position:relative; z-index:10; flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 60px;}
   .zones{display:flex; justify-content:space-between; gap:40px; margin-bottom:44px;}
-  .zone{max-width:440px; transition:opacity .18s, transform .18s; cursor:pointer; container-type:inline-size;}
+  .zone{max-width:440px; transition:opacity .18s, transform .18s; cursor:pointer;}
+  .zone-inner{container-type:inline-size;}
   .zone.left{text-align:left;}
   .zone.right{text-align:right; margin-left:auto;}
   .zone-title{font-family:var(--font-display); font-weight:800; font-size:clamp(14px,6.4cqw,32px); line-height:1.2; margin:0 0 10px; text-shadow:0 2px 16px rgba(0,0,0,.35); white-space:nowrap;}
@@ -419,12 +420,16 @@
     <h1 class="hero-headline">You don't have to <span class="hl-circle">finish</span> what you <span class="hl-squiggle">start</span>,<br>and you don't have to <span class="hl-squiggle">start</span> what you <span class="hl-circle">finish</span>.</h1>
     <div class="zones">
       <div class="zone left" id="zoneLeft">
+        <div class="zone-inner">
         <h2 class="zone-title">I'm ready to pass it on</h2>
         <p class="zone-sub">Finished or not, your idea has value — and so does the time you put into it. Share it, choose who picks it up, and set your own terms: a payout, a revenue share, a mix of both - it's up to you.</p>
+        </div>
       </div>
       <div class="zone right" id="zoneRight">
+        <div class="zone-inner">
         <h2 class="zone-title">I'm ready to help it grow</h2>
         <p class="zone-sub">Why start from scratch? Browse truly unique, unfinished ideas that fit what you're good at and what you have time for, and give one what it needs to become real.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -448,7 +453,7 @@
 <section class="problem-section">
   <div class="problem-wrap">
     <h2>You don't have to do it all, <span class="accent">or do it alone.</span></h2>
-    <p>An idea for a cool new app. A business idea you thought of at 1am in the morning, built out halfway, and never looking back at again. It's not you — it's that <b>starting something and finishing something are two very different things</b>, and it's normal to excel at one or the other and not always both. Sitting on your phone in your notes app, <b>your idea isn't worth anything to anyone, including you.</b> Espalier is where you can go to <span class="accent">pass it on to someone who believes in your idea</span> and can bring it to life.</p>
+    <p>That 1am idea, half-built and never opened again — it's not you. <b>Starting and finishing are different skills; almost no one's great at both.</b> An idea sitting in your notes app is <b>worth nothing, to anyone, including you.</b> Espalier is where you <span class="accent">pass it on to someone who'll bring it to life.</span></p>
   </div>
 </section>
 
