@@ -131,14 +131,9 @@
 
   .hiw-columns{display:flex; gap:72px; max-width:1600px; margin:0 auto;}
   .side{flex:1; min-width:0; text-align:left;}
-  .side-head{display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:12px; text-align:center;}
-  .side-head .head-row{display:flex; align-items:center; gap:12px;}
-  .side-head h3{font-family:var(--font-display); font-weight:800; font-size:26px; margin:0; letter-spacing:-.01em;}
-  .side.starter .side-head h3{color:var(--lA);}
-  .side.finisher .side-head h3{color:var(--rA);}
-  .head-accent{width:44px; height:3px; border-radius:2px;}
-  .side.starter .head-accent{background:var(--lA);}
-  .side.finisher .head-accent{background:var(--rA);}
+  .side-head{display:flex; align-items:center; gap:14px; margin-bottom:12px; width:100%;}
+  .side-head .rule{flex:1; height:1px; background:#D9D4C4;}
+  .side-head h3{font-family:var(--font-display); font-weight:800; font-size:20px; margin:0; letter-spacing:-.005em; color:#15181D; white-space:nowrap;}
   .side.starter .col-icon{color:var(--lA);}
   .side.finisher .col-icon{color:var(--rA);}
   .side-lead{font-size:14px; line-height:1.65; color:#454B52; margin:0 auto 32px; max-width:520px; text-align:center;}
@@ -477,17 +472,16 @@
     <div class="hiw-columns">
     <div class="side starter">
       <div class="side-head">
-        <div class="head-row">
-          <span class="col-icon">
-            <svg viewBox="0 0 40 40" fill="none" width="32" height="32">
-              <path d="M12 24C12 24 11 14 20 11C29 8 31 14 31 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M25 8L31 14L25 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M12 24C9 24 6 26 6 30" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <h3>If you're a starter</h3>
-        </div>
-        <div class="head-accent"></div>
+        <div class="rule"></div>
+        <span class="col-icon">
+          <svg viewBox="0 0 40 40" fill="none" width="22" height="22">
+            <path d="M12 24C12 24 11 14 20 11C29 8 31 14 31 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M25 8L31 14L25 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 24C9 24 6 26 6 30" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <h3>If you're a starter</h3>
+        <div class="rule"></div>
       </div>
       <p class="side-lead">A short overview of the listing process</p>
       <div class="hiw-zigzag">
@@ -522,17 +516,16 @@
 
     <div class="side finisher">
       <div class="side-head">
-        <div class="head-row">
-          <span class="col-icon">
-            <svg viewBox="0 0 40 40" fill="none" width="32" height="32">
-              <path d="M20 30V16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M20 16C20 16 12 16 12 9C19 9 20 16 20 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M20 20C20 20 28 20 28 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <h3>If you're a finisher</h3>
-        </div>
-        <div class="head-accent"></div>
+        <div class="rule"></div>
+        <span class="col-icon">
+          <svg viewBox="0 0 40 40" fill="none" width="22" height="22">
+            <path d="M20 30V16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M20 16C20 16 12 16 12 9C19 9 20 16 20 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20 20C20 20 28 20 28 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <h3>If you're a finisher</h3>
+        <div class="rule"></div>
       </div>
       <p class="side-lead">Here's how it works</p>
       <div class="hiw-zigzag">
