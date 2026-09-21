@@ -257,7 +257,8 @@
   .money-carousel{max-width:640px; margin:48px auto 0; text-align:left;}
   .money-track{display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding-bottom:4px;}
   .money-track::-webkit-scrollbar{display:none;}
-  .money-card{flex:0 0 78%; scroll-snap-align:start; background:#fff; border:1px solid #E4E1D6; border-radius:18px; padding:26px 24px;}
+  .money-card{flex:0 0 78%; scroll-snap-align:start; background:#fff; border:1px solid #E4E1D6; border-radius:18px; padding:26px 24px; transition:border-color .25s ease, box-shadow .25s ease;}
+  .money-card.active{border-color:var(--rA); box-shadow:0 0 0 1px var(--rA), 0 0 24px 4px rgba(86,95,174,.35);}
   .money-dots{display:flex; gap:7px; justify-content:center; margin-top:18px;}
   .money-dot{width:7px; height:7px; border-radius:50%; background:#E4E1D6; border:none; padding:0; cursor:pointer; transition:background .15s, transform .15s;}
   .money-dot.active{background:var(--rA); transform:scale(1.3);}
@@ -717,7 +718,7 @@
 
 <section class="light-section" id="money">
   <div class="mission-wrap">
-    <div class="kicker">How the money works</div>
+    <div class="kicker">Show me the money</div>
     <h2 class="statement money-heading">Pre-built templates — <span class="accent">catered to each idea and each person.</span></h2>
     <p class="lead">The two of you agree on terms before anything changes hands or any proprietary information related to the idea is released. Espalier doesn't set the split — but we have our AI models recommend deal formats and conditions directly relating to all the information we have about a given idea. We always make sure both parties have all the relevant details they need to enter an agreement with transparency, good faith, and backup precautions in case there is any discrepancy between what someone commits to or offers and what they are actually able to provide.</p>
   </div>
@@ -751,7 +752,7 @@
     </div>
     <div class="money-dots" id="moneyDots"></div>
   </div>
-  <a class="section-link" href="pricing.html">What Espalier itself charges
+  <a class="section-link" href="pricing.html">What we ask
     <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </a>
 </section>
@@ -993,7 +994,9 @@ function setActiveMoneyDot(){
     if(dist < closestDist){ closestDist = dist; closest = i; }
   });
   moneyDotEls.forEach((d, i) => d.classList.toggle('active', i === closest));
+  moneyCards.forEach((c, i) => c.classList.toggle('active', i === closest));
 }
+moneyCards[0].classList.add('active');
 let moneyScrollTimer;
 moneyTrack.addEventListener('scroll', () => {
   clearTimeout(moneyScrollTimer);
