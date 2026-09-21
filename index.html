@@ -79,10 +79,10 @@
 
   .content{position:relative; z-index:10; flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 60px;}
   .zones{display:flex; justify-content:space-between; gap:40px; margin-bottom:44px;}
-  .zone{max-width:440px; transition:opacity .18s, transform .18s; cursor:pointer;}
+  .zone{max-width:440px; transition:opacity .18s, transform .18s; cursor:pointer; container-type:inline-size;}
   .zone.left{text-align:left;}
   .zone.right{text-align:right; margin-left:auto;}
-  .zone-title{font-family:var(--font-display); font-weight:800; font-size:clamp(22px,3.4vw,32px); line-height:1.2; margin:0 0 10px; text-shadow:0 2px 16px rgba(0,0,0,.35);}
+  .zone-title{font-family:var(--font-display); font-weight:800; font-size:clamp(14px,6.4cqw,32px); line-height:1.2; margin:0 0 10px; text-shadow:0 2px 16px rgba(0,0,0,.35); white-space:nowrap;}
   .zone-sub{font-size:14px; line-height:1.6; color:rgba(255,255,255,.82); margin:0; text-shadow:0 1px 10px rgba(0,0,0,.3); text-wrap:balance;}
 
   .trellis-dock{position:relative; z-index:10; padding:0 60px 40px; max-width:820px; margin:0 auto; width:100%;}
@@ -419,11 +419,11 @@
     <h1 class="hero-headline">You don't have to <span class="hl-circle">finish</span> what you <span class="hl-squiggle">start</span>,<br>and you don't have to <span class="hl-squiggle">start</span> what you <span class="hl-circle">finish</span>.</h1>
     <div class="zones">
       <div class="zone left" id="zoneLeft">
-        <h2 class="zone-title">I'm ready to<br>pass it on</h2>
+        <h2 class="zone-title">I'm ready to pass it on</h2>
         <p class="zone-sub">Finished or not, your idea has value — and so does the time you put into it. Share it, choose who picks it up, and set your own terms: a payout, a revenue share, a mix of both - it's up to you.</p>
       </div>
       <div class="zone right" id="zoneRight">
-        <h2 class="zone-title">I'm ready to<br>help it grow</h2>
+        <h2 class="zone-title">I'm ready to help it grow</h2>
         <p class="zone-sub">Why start from scratch? Browse truly unique, unfinished ideas that fit what you're good at and what you have time for, and give one what it needs to become real.</p>
       </div>
     </div>
