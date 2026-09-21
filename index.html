@@ -189,7 +189,10 @@
   .problem-section{background:var(--ink); color:#fff; padding:70px 24px 90px; text-align:center; position:relative; z-index:10;}
   .problem-wrap{max-width:1040px; margin:0 auto;}
   .problem-wrap h2{font-family:var(--font-display); font-weight:800; font-size:clamp(14px,2.3vw,28px); line-height:1.45; margin:0 0 22px; white-space:nowrap;}
+  .problem-wrap h2 .accent{color:var(--lA);}
   .problem-wrap p{font-size:15px; line-height:1.8; color:rgba(255,255,255,.68); margin:0;}
+  .problem-wrap p b{color:#fff; font-weight:700;}
+  .problem-wrap p .accent{color:var(--lA); font-weight:700;}
 
   /* ---------- shared section chrome for new light sections ---------- */
   .light-section{background:#F5F6F1; padding:56px 20px 64px; text-align:center;}
@@ -244,10 +247,11 @@
   .persona-card p{font-size:12.5px; line-height:1.6; color:#454B52; margin:0;}
 
   /* ---------- faq teaser ---------- */
-  .faq-list{max-width:720px; margin:48px auto 0; text-align:left; display:flex; flex-direction:column; gap:12px;}
+  .faq-list{max-width:920px; margin:48px auto 0; text-align:left; display:grid; grid-template-columns:1fr 1fr; gap:14px;}
   .faq-item{background:#fff; border:1px solid #E4E1D6; border-radius:14px; padding:20px 24px;}
   .faq-item h4{font-family:var(--font-display); font-weight:700; font-size:14.5px; margin:0 0 8px; color:#15181D;}
   .faq-item p{font-size:13px; line-height:1.6; color:#454B52; margin:0;}
+  @media (max-width:700px){ .faq-list{grid-template-columns:1fr;} }
 
   /* ---------- final CTA ---------- */
   .final-cta{
@@ -438,8 +442,8 @@
 
 <section class="problem-section">
   <div class="problem-wrap">
-    <h2>You don't have to do it at all, or do it alone.</h2>
-    <p>An idea for a cool new app. A business idea you thought of at 1am in the morning, built out halfway, and never looking back at again. It's not you — it's that starting something and finishing something are two very different things, and it's normal to excel at one or the other and not always both. Sitting on your phone in your notes app, your idea isn't worth anything to anyone, including you. Espalier is where you can go to pass it on to someone who believes in your idea and can bring it to life.</p>
+    <h2>You don't have to do it all, <span class="accent">or do it alone.</span></h2>
+    <p>An idea for a cool new app. A business idea you thought of at 1am in the morning, built out halfway, and never looking back at again. It's not you — it's that <b>starting something and finishing something are two very different things</b>, and it's normal to excel at one or the other and not always both. Sitting on your phone in your notes app, <b>your idea isn't worth anything to anyone, including you.</b> Espalier is where you can go to <span class="accent">pass it on to someone who believes in your idea</span> and can bring it to life.</p>
   </div>
 </section>
 
