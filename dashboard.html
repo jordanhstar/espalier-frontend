@@ -552,6 +552,12 @@
   </div>
 </div>
 
+<div class="idea-modal-overlay" id="screenshotLightboxOverlay"></div>
+<div class="idea-modal" id="screenshotLightbox" style="width:auto; max-width:90vw; padding:16px; text-align:center;">
+  <button class="idea-modal-close" id="screenshotLightboxClose">✕</button>
+  <img id="screenshotLightboxImg" style="max-width:100%; max-height:78vh; border-radius:10px; display:block;">
+</div>
+
 <script>
 /* ================= DATA MODEL ================= */
 const TYPE_META = {
@@ -1561,6 +1567,15 @@ document.getElementById('feedbackModalClose').addEventListener('click', closeFee
 document.getElementById('feedbackModalOverlay').addEventListener('click', closeFeedbackModal);
 document.getElementById('fbCloseSuccessBtn').addEventListener('click', closeFeedbackModal);
 
+document.getElementById('screenshotLightboxClose').addEventListener('click', () => {
+  document.getElementById('screenshotLightboxOverlay').classList.remove('show');
+  document.getElementById('screenshotLightbox').classList.remove('show');
+});
+document.getElementById('screenshotLightboxOverlay').addEventListener('click', () => {
+  document.getElementById('screenshotLightboxOverlay').classList.remove('show');
+  document.getElementById('screenshotLightbox').classList.remove('show');
+});
+
 document.querySelectorAll('.fb-kind-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     fbSelectedKind = btn.dataset.kind;
@@ -1679,7 +1694,9 @@ document.addEventListener('click', async (e) => {
       const res = await apiFetch(`/api/admin/feedback/${id}/screenshot`);
       if(res.ok){
         const { screenshotUrl } = await res.json();
-        window.open(screenshotUrl, '_blank');
+        document.getElementById('screenshotLightboxImg').src = screenshotUrl;
+        document.getElementById('screenshotLightboxOverlay').classList.add('show');
+        document.getElementById('screenshotLightbox').classList.add('show');
       }
     } catch(err){ alert("Couldn't load that screenshot."); }
     return;
