@@ -2046,12 +2046,15 @@ async function toggleSave(ideaId){
   const wasSaved = state.saved.has(ideaId);
   try {
     const res = await apiFetch(`/api/saved-ideas/${ideaId}`, { method: wasSaved ? 'DELETE' : 'POST' });
-    if(!res.ok) throw new Error();
+    if(!res.ok){
+      const data = await res.json().catch(()=>({}));
+      throw new Error(data.message || "Couldn't update your saved ideas — try again.");
+    }
     if(wasSaved) state.saved.delete(ideaId); else state.saved.add(ideaId);
     updateSavedToggleLabel();
     renderList();
     renderDetail();
-  } catch(e){ alert("Couldn't update your saved ideas — try again."); }
+  } catch(e){ alert(e.message || "Couldn't update your saved ideas — try again."); }
 }
 
 async function sendMessageRequest(ideaId){
@@ -2093,21 +2096,27 @@ async function sendConsultRequest(creatorId){
   const budget = budgetLabels[state.modal.budget] || 'Not sure yet';
   try {
     const res = await apiFetch('/api/requests', { method:'POST', body: JSON.stringify({ kind:'consulting', toUserId: creatorId, obstacle, budget }) });
-    if(!res.ok) throw new Error();
+    if(!res.ok){
+      const data = await res.json().catch(()=>({}));
+      throw new Error(data.message || "Couldn't send that request — try again.");
+    }
     state.modal.sent = true;
     renderModal();
-  } catch(e){ alert("Couldn't send that request — try again."); }
+  } catch(e){ alert(e.message || "Couldn't send that request — try again."); }
 }
 
 async function saveAlert(label, criteria, rawText){
   if(!requireLogin()) return;
   try {
     const res = await apiFetch('/api/alerts', { method:'POST', body: JSON.stringify({ label, criteria, rawText }) });
-    if(!res.ok) throw new Error();
+    if(!res.ok){
+      const data = await res.json().catch(()=>({}));
+      throw new Error(data.message || "Couldn't save that alert — try again.");
+    }
     const data = await res.json();
     state.savedAlerts.push({ id: data.id, label, raw: rawText });
     renderModal();
-  } catch(e){ alert("Couldn't save that alert — try again."); }
+  } catch(e){ alert(e.message || "Couldn't save that alert — try again."); }
 }
 
 async function removeAlert(id){
