@@ -166,6 +166,29 @@
 
 <section class="sec-final">
   <div class="inner">
+    <div class="step-num" style="color:var(--coral);">05a — YOUR LINK</div>
+    <h2>A portfolio link that's just yours</h2>
+    <p class="sub">A clean, shareable link showing your public track record. Membership and All Access only.</p>
+    <div id="usernameLocked" style="display:none; background:#fff; border:1px solid var(--border); border-radius:14px; padding:20px 24px; font-size:13.5px; color:var(--ink-soft); margin-bottom:24px;">
+      🔒 This is part of <b>Membership</b> or <b>All Access</b>. <a href="pricing.html" style="color:var(--rA); font-weight:700;">See plans →</a>
+    </div>
+    <div id="usernameUnlocked" style="display:none; margin-bottom:24px;">
+      <div style="display:flex; align-items:center; gap:0; background:#fff; border:1px solid var(--border); border-radius:12px; padding:4px; max-width:440px;">
+        <span style="padding:10px 4px 10px 14px; color:var(--dim); font-size:14px; white-space:nowrap;">espalier.dev/u/</span>
+        <input type="text" id="fUsername" placeholder="yourname" style="border:none; outline:none; font-size:14px; padding:10px 4px; flex:1; min-width:0; background:transparent;">
+        <button type="button" class="btn" id="saveUsernameBtn" style="padding:9px 18px; font-size:13px;">Save</button>
+      </div>
+      <p id="usernameStatus" style="font-size:12.5px; margin-top:8px;"></p>
+      <div id="usernameLiveLink" style="display:none; margin-top:10px; font-size:13px;">
+        Your link: <a id="usernameLiveLinkHref" href="#" target="_blank" style="color:var(--rA); font-weight:700;"></a>
+        <button type="button" id="copyUsernameLinkBtn" style="margin-left:8px; background:none; border:none; color:var(--dim); font-size:12px; cursor:pointer; text-decoration:underline;">Copy</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec-final">
+  <div class="inner">
     <div class="step-num" style="color:var(--coral);">05 — LAST THING</div>
     <h2>Anywhere else to find you or coverage of your work?</h2>
     <p class="sub">Portfolio, press, socials — up to five, totally optional.</p>
@@ -312,8 +335,66 @@ async function loadExisting(){
       document.getElementById('skipBtn').textContent = 'Cancel';
       document.getElementById('saveBtn').textContent = 'Save changes';
     }
+
+    if((user.plan || 'free') === 'free'){
+      document.getElementById('usernameLocked').style.display = 'block';
+    } else {
+      document.getElementById('usernameUnlocked').style.display = 'block';
+      if(user.username){
+        document.getElementById('fUsername').value = user.username;
+        showUsernameLink(user.username);
+      }
+    }
   } catch(e){ /* fine, just start blank */ }
 }
+
+function showUsernameLink(username){
+  const wrap = document.getElementById('usernameLiveLink');
+  const href = document.getElementById('usernameLiveLinkHref');
+  const url = `${window.location.origin}/u/${username}`;
+  wrap.style.display = 'block';
+  href.href = url;
+  href.textContent = url;
+}
+
+document.getElementById('saveUsernameBtn')?.addEventListener('click', async () => {
+  const input = document.getElementById('fUsername');
+  const statusEl = document.getElementById('usernameStatus');
+  const username = input.value.trim().toLowerCase();
+  statusEl.textContent = '';
+  statusEl.style.color = '';
+  if(!username){ statusEl.textContent = 'Enter a username first.'; statusEl.style.color = 'var(--coral)'; return; }
+
+  const btn = document.getElementById('saveUsernameBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  try {
+    const res = await apiFetch('/api/auth/me', { method: 'PATCH', body: JSON.stringify({ username }) });
+    const data = await res.json().catch(() => ({}));
+    if(!res.ok){
+      statusEl.textContent = data.message || "Couldn't save that — try again.";
+      statusEl.style.color = 'var(--coral)';
+    } else {
+      statusEl.textContent = "Saved — that's your link now.";
+      statusEl.style.color = 'var(--teal)';
+      showUsernameLink(username);
+    }
+  } catch(e){
+    statusEl.textContent = "Couldn't reach the server — try again.";
+    statusEl.style.color = 'var(--coral)';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Save';
+});
+
+document.getElementById('copyUsernameLinkBtn')?.addEventListener('click', () => {
+  const href = document.getElementById('usernameLiveLinkHref').textContent;
+  navigator.clipboard?.writeText(href);
+  const btn = document.getElementById('copyUsernameLinkBtn');
+  const original = btn.textContent;
+  btn.textContent = 'Copied!';
+  setTimeout(() => { btn.textContent = original; }, 1500);
+});
 
 async function saveProfile(){
   hideError();
