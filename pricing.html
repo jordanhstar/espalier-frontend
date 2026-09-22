@@ -143,7 +143,6 @@
     <div class="seg" id="roleToggle">
       <button class="seg-btn active" data-role="starter">I'm a starter</button>
       <button class="seg-btn" data-role="finisher">I'm a finisher</button>
-      <button class="seg-btn" data-role="both">I do both</button>
     </div>
     <div class="seg" id="billingToggle">
       <button class="seg-btn active" data-billing="monthly">Monthly</button>
@@ -154,7 +153,7 @@
   <div class="tier-grid">
     <div class="tier-card" data-tier="free">
       <div class="tier-name">Free</div>
-      <div class="tier-sub" data-role-text>Everything you need to <span data-starter-text>list an idea and find the right finisher</span><span data-finisher-text style="display:none;">browse, filter, and reach out to starters</span><span data-both-text style="display:none;">list ideas and find your next project</span></div>
+      <div class="tier-sub" data-role-text>Everything you need to <span data-starter-text>list an idea and find the right finisher</span><span data-finisher-text style="display:none;">browse, filter, and reach out to starters</span></div>
       <div class="tier-price">$0<span class="unit">/ forever</span></div>
       <div class="tier-price-note">No card required to get started</div>
       <button class="tier-cta">Get started free</button>
@@ -169,7 +168,7 @@
     <div class="tier-card highlight" data-tier="membership">
       <div class="tier-badge">Most popular</div>
       <div class="tier-name">Membership</div>
-      <div class="tier-sub">For people who are serious about <span data-starter-text>getting their idea into the right hands</span><span data-finisher-text style="display:none;">finding their next project first</span><span data-both-text style="display:none;">both sides of the platform</span></div>
+      <div class="tier-sub">For people who are serious about <span data-starter-text>getting their idea into the right hands</span><span data-finisher-text style="display:none;">finding their next project first</span></div>
       <div class="tier-price">
         <span data-price-monthly>[ $X ]<span class="unit">/ month</span></span>
         <span data-price-annual style="display:none;">[ $X ]<span class="unit">/ year</span></span>
@@ -186,7 +185,6 @@
     </div>
 
     <div class="tier-card" data-tier="allaccess">
-      <div class="tier-badge" id="allAccessBadge" style="display:none; background:var(--lA);">This is you</div>
       <div class="tier-name">All Access <span style="font-weight:600; font-size:13px; color:var(--rA);">(Starter + Finisher)</span></div>
       <div class="tier-sub">The <span class="plus-inline">same account</span> gets Membership-level access on <span class="plus-inline">both</span> sides of the platform — everything below applies whether you're listing an idea or browsing for one.</div>
       <div class="tier-price">
@@ -415,12 +413,10 @@
 const roleBtns = document.querySelectorAll('#roleToggle .seg-btn');
 function applyRole(role){
   document.querySelectorAll('tr[data-role]').forEach(el=>{
-    el.style.display = (role === 'both' || el.dataset.role === role) ? '' : 'none';
+    el.style.display = (el.dataset.role === role) ? '' : 'none';
   });
   document.querySelectorAll('[data-starter-text]').forEach(el=> el.style.display = (role === 'starter') ? '' : 'none');
   document.querySelectorAll('[data-finisher-text]').forEach(el=> el.style.display = (role === 'finisher') ? '' : 'none');
-  document.querySelectorAll('[data-both-text]').forEach(el=> el.style.display = (role === 'both') ? '' : 'none');
-  document.getElementById('allAccessBadge').style.display = (role === 'both') ? '' : 'none';
 }
 roleBtns.forEach(btn=>{
   btn.addEventListener('click', ()=>{
