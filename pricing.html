@@ -133,6 +133,7 @@
 
 <div class="page-hero">
   <div class="kicker">Pricing</div>
+  <div id="lockedBanner" style="display:none; max-width:560px; margin:0 auto 20px; background:#FFF4ED; border:1px solid var(--lA); border-radius:12px; padding:14px 20px; font-size:13.5px; color:#454B52;"></div>
   <h1>What it costs to use Espalier</h1>
   <p>Straightforward and generous, on purpose. See what's included as a starter or a finisher, and compare every feature side by side.</p>
 </div>
@@ -409,6 +410,17 @@
 <script>
 /* ---------- role toggle ---------- */
 const roleBtns = document.querySelectorAll('#roleToggle .seg-btn');
+const lockedReason = new URLSearchParams(window.location.search).get('locked');
+if (lockedReason) {
+  const banner = document.getElementById('lockedBanner');
+  banner.style.display = 'block';
+  banner.innerHTML = lockedReason === 'marketplace'
+    ? '🔒 Browsing the marketplace is part of <b>All Access</b> — the only plan that unlocks both sides of Espalier on one account.'
+    : lockedReason === 'listing'
+      ? '🔒 Listing an idea is part of <b>All Access</b> — the only plan that unlocks both sides of Espalier on one account.'
+      : '🔒 That\'s part of <b>All Access</b> — the only plan that unlocks both sides of Espalier on one account.';
+}
+
 function applyRole(role){
   document.querySelectorAll('tr[data-role]').forEach(el=>{
     el.style.display = (el.dataset.role === role) ? '' : 'none';

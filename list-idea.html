@@ -1408,6 +1408,21 @@ if(!authToken){
   window.location.href = 'index.html';
 }
 
+// Finishers (buyer-only accounts) don't get to list ideas unless they're on All
+// Access — check before anything else on this page runs.
+(async () => {
+  if(!authToken) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/me`, { headers: { 'Authorization': 'Bearer ' + authToken } });
+    if(res.ok){
+      const { user } = await res.json();
+      if(user.isBuyer && !user.isCreator){
+        window.location.href = 'pricing.html?locked=listing';
+      }
+    }
+  } catch(e){ /* if this check fails, fall through rather than block a real creator */ }
+})();
+
 function showPublishError(msg){
   const el = document.getElementById('publishError');
   el.textContent = msg;

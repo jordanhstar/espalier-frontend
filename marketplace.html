@@ -739,7 +739,17 @@ async function loadMe(){
   if(!authToken) return;
   try {
     const res = await apiFetch('/api/auth/me');
-    if(res.ok){ const d = await res.json(); ME = d.user; renderDetail(); }
+    if(res.ok){
+      const d = await res.json();
+      ME = d.user;
+      // Starters (creator-only accounts) don't get marketplace access unless they're
+      // on All Access — send them back with a clear reason instead of a silent block.
+      if(ME.isCreator && !ME.isBuyer){
+        window.location.href = 'pricing.html?locked=marketplace';
+        return;
+      }
+      renderDetail();
+    }
   } catch(e){}
 }
 function timeAgo(iso){

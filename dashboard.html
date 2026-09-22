@@ -332,12 +332,12 @@
   <aside class="sidebar">
     <div class="brand"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9M12 9C12 9 5 9 5 4C10 4 12 9 12 9M12 9C12 9 19 9 19 4C14 4 12 9 12 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Espalier</div>
     <button class="nav-item active" data-view="overview"><span class="ic">◆</span> Overview</button>
-    <button class="nav-item" data-view="ideas"><span class="ic">📦</span> My ideas</button>
+    <button class="nav-item" data-view="ideas" id="myIdeasNavItem"><span class="ic">📦</span> My ideas</button>
     <button class="nav-item" data-view="requests"><span class="ic">✉️</span> Requests &amp; deals <span class="nav-badge" id="navReqBadge"></span></button>
     <button class="nav-item" data-view="promote"><span class="ic">🚀</span> Promote</button>
     <button class="nav-item" data-view="earnings"><span class="ic">💰</span> Earnings</button>
     <button class="nav-item" data-view="followers"><span class="ic">👥</span> Followers</button>
-    <a class="nav-item" href="marketplace.html" style="text-decoration:none; display:flex;"><span class="ic">🧭</span> Browse marketplace</a>
+    <a class="nav-item" href="marketplace.html" id="browseMarketplaceLink" style="text-decoration:none; display:flex;"><span class="ic">🧭</span> Browse marketplace</a>
     <button class="nav-item" data-view="admin" id="navAdminItem" style="display:none;"><span class="ic">🛡️</span> Admin <span class="nav-badge" id="navAdminBadge"></span></button>
 
     <button class="nav-item" id="openFeedbackBtn"><span class="ic">💬</span> Feedback &amp; Reports</button>
@@ -364,7 +364,7 @@
       </div>
       <div class="top-actions">
         <div class="bell-wrap"><button class="bell-btn">🔔<span class="bell-badge" id="bellBadge"></span></button></div>
-        <a class="btn" href="list-idea.html">+ List a new idea</a>
+        <a class="btn" href="list-idea.html" id="listIdeaBtn">+ List a new idea</a>
       </div>
     </div>
 
@@ -1947,6 +1947,20 @@ async function loadDashboard(){
       if (document.getElementById('view-overview').classList.contains('active')) {
         document.getElementById('topTitle').textContent = TITLES.overview[0];
       }
+    }
+
+    // Only All Access accounts get both sides — everyone else is locked to whichever
+    // side they signed up as, with a clear path to upgrade rather than a silent hide.
+    if (!meData.user.isBuyer) {
+      const link = document.getElementById('browseMarketplaceLink');
+      link.href = 'pricing.html';
+      link.innerHTML = '<span class="ic">🔒</span> Browse marketplace <span style="font-size:10.5px; color:var(--dim); margin-left:2px;">(All Access)</span>';
+    }
+    if (!meData.user.isCreator) {
+      document.getElementById('myIdeasNavItem').style.display = 'none';
+      const listBtn = document.getElementById('listIdeaBtn');
+      listBtn.href = 'pricing.html';
+      listBtn.textContent = '🔒 Get All Access to list an idea';
     }
 
     const [activeRes, claimedRes, completedRes, draftRes, reqRes, activityRes, followRes, summaryRes] = await Promise.all([
