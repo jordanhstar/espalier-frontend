@@ -393,6 +393,7 @@
     <div class="view" id="view-promote">
       <h2 class="section-h">Promote your ideas</h2>
       <p class="section-sub">Pay to put an idea in front of more of the right buyers.</p>
+      <div id="promoCreditBanner" style="display:none; background:var(--teal-dim); border:1px solid var(--teal); border-radius:12px; padding:14px 20px; margin-bottom:20px; font-size:13.5px; color:var(--ink-soft);"></div>
       <div id="promoteList"></div>
     </div>
 
@@ -618,7 +619,7 @@ function logActivity(icon, bg, text){
 
 /* ================= RENDER ================= */
 function renderAll(){
-  renderOverview(); renderIdeas(); renderRequests(); renderPromote(); renderEarnings(); renderFollowers(); renderNav(); renderRepPill();
+  renderOverview(); renderIdeas(); renderRequests(); renderPromote(); renderEarnings(); renderFollowers(); renderNav(); renderRepPill(); loadPromoCredit();
 }
 
 // Reputation — starter side only here, since this dashboard is about ideas *you've*
@@ -1018,12 +1019,24 @@ async function promoteIdea(ideaId, days){
   try {
     const res = await apiFetch(`/api/ideas/${ideaId}`, { method:'PATCH', body: JSON.stringify({ promote: { days } }) });
     const data = await res.json();
-    if(!res.ok) throw new Error();
+    if(!res.ok) throw new Error(data.message || "Couldn't promote that idea — try again.");
     idea.promoted = true;
     idea.promotedUntil = new Date(data.idea.promotedUntil).toLocaleDateString('en-US', {month:'short', day:'numeric'});
     logActivity('🚀', 'coral', `Promoted <b>${idea.title}</b> for ${days} days`);
     renderAll();
-  } catch(e){ alert("Couldn't promote that idea — try again."); }
+    loadPromoCredit();
+  } catch(e){ alert(e.message || "Couldn't promote that idea — try again."); }
+}
+
+async function loadPromoCredit(){
+  try {
+    const res = await apiFetch('/api/dashboard/promo-credit');
+    if(!res.ok) return;
+    const { balanceDollars } = await res.json();
+    const banner = document.getElementById('promoCreditBanner');
+    banner.style.display = 'block';
+    banner.innerHTML = `💰 You have <b>$${balanceDollars}</b> in Promote credit this month. ${Number(balanceDollars) > 0 ? "It's applied automatically at checkout — no separate step." : 'Membership and All Access members build up credit monthly toward Promote costs.'}`;
+  } catch(e){ /* quiet — this banner is a bonus, not core to the page working */ }
 }
 
 function scoreLabelColor(label){
