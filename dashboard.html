@@ -34,17 +34,13 @@
   .brand{display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:700; font-size:17px; padding:8px 10px 22px;}
   .brand svg{width:20px; height:20px; color:var(--coral);}
   .nav-item{display:flex; align-items:center; gap:11px; font-size:14px; font-weight:600; color:var(--ink-soft); padding:11px 12px; border-radius:10px; margin-bottom:2px; background:none; border:none; width:100%; text-align:left;}
-  .feedback-widget-btn{display:flex; align-items:center; gap:11px; width:100%; text-align:left; margin-top:14px; padding:12px; border-radius:14px; background:linear-gradient(135deg, var(--teal-dim), #fff); border:1px solid var(--teal); cursor:pointer;}
-  .feedback-widget-btn:hover{box-shadow:0 4px 14px rgba(31,138,112,.18);}
-  .feedback-widget-btn .ic{font-size:19px;}
-  .feedback-widget-btn .fw-title{font-size:13px; font-weight:700; color:var(--ink);}
-  .feedback-widget-btn .fw-sub{font-size:11px; color:var(--teal); font-weight:600;}
   .fb-modal-h{font-family:var(--font-display); font-weight:800; font-size:19px; margin:0 0 8px; text-align:center;}
   .fb-modal-sub{font-size:13px; color:var(--dim); line-height:1.6; text-align:center; margin:0 0 20px;}
   .fb-kind-toggle{display:flex; gap:8px; margin-bottom:14px;}
   .fb-kind-btn{flex:1; font-family:var(--font-body); font-weight:700; font-size:13px; padding:10px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--ink-soft); cursor:pointer;}
   .fb-kind-btn.active{background:var(--coral-dim); border-color:var(--coral); color:var(--coral);}
-  .fb-textarea{width:100%; font-family:var(--font-body); font-size:13.5px; color:var(--ink); border:1px solid var(--border); border-radius:12px; padding:12px 14px; resize:vertical; min-height:100px;}
+  .fb-textarea{width:100%; font-family:var(--font-body); font-size:13.5px; background:#fff; color:#15181D; border:1px solid var(--border); border-radius:12px; padding:12px 14px; resize:vertical; min-height:100px;}
+  .fb-textarea::placeholder{color:#9AA0A6;}
   .fb-screenshot-row{display:flex; align-items:center; gap:10px; margin-top:12px;}
   .fb-attach-btn{font-size:12.5px; font-weight:700; color:var(--ink-soft); background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:8px 14px; cursor:pointer;}
   .fb-attach-btn:hover{border-color:var(--border-strong);}
@@ -343,13 +339,7 @@
     <a class="nav-item" href="marketplace.html" style="text-decoration:none; display:flex;"><span class="ic">🧭</span> Browse marketplace</a>
     <button class="nav-item" data-view="admin" id="navAdminItem" style="display:none;"><span class="ic">🛡️</span> Admin <span class="nav-badge" id="navAdminBadge"></span></button>
 
-    <button class="feedback-widget-btn" id="openFeedbackBtn">
-      <span class="ic">💬</span>
-      <div>
-        <div class="fw-title">Feedback &amp; reports</div>
-        <div class="fw-sub">We read every single one</div>
-      </div>
-    </button>
+    <button class="nav-item" id="openFeedbackBtn"><span class="ic">💬</span> Feedback &amp; Reports</button>
 
     <div class="sidebar-footer">
       <div class="sync-note" style="margin-bottom:10px;"><span class="sync-dot" id="syncDot"></span><span id="syncText">Connecting…</span></div>
