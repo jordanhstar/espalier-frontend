@@ -152,7 +152,7 @@
   </div>
 
   <div class="tier-grid">
-    <div class="tier-card">
+    <div class="tier-card" data-tier="free">
       <div class="tier-name">Free</div>
       <div class="tier-sub" data-role-text>Everything you need to <span data-starter-text>list an idea and find the right finisher</span><span data-finisher-text style="display:none;">browse, filter, and reach out to starters</span><span data-both-text style="display:none;">list ideas and find your next project</span></div>
       <div class="tier-price">$0<span class="unit">/ forever</span></div>
@@ -166,7 +166,7 @@
       </ul>
     </div>
 
-    <div class="tier-card highlight">
+    <div class="tier-card highlight" data-tier="membership">
       <div class="tier-badge">Most popular</div>
       <div class="tier-name">Membership</div>
       <div class="tier-sub">For people who are serious about <span data-starter-text>getting their idea into the right hands</span><span data-finisher-text style="display:none;">finding their next project first</span><span data-both-text style="display:none;">both sides of the platform</span></div>
@@ -185,9 +185,10 @@
       </ul>
     </div>
 
-    <div class="tier-card">
-      <div class="tier-name">All Access</div>
-      <div class="tier-sub">Everything Membership offers, unlocked on <span class="plus-inline">both</span> sides of the platform at once.</div>
+    <div class="tier-card" data-tier="allaccess">
+      <div class="tier-badge" id="allAccessBadge" style="display:none; background:var(--lA);">This is you</div>
+      <div class="tier-name">All Access <span style="font-weight:600; font-size:13px; color:var(--rA);">(Starter + Finisher)</span></div>
+      <div class="tier-sub">The <span class="plus-inline">same account</span> gets Membership-level access on <span class="plus-inline">both</span> sides of the platform — everything below applies whether you're listing an idea or browsing for one.</div>
       <div class="tier-price">
         <span data-price-monthly>[ $Y ]<span class="unit">/ month</span></span>
         <span data-price-annual style="display:none;">[ $Y ]<span class="unit">/ year</span></span>
@@ -214,7 +215,7 @@
           <th class="feat-col">Feature</th>
           <th class="tier-col">Free</th>
           <th class="tier-col tier-highlight">Membership</th>
-          <th class="tier-col tier-allaccess">All Access</th>
+          <th class="tier-col tier-allaccess">All Access<br><span style="font-weight:500; font-size:10.5px; text-transform:none; letter-spacing:0;">(Starter + Finisher)</span></th>
         </tr>
       </thead>
       <tbody>
@@ -419,6 +420,7 @@ function applyRole(role){
   document.querySelectorAll('[data-starter-text]').forEach(el=> el.style.display = (role === 'starter') ? '' : 'none');
   document.querySelectorAll('[data-finisher-text]').forEach(el=> el.style.display = (role === 'finisher') ? '' : 'none');
   document.querySelectorAll('[data-both-text]').forEach(el=> el.style.display = (role === 'both') ? '' : 'none');
+  document.getElementById('allAccessBadge').style.display = (role === 'both') ? '' : 'none';
 }
 roleBtns.forEach(btn=>{
   btn.addEventListener('click', ()=>{
