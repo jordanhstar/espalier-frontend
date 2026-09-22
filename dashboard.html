@@ -34,6 +34,37 @@
   .brand{display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:700; font-size:17px; padding:8px 10px 22px;}
   .brand svg{width:20px; height:20px; color:var(--coral);}
   .nav-item{display:flex; align-items:center; gap:11px; font-size:14px; font-weight:600; color:var(--ink-soft); padding:11px 12px; border-radius:10px; margin-bottom:2px; background:none; border:none; width:100%; text-align:left;}
+  .feedback-widget-btn{display:flex; align-items:center; gap:11px; width:100%; text-align:left; margin-top:14px; padding:12px; border-radius:14px; background:linear-gradient(135deg, var(--teal-dim), #fff); border:1px solid var(--teal); cursor:pointer;}
+  .feedback-widget-btn:hover{box-shadow:0 4px 14px rgba(31,138,112,.18);}
+  .feedback-widget-btn .ic{font-size:19px;}
+  .feedback-widget-btn .fw-title{font-size:13px; font-weight:700; color:var(--ink);}
+  .feedback-widget-btn .fw-sub{font-size:11px; color:var(--teal); font-weight:600;}
+  .fb-modal-h{font-family:var(--font-display); font-weight:800; font-size:19px; margin:0 0 8px; text-align:center;}
+  .fb-modal-sub{font-size:13px; color:var(--dim); line-height:1.6; text-align:center; margin:0 0 20px;}
+  .fb-kind-toggle{display:flex; gap:8px; margin-bottom:14px;}
+  .fb-kind-btn{flex:1; font-family:var(--font-body); font-weight:700; font-size:13px; padding:10px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--ink-soft); cursor:pointer;}
+  .fb-kind-btn.active{background:var(--coral-dim); border-color:var(--coral); color:var(--coral);}
+  .fb-textarea{width:100%; font-family:var(--font-body); font-size:13.5px; color:var(--ink); border:1px solid var(--border); border-radius:12px; padding:12px 14px; resize:vertical; min-height:100px;}
+  .fb-screenshot-row{display:flex; align-items:center; gap:10px; margin-top:12px;}
+  .fb-attach-btn{font-size:12.5px; font-weight:700; color:var(--ink-soft); background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:8px 14px; cursor:pointer;}
+  .fb-attach-btn:hover{border-color:var(--border-strong);}
+  .fb-screenshot-name{font-size:12px; color:var(--dim);}
+  .fb-screenshot-preview{max-width:100%; max-height:140px; border-radius:10px; border:1px solid var(--border); margin-top:10px; display:block;}
+  .fb-screenshot-remove{font-size:11.5px; color:var(--coral); background:none; border:none; cursor:pointer; padding:6px 0; text-decoration:underline;}
+  .fb-error{font-size:12.5px; color:var(--coral); margin:10px 0 0;}
+  .fb-admin-card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 20px; margin-bottom:12px;}
+  .fb-admin-head{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:8px;}
+  .fb-admin-who{font-size:13px; font-weight:700; color:var(--ink);}
+  .fb-admin-when{font-size:11.5px; color:var(--dim);}
+  .fb-admin-kind{display:inline-block; font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:100px; text-transform:uppercase; letter-spacing:.03em;}
+  .fb-admin-kind.feedback{background:var(--teal-dim); color:var(--teal);}
+  .fb-admin-kind.report{background:var(--coral-dim); color:var(--coral);}
+  .fb-admin-msg{font-size:13.5px; color:var(--ink-soft); line-height:1.6; margin:8px 0;}
+  .fb-admin-screenshot-link{font-size:12px; font-weight:700; color:var(--blue); cursor:pointer; text-decoration:underline;}
+  .fb-admin-controls{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; align-items:center;}
+  .fb-admin-controls select{font-size:12.5px; border:1px solid var(--border); border-radius:8px; padding:6px 10px; background:var(--bg);}
+  .fb-admin-controls input{flex:1; min-width:180px; font-size:12.5px; border:1px solid var(--border); border-radius:8px; padding:6px 10px;}
+  .fb-admin-controls button{font-size:12px; font-weight:700; color:#fff; background:var(--coral); border:none; border-radius:8px; padding:7px 14px; cursor:pointer;}
   .nav-item .ic{font-size:16px; width:18px; text-align:center;}
   .nav-item:hover{background:var(--bg);}
   .nav-item.active{background:var(--coral-dim); color:var(--coral);}
@@ -312,6 +343,14 @@
     <a class="nav-item" href="marketplace.html" style="text-decoration:none; display:flex;"><span class="ic">🧭</span> Browse marketplace</a>
     <button class="nav-item" data-view="admin" id="navAdminItem" style="display:none;"><span class="ic">🛡️</span> Admin <span class="nav-badge" id="navAdminBadge"></span></button>
 
+    <button class="feedback-widget-btn" id="openFeedbackBtn">
+      <span class="ic">💬</span>
+      <div>
+        <div class="fw-title">Feedback &amp; reports</div>
+        <div class="fw-sub">We read every single one</div>
+      </div>
+    </button>
+
     <div class="sidebar-footer">
       <div class="sync-note" style="margin-bottom:10px;"><span class="sync-dot" id="syncDot"></span><span id="syncText">Connecting…</span></div>
       <div class="me-row">
@@ -457,6 +496,26 @@
       <h3 class="admin-section-h">Waiting on your review</h3>
       <p class="section-sub">Ideas that were denied and appealed for a second look.</p>
       <div id="adminReviewList"></div>
+
+      <h3 class="admin-section-h">Feedback &amp; reports</h3>
+      <p class="section-sub">Everything submitted through the "Feedback &amp; reports" widget, across every user.</p>
+      <div class="chart-controls" style="margin-bottom:14px;">
+        <div class="chart-control-group">
+          <label for="fbKindFilter">Type</label>
+          <select id="fbKindFilter"><option value="">All</option><option value="feedback">Feedback</option><option value="report">Reports</option></select>
+        </div>
+        <div class="chart-control-group">
+          <label for="fbStatusFilter">Status</label>
+          <select id="fbStatusFilter">
+            <option value="">All</option>
+            <option value="new">New</option>
+            <option value="in_progress">In progress</option>
+            <option value="addressed">Addressed</option>
+            <option value="wont_fix">Won't fix</option>
+          </select>
+        </div>
+      </div>
+      <div id="adminFeedbackList"></div>
     </div>
   </div>
 </div>
@@ -465,6 +524,41 @@
 <div class="idea-modal" id="ideaModal">
   <button class="idea-modal-close" id="ideaModalClose">✕</button>
   <div id="ideaModalBody"></div>
+</div>
+
+<div class="idea-modal-overlay" id="feedbackModalOverlay"></div>
+<div class="idea-modal" id="feedbackModal" style="width:480px;">
+  <button class="idea-modal-close" id="feedbackModalClose">✕</button>
+  <div id="feedbackModalBody">
+    <h2 class="fb-modal-h">We'd love to hear from you</h2>
+    <p class="fb-modal-sub">Every single note here is read by an actual person on our team — not a bot, not a support queue. We really do want to know what's working, what's not, and what you wish existed.</p>
+
+    <div class="fb-kind-toggle">
+      <button type="button" class="fb-kind-btn active" data-kind="feedback">💡 General feedback</button>
+      <button type="button" class="fb-kind-btn" data-kind="report">🚩 Report a problem</button>
+    </div>
+
+    <textarea id="fbMessage" class="fb-textarea" placeholder="What's on your mind?" rows="5"></textarea>
+
+    <div class="fb-screenshot-row">
+      <label class="fb-attach-btn" for="fbScreenshotInput">📎 Attach a screenshot (optional)</label>
+      <input type="file" id="fbScreenshotInput" accept="image/*" style="display:none;">
+      <span id="fbScreenshotName" class="fb-screenshot-name"></span>
+    </div>
+    <div id="fbScreenshotPreviewWrap" style="display:none;">
+      <img id="fbScreenshotPreview" class="fb-screenshot-preview">
+      <button type="button" id="fbScreenshotRemove" class="fb-screenshot-remove">Remove</button>
+    </div>
+
+    <p id="fbError" class="fb-error" style="display:none;"></p>
+    <button type="button" class="btn" id="fbSubmitBtn" style="width:100%; margin-top:16px;">Send it over</button>
+  </div>
+  <div id="feedbackSuccessBody" style="display:none; text-align:center; padding:20px 0;">
+    <div style="font-size:38px; margin-bottom:12px;">🌱</div>
+    <h2 class="fb-modal-h">Got it — thank you</h2>
+    <p class="fb-modal-sub">This really does get read and considered. We appreciate you taking the time.</p>
+    <button type="button" class="btn" id="fbCloseSuccessBtn" style="margin-top:10px;">Close</button>
+  </div>
 </div>
 
 <script>
@@ -1166,6 +1260,7 @@ async function loadAdminOverview(){
     }
   } catch(e){ /* quiet — leaderboard is a bonus view */ }
   setupConfigurableChart();
+  loadAdminFeedback();
 }
 
 function monthLabel(m){
@@ -1440,6 +1535,179 @@ document.addEventListener('click', (e)=>{
 });
 document.getElementById('ideaModalClose').addEventListener('click', closeIdeaModal);
 document.getElementById('ideaModalOverlay').addEventListener('click', closeIdeaModal);
+
+/* ================= FEEDBACK & REPORTS WIDGET ================= */
+let fbScreenshotDataUrl = null;
+let fbSelectedKind = 'feedback';
+
+function openFeedbackModal(){
+  document.getElementById('feedbackModalOverlay').classList.add('show');
+  document.getElementById('feedbackModal').classList.add('show');
+}
+function closeFeedbackModal(){
+  document.getElementById('feedbackModalOverlay').classList.remove('show');
+  document.getElementById('feedbackModal').classList.remove('show');
+}
+function resetFeedbackForm(){
+  document.getElementById('feedbackModalBody').style.display = 'block';
+  document.getElementById('feedbackSuccessBody').style.display = 'none';
+  document.getElementById('fbMessage').value = '';
+  document.getElementById('fbError').style.display = 'none';
+  fbScreenshotDataUrl = null;
+  document.getElementById('fbScreenshotInput').value = '';
+  document.getElementById('fbScreenshotName').textContent = '';
+  document.getElementById('fbScreenshotPreviewWrap').style.display = 'none';
+  fbSelectedKind = 'feedback';
+  document.querySelectorAll('.fb-kind-btn').forEach(b => b.classList.toggle('active', b.dataset.kind === 'feedback'));
+  document.getElementById('fbMessage').placeholder = "What's on your mind?";
+  const btn = document.getElementById('fbSubmitBtn');
+  btn.disabled = false;
+  btn.textContent = 'Send it over';
+}
+
+document.getElementById('openFeedbackBtn').addEventListener('click', () => { resetFeedbackForm(); openFeedbackModal(); });
+document.getElementById('feedbackModalClose').addEventListener('click', closeFeedbackModal);
+document.getElementById('feedbackModalOverlay').addEventListener('click', closeFeedbackModal);
+document.getElementById('fbCloseSuccessBtn').addEventListener('click', closeFeedbackModal);
+
+document.querySelectorAll('.fb-kind-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    fbSelectedKind = btn.dataset.kind;
+    document.querySelectorAll('.fb-kind-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('fbMessage').placeholder = fbSelectedKind === 'report'
+      ? 'What happened? Please include as much detail as you can — a listing title, a username, whatever helps us look into it.'
+      : "What's on your mind?";
+  });
+});
+
+document.getElementById('fbScreenshotInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  if(file.size > 1_000_000){ alert('That screenshot is a bit large — try one under 1MB.'); e.target.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    fbScreenshotDataUrl = reader.result;
+    document.getElementById('fbScreenshotPreview').src = fbScreenshotDataUrl;
+    document.getElementById('fbScreenshotPreviewWrap').style.display = 'block';
+    document.getElementById('fbScreenshotName').textContent = file.name;
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('fbScreenshotRemove').addEventListener('click', () => {
+  fbScreenshotDataUrl = null;
+  document.getElementById('fbScreenshotInput').value = '';
+  document.getElementById('fbScreenshotName').textContent = '';
+  document.getElementById('fbScreenshotPreviewWrap').style.display = 'none';
+});
+
+document.getElementById('fbSubmitBtn').addEventListener('click', async () => {
+  const message = document.getElementById('fbMessage').value.trim();
+  const errEl = document.getElementById('fbError');
+  errEl.style.display = 'none';
+  if(!message){ errEl.textContent = 'Please add a message before sending.'; errEl.style.display = 'block'; return; }
+
+  const btn = document.getElementById('fbSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  try {
+    const res = await apiFetch('/api/feedback', {
+      method: 'POST',
+      body: JSON.stringify({ kind: fbSelectedKind, message, screenshotUrl: fbScreenshotDataUrl || undefined }),
+    });
+    if(!res.ok){
+      const data = await res.json().catch(() => ({}));
+      errEl.textContent = data.message || 'Something went wrong — mind trying again?';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Send it over';
+      return;
+    }
+    document.getElementById('feedbackModalBody').style.display = 'none';
+    document.getElementById('feedbackSuccessBody').style.display = 'block';
+  } catch(e){
+    errEl.textContent = "Couldn't reach the server — mind trying again?";
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Send it over';
+  }
+});
+
+/* ================= ADMIN: FEEDBACK & REPORTS ================= */
+async function loadAdminFeedback(){
+  const kind = document.getElementById('fbKindFilter')?.value || '';
+  const status = document.getElementById('fbStatusFilter')?.value || '';
+  const params = new URLSearchParams();
+  if(kind) params.set('kind', kind);
+  if(status) params.set('status', status);
+  try {
+    const res = await apiFetch(`/api/admin/feedback?${params.toString()}`);
+    if(!res.ok) return;
+    const { items } = await res.json();
+    renderAdminFeedback(items);
+  } catch(e){ /* quiet — bonus view */ }
+}
+
+function timeAgoSafe(dateStr){ try { return timeAgo(dateStr); } catch(e){ return ''; } }
+
+function renderAdminFeedback(items){
+  const el = document.getElementById('adminFeedbackList');
+  if(!items.length){ el.innerHTML = '<p class="admin-empty">Nothing submitted yet.</p>'; return; }
+  el.innerHTML = items.map(item => `
+    <div class="fb-admin-card" data-fb-id="${item.id}">
+      <div class="fb-admin-head">
+        <div>
+          <span class="fb-admin-kind ${item.kind}">${item.kind === 'report' ? 'Report' : 'Feedback'}</span>
+          <div class="fb-admin-who">${item.userName} <span style="font-weight:400; color:var(--dim);">(${item.userEmail})</span></div>
+        </div>
+        <div class="fb-admin-when">${timeAgoSafe(item.createdAt)}</div>
+      </div>
+      <p class="fb-admin-msg">${item.message}</p>
+      ${item.hasScreenshot ? `<div class="fb-admin-screenshot-link" data-view-screenshot="${item.id}">📎 View attached screenshot</div>` : ''}
+      <div class="fb-admin-controls">
+        <select data-status-for="${item.id}">
+          <option value="new" ${item.status==='new'?'selected':''}>New</option>
+          <option value="in_progress" ${item.status==='in_progress'?'selected':''}>In progress</option>
+          <option value="addressed" ${item.status==='addressed'?'selected':''}>Addressed</option>
+          <option value="wont_fix" ${item.status==='wont_fix'?'selected':''}>Won't fix</option>
+        </select>
+        <input type="text" placeholder="Note — e.g. 'Fixed in the Sept 25 deploy'" value="${(item.adminNote||'').replace(/"/g,'&quot;')}" data-note-for="${item.id}">
+        <button data-save-fb="${item.id}">Save</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+document.getElementById('fbKindFilter')?.addEventListener('change', loadAdminFeedback);
+document.getElementById('fbStatusFilter')?.addEventListener('change', loadAdminFeedback);
+
+document.addEventListener('click', async (e) => {
+  const viewLink = e.target.closest('[data-view-screenshot]');
+  if(viewLink){
+    const id = viewLink.dataset.viewScreenshot;
+    try {
+      const res = await apiFetch(`/api/admin/feedback/${id}/screenshot`);
+      if(res.ok){
+        const { screenshotUrl } = await res.json();
+        window.open(screenshotUrl, '_blank');
+      }
+    } catch(err){ alert("Couldn't load that screenshot."); }
+    return;
+  }
+  const saveBtn = e.target.closest('[data-save-fb]');
+  if(saveBtn){
+    const id = saveBtn.dataset.saveFb;
+    const status = document.querySelector(`[data-status-for="${id}"]`).value;
+    const adminNote = document.querySelector(`[data-note-for="${id}"]`).value;
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
+    try {
+      const res = await apiFetch(`/api/admin/feedback/${id}`, { method: 'PATCH', body: JSON.stringify({ status, adminNote }) });
+      saveBtn.textContent = res.ok ? 'Saved ✓' : 'Failed';
+    } catch(err){ saveBtn.textContent = 'Failed'; }
+    setTimeout(() => { saveBtn.disabled = false; saveBtn.textContent = 'Save'; }, 1500);
+    return;
+  }
+});
 
 function renderIdeaModal(idea){
   const f = idea.forecast;
