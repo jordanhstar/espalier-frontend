@@ -851,9 +851,10 @@ function renderPromote(){
         : `<div class="promote-status">Not currently promoted</div>`;
     const optionsHTML = idea.status==='completed' ? '' : idea.promoted
       ? `<div class="promote-options"><div class="promote-opt"><div class="price">+$15</div><div class="desc">Extend 7 more days</div><button data-promote="${idea.id}" data-days="7">Extend</button></div></div>`
-      : `<div class="promote-options">
+      : `<div class="promote-options" style="margin-top:14px;">
+          <div class="promote-opt"><div class="price">$5</div><div class="desc">2 days — a quick nudge</div><button data-promote="${idea.id}" data-days="2">Promote</button></div>
           <div class="promote-opt"><div class="price">$15</div><div class="desc">7 days, top of ${idea.type} listings</div><button data-promote="${idea.id}" data-days="7">Promote</button></div>
-          <div class="promote-opt"><div class="price">$40</div><div class="desc">30 days + newsletter feature</div><button data-promote="${idea.id}" data-days="30">Promote</button></div>
+          <div class="promote-opt" style="border-color:var(--blue);"><div style="background:var(--blue); color:#fff; font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:.03em; padding:2px 8px; border-radius:100px; display:inline-block; margin-bottom:4px;">Best value</div><div class="price">$40</div><div class="desc">30 days + newsletter feature</div><button data-promote="${idea.id}" data-days="30">Promote</button></div>
         </div>`;
     return `
       <div class="promote-card">
