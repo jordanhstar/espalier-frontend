@@ -1430,6 +1430,7 @@ function showPublishError(msg){
 }
 
 const editIdeaId = new URLSearchParams(window.location.search).get('editId') || null;
+let loadedIdeaStatus = null;
 const INVOLVE_MAP_REVERSE = Object.fromEntries(Object.entries(INVOLVE_MAP).map(([k,v]) => [v,k]));
 
 async function loadIdeaForEdit(){
@@ -1490,9 +1491,10 @@ async function loadIdeaForEdit(){
       : [];
     renderIdeaLinks();
 
-    document.getElementById('publishBtn').textContent = 'Save changes';
+    document.getElementById('publishBtn').textContent = idea.status === 'draft' ? 'Publish listing' : 'Save changes';
+    loadedIdeaStatus = idea.status;
     const draftBtnEl = document.querySelector('#panel-c .actions .btn-outline');
-    if(draftBtnEl) draftBtnEl.style.display = 'none';
+    if(draftBtnEl) draftBtnEl.style.display = idea.status === 'draft' ? '' : 'none';
     goTo('panel-c');
     updatePreview();
   } catch(err){
@@ -1636,6 +1638,8 @@ document.getElementById('publishBtn').addEventListener('click', async ()=>{
   if(!editIdeaId){
     payload.draftId = draftId;
     payload.aiAnalysis = lastFileAnalysis || undefined;
+  } else if(loadedIdeaStatus === 'draft'){
+    payload.publish = true; // continuing a draft and hitting "Publish listing" should actually publish it, not just save edits
   }
 
   const btn = document.getElementById('publishBtn');
